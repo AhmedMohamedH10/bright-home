@@ -198,9 +198,15 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .kp-tag{position:absolute;left:50%;top:-14px;transform:translate(-50%,10px);padding:8px 16px;border-radius:99px;background:#fff;color:var(--navy-800);font-weight:800;font-size:16px;white-space:nowrap;opacity:0;transition:.4s var(--ease);z-index:6;box-shadow:0 10px 24px rgba(0,5,25,.4)}
 .kp:hover,.kp:focus-visible{transform:translateY(-12px) scale(1.04)}
 .kp:hover .kp-tag,.kp:focus-visible .kp-tag{opacity:1;transform:translate(-50%,0)}
-.kp-jug{left:46px;top:254px;width:228px;height:331px}
+.kp-jug{left:78px;top:632px;width:117px;height:170px}
 .kp-green{left:282px;top:336px;width:84px;height:250px}
 .kp-yellow{left:1064px;top:336px;width:84px;height:250px}
+
+/* ضلفة مفتوحة والجركن جواها (الديسكتوب بس) */
+.k-counter.l .kc-body i:last-child{background:linear-gradient(180deg,#010b1d,#05193a 70%,#0a2a58);box-shadow:inset 0 12px 22px rgba(0,0,0,.75),inset 0 -3px 0 rgba(127,220,245,.12);border-color:rgba(255,255,255,.08);overflow:visible}
+.k-counter.l .kc-body i:last-child::before{top:0;left:0;width:26px;height:100%;margin:0;border-radius:0;box-shadow:none;background:linear-gradient(90deg,#0f3a74,#1a5099);clip-path:polygon(0 5%,100% 0,100% 100%,0 95%)}
+.scene.p .k-counter.l .kc-body i:last-child{background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,0) 50%),linear-gradient(180deg,#123b76,#0a2a58);box-shadow:none;border-color:rgba(255,255,255,.13)}
+.scene.p .k-counter.l .kc-body i:last-child::before{top:14px;left:50%;width:56px;height:6px;margin-left:-28px;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,.4);background:linear-gradient(180deg,#f2f7fb,#9fb7cc);clip-path:none}
 
 /* washer */
 .washer{left:600px;top:318px;width:400px;height:520px;z-index:6;transform-origin:50% 100%}
@@ -268,7 +274,7 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .scene.p .k-counter.l{left:-14px}.scene.p .k-counter.r{left:644px}
 .scene.p .k-sink,.scene.p .k-faucet,.scene.p .k-hob,.scene.p .k-kettle,.scene.p .k-potwrap{display:none}
 .scene.p .k-counter.r .k-plant{left:150px}
-.scene.p .kp-jug{left:14px;top:728px;width:224px;height:326px}
+.scene.p .kp-jug{left:16px;top:1062px;width:207px;height:300px}
 .scene.p .kp-green{left:690px;top:808px;width:88px;height:262px}
 .scene.p .kp-yellow{left:764px;top:808px;width:88px;height:262px}
 .scene.p .washer{left:250px;top:885px;scale:1.125;transform-origin:50% 100%}
@@ -279,12 +285,12 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .kicker i{width:34px;height:1px;background:linear-gradient(90deg,transparent,var(--sky))}.kicker i:last-child{transform:scaleX(-1)}
 .hero-title h1{display:flex;flex-direction:column;align-items:center;margin-top:6px;line-height:1}
 .h-ar{font-family:var(--font-ar);font-weight:700;font-size:var(--t-ar,96px);line-height:1.12;letter-spacing:0;display:inline-flex;gap:.22em;
-  filter:drop-shadow(0 10px 30px rgba(0,20,60,.6))}
+  filter:drop-shadow(0 0 1.5px rgba(2,20,60,.95)) drop-shadow(0 4px 0 rgba(2,24,70,.6)) drop-shadow(0 14px 28px rgba(0,20,60,.7))}
 .mask{display:inline-block;overflow:hidden;padding:.12em .06em 0;margin:-.12em -.06em 0}
-.mask>span{display:inline-block;transform:translateY(115%);animation:maskUp 1.3s var(--ease) forwards;background:linear-gradient(180deg,#fff 25%,#cfeeff 62%,#7fdcf5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.05em}
+.mask>span{display:inline-block;transform:translateY(115%);animation:maskUp 1.3s var(--ease) forwards;background:linear-gradient(180deg,var(--title-top,#f0fbff) 0%,var(--title-mid,#8fdcff) 38%,var(--title-mid2,#3aa8f2) 72%,var(--title-bot,#1c6fd6) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.05em}
 .mask:nth-child(1)>span{animation-delay:.7s}.mask:nth-child(2)>span{animation-delay:.85s}
 @keyframes maskUp{to{transform:none}}
-.h-en{font-family:var(--font-en);font-size:var(--t-en,28px);letter-spacing:.16em;color:#fff;margin-top:2px;text-shadow:0 6px 24px rgba(0,20,60,.7);display:inline-flex}
+.h-en{font-family:var(--font-en);font-size:var(--t-en,clamp(34px,2.8vw,46px));letter-spacing:.14em;color:#fff;margin-top:2px;text-shadow:0 6px 24px rgba(0,20,60,.7);display:inline-flex}
 .h-en span{display:inline-block;opacity:0;transform:translateY(24px) rotate(6deg);animation:letter .9s var(--ease) forwards;white-space:pre}
 @keyframes letter{to{opacity:1;transform:none}}
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -715,3 +721,268 @@ img,svg,canvas,video{max-width:100%}
 @media (max-height:560px) and (orientation:landscape){
   .sc-title.long{font-size:clamp(30px,5.4vw,50px);white-space:nowrap}
 }
+
+/* =========================================================
+   غسالة الأطباق (بدل الغسالة)
+   ========================================================= */
+.dw .w-panel{gap:14px}
+.dw .w-btns{display:flex;gap:6px}
+.dw .w-btns i{width:14px;height:14px;border-radius:50%;background:linear-gradient(180deg,#fff,#c3d2de);box-shadow:inset 0 0 0 1px rgba(10,60,120,.2),0 2px 3px rgba(10,60,120,.25)}
+.dw .w-btns i:nth-child(2){background:linear-gradient(180deg,#ffe87a,#f5b800)}
+.dw .w-btns i:nth-child(3){background:linear-gradient(180deg,#9bff7a,#27c75e)}
+.dw .w-door{top:122px;width:320px;height:318px;margin-left:-160px}
+.dw .w-handle{left:50%;top:-20px;width:130px;height:11px;margin:0 0 0 -65px;border-radius:8px;background:linear-gradient(180deg,#fff,#9fb4c7)}
+.dw .w-ring{border-radius:26px;padding:12px;background:linear-gradient(160deg,#ffffff,#b5c6d4 55%,#f4f9fd)}
+.dw .w-gasket{border-radius:18px;padding:10px;background:linear-gradient(180deg,#1a2b3d,#050c15)}
+.dw .w-glass{border-radius:12px;background:linear-gradient(180deg,#6fa3cf 0%,#3a6e9f 55%,#1c4570 100%);box-shadow:inset 0 0 34px rgba(0,0,0,.55)}
+.dw .w-inner{background:radial-gradient(60% 50% at 50% 38%,rgba(255,255,255,.32),transparent 70%)}
+.dw .w-glare{border-radius:12px}
+.dw .w-rack{position:absolute;left:8px;right:8px;height:4px;border-radius:3px;background:#dbe6f0;box-shadow:0 2px 3px rgba(0,0,0,.35)}
+.dw .w-rack::after{content:"";position:absolute;left:0;right:0;top:4px;height:12px;background:repeating-linear-gradient(90deg,rgba(219,230,240,.85) 0 2px,transparent 2px 14px)}
+.dw .w-rack.u{top:104px}
+.dw .w-rack.l{top:232px}
+.dw .w-clothes{top:0;right:0;bottom:0;left:0}
+.dw .dsh{position:absolute;display:block;will-change:transform}
+.dw .dsh.cup{top:60px;width:38px;height:44px;clip-path:polygon(5% 0,95% 0,80% 100%,20% 100%)}
+.dw .dsh.cup.c0{background:linear-gradient(135deg,#fff,#cfe3f3)}
+.dw .dsh.cup.c1{background:linear-gradient(135deg,#fff5a0,#f5b800)}
+.dw .dsh.cup.c2{background:linear-gradient(135deg,#d6ffb8,#27c75e)}
+.dw .dsh.plate{top:152px;width:15px;height:80px;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(255,255,255,.9),0 3px 5px rgba(0,5,25,.4)}
+.dw .dsh.plate.p0{background:linear-gradient(90deg,#fff,#d7e6f3)}
+.dw .dsh.plate.p1{background:linear-gradient(90deg,#fffbd0,#ffd84a)}
+.dw .dsh.plate.p2{background:linear-gradient(90deg,#e6ffd2,#7fdc6a)}
+.dw .w-drum{top:136px;right:34px;bottom:auto;left:34px;height:9px;border-radius:6px;background:linear-gradient(180deg,#fff,#9fb4c7);-webkit-mask-image:none;mask-image:none;box-shadow:0 3px 6px rgba(0,0,0,.4)}
+.dw .w-drum::after{content:"";position:absolute;left:50%;top:-5px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:#e9f1f7;box-shadow:0 0 0 2px #9fb4c7}
+.dw .w-water{left:0;right:0}
+
+/* ===== ألوان الأصفر والأخضر: كل لون جرادينت من درجات لونه بس ===== */
+.sc-title.t-green{background-image:linear-gradient(165deg,#e9ffd0 0%,#8cf26a 30%,#27c75e 62%,#0a7d44 100%);filter:drop-shadow(0 12px 30px rgba(0,40,10,.6)) drop-shadow(0 0 26px rgba(90,255,140,.32))}
+.sc-title.t-yellow{background-image:linear-gradient(165deg,#fffbd2 0%,#ffe45e 34%,#ffc61a 66%,#f59e0b 100%);filter:drop-shadow(0 12px 30px rgba(70,35,0,.6)) drop-shadow(0 0 26px rgba(255,200,40,.35))}
+.sc-title.t-lime{background-image:linear-gradient(165deg,#f6ffcf 0%,#c9f542 34%,#6fd12a 68%,#1f9a3a 100%);filter:drop-shadow(0 12px 30px rgba(10,45,0,.6)) drop-shadow(0 0 26px rgba(170,240,60,.35))}
+
+/* ===== «برائحة الليمون» فضي لامع + الأخضر/الأصفر بجرادينت لونه ===== */
+@keyframes silverShine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.sc-cat,.sc-title.two .lm{background-image:linear-gradient(105deg,#7f8a96 0%,#f4f8fb 18%,#c3ccd5 34%,#ffffff 50%,#aab4bf 66%,#f4f8fb 82%,#7f8a96 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;opacity:1;animation:silverShine 5s linear infinite}
+.sc-cat{font-size:clamp(20px,2vw,30px);font-weight:800;display:inline-block;filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
+.sc-title.two{background:none;filter:none;color:inherit}
+.sc-title.two>span{display:block;width:max-content;max-width:100%;padding-bottom:.06em}
+.sc-title.two .lm{filter:drop-shadow(0 10px 22px rgba(0,0,0,.5)) drop-shadow(0 0 18px rgba(255,255,255,.28))}
+.sc-title.two .cc{-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.sc-title.two .cc-g,.sc-title.two .cc-l{background-image:linear-gradient(165deg,#e9ffd0 0%,#8cf26a 30%,#27c75e 62%,#0a8f4a 100%);filter:drop-shadow(0 12px 28px rgba(0,40,10,.6)) drop-shadow(0 0 24px rgba(90,255,140,.35))}
+.sc-title.two .cc-l{background-image:linear-gradient(165deg,#f6ffcf 0%,#c9f542 34%,#6fd12a 68%,#1f9a3a 100%)}
+.sc-title.two .cc-y{background-image:linear-gradient(165deg,#fffbd2 0%,#ffe45e 34%,#ffc61a 66%,#f59e0b 100%);filter:drop-shadow(0 12px 28px rgba(70,35,0,.6)) drop-shadow(0 0 24px rgba(255,200,40,.38))}
+@media (prefers-reduced-motion:reduce){.sc-cat,.sc-title.two .lm{animation:none}}
+.sc-cat{background-image:linear-gradient(105deg,#a9b4c0 0%,#ffffff 18%,#d5dde5 34%,#ffffff 50%,#c0cad4 66%,#ffffff 82%,#a9b4c0 100%);filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)) drop-shadow(0 0 10px rgba(255,255,255,.22))}
+
+/* ===== تهدئة حركة عرض الجراكن (راحة للعين) ===== */
+.sj-in{animation:bobSoft 9s ease-in-out infinite}
+@keyframes bobSoft{50%{transform:translateY(-6px)}}
+.sc-rays{animation:none;opacity:.45}
+.sc-halo{animation:none;opacity:.8}
+.sc-ring::before{display:none}
+.sc-ring{border-color:rgba(255,255,255,.18);animation-duration:80s}
+.sc-ring.r2{animation-duration:120s}
+.sc-panel{transform:translateY(14px);filter:none;transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.sc-panel.is-on{transform:none}
+.fx-spark i{animation-duration:6s}
+@media (prefers-reduced-motion:reduce){.sj-in{animation:none}}
+
+/* =========================================================
+   v9 — الأسعار + شريط الشراء + السلة
+   ========================================================= */
+.buy{display:flex;flex-direction:column;gap:8px;margin-top:6px;padding:12px;border-radius:18px;background:rgba(2,15,36,.38);border:1px solid rgba(255,255,255,.18);text-align:right}
+.buy-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px}
+.buy-price b{font:800 28px/1 var(--font-en);color:#fff;letter-spacing:.01em}
+.buy-price span{font-weight:800;font-size:15px;color:var(--sky)}
+.buy-price small{flex-basis:100%;font-size:12.5px;opacity:.78;margin-top:2px}
+.buy-lbl{font-size:12px;font-weight:700;color:var(--mist)}
+.buy-row{display:flex;align-items:stretch;gap:8px}
+.buy-row .qty{flex:0 0 auto}
+.buy-add{flex:1;min-width:0;--pad:10px 14px;font-weight:800;background:linear-gradient(135deg,#fff,#d6f1ff);color:var(--navy-800);border:0}
+.buy-add:hover{background:#fff}
+.buy-sum{min-height:1.2em;font-size:13px;font-weight:700;color:var(--sky)}
+.q-s{padding:3px;gap:2px;border-radius:14px}
+.q-s button{width:34px;min-height:40px;font-size:20px}
+.q-s input{width:46px;min-width:0;border:0;background:transparent;color:#fff;text-align:center;font:800 17px var(--font-en);outline:none;padding:0;-moz-appearance:textfield}
+.q-s input::-webkit-outer-spin-button,.q-s input::-webkit-inner-spin-button{-webkit-appearance:none}
+.q-s input:focus{background:rgba(255,255,255,.12);border-radius:8px}
+.sc-cta.has-buy{flex-direction:column;align-items:stretch;gap:10px;max-width:380px}
+.sc-cta.has-buy small{order:-1}
+.card.flash{animation:cardFlash 2.2s var(--ease)}
+@keyframes cardFlash{0%,100%{box-shadow:0 0 0 0 rgba(127,220,245,0)}20%,60%{box-shadow:0 0 0 4px var(--sky),0 0 50px 6px rgba(127,220,245,.6)}}
+.c-vis img.ph{object-fit:contain;padding:14%;opacity:.95}
+
+/* زرار السلة العايم */
+.cart-fab{position:fixed;z-index:80;left:18px;bottom:calc(18px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:0;display:grid;place-items:center;color:var(--navy-800);background:linear-gradient(135deg,#fff,#d6f1ff);box-shadow:0 16px 40px -8px rgba(0,10,40,.75),0 0 0 1px rgba(255,255,255,.4);transition:transform .35s var(--ease)}
+.cart-fab:hover{transform:translateY(-3px) scale(1.05)}
+.cart-fab.has{background:linear-gradient(135deg,#7fdcf5,#fff)}
+.cart-fab.bump{animation:cartBump .6s var(--ease)}
+@keyframes cartBump{30%{transform:scale(1.25) rotate(-8deg)}60%{transform:scale(.95)}}
+.cart-badge{position:absolute;top:-4px;right:-4px;min-width:24px;height:24px;padding:0 6px;border-radius:99px;background:#ff4d6d;color:#fff;font:800 13px/24px var(--font-en);text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.cart-badge[hidden]{display:none}
+.cart-back{position:fixed;inset:0;z-index:90;background:rgba(1,8,22,.6);opacity:0;pointer-events:none;transition:opacity .4s}
+.cart-open .cart-back{opacity:1;pointer-events:auto}
+.cart-drawer{position:fixed;z-index:95;top:0;bottom:0;right:0;width:min(440px,100vw);display:flex;flex-direction:column;background:linear-gradient(180deg,#07366e,#041a38);border-inline-start:1px solid rgba(255,255,255,.18);box-shadow:-30px 0 80px rgba(0,5,25,.6);transform:translateX(105%);visibility:hidden;transition:transform .5s var(--ease),visibility 0s .5s}
+.cart-drawer.on{transform:none;visibility:visible;transition:transform .5s var(--ease)}
+.cd-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid rgba(255,255,255,.14)}
+.cd-head h3{font-size:20px}
+.cd-x{width:40px;height:40px;border-radius:12px;border:0;background:rgba(255,255,255,.12);font-size:24px;line-height:1}
+.cd-x:hover{background:#fff;color:var(--navy-800)}
+.cd-body{flex:1;overflow:auto;padding:14px 18px;-webkit-overflow-scrolling:touch}
+.cd-empty{opacity:.75;text-align:center;padding:50px 10px;line-height:1.9}
+.cd-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.ci{padding:14px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.ci-top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.ci-name{font-weight:800;font-size:15px;line-height:1.6}
+.ci-name small{display:block;font-weight:500;font-size:12.5px;opacity:.75}
+.ci-del{flex:0 0 auto;width:34px;height:34px;border-radius:10px;border:0;background:rgba(255,120,140,.18);color:#ffb3c0;font-size:22px;line-height:1}
+.ci-del:hover{background:#ff4d6d;color:#fff}
+.ci-bot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.ci-sum{font:800 20px var(--font-en)}
+.ci-sum span{font:700 13px var(--font-ar,inherit);color:var(--sky)}
+.cd-foot{padding:16px 18px calc(16px + env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.14);display:flex;flex-direction:column;gap:10px;background:rgba(2,15,36,.5)}
+.cd-total{display:flex;justify-content:space-between;align-items:baseline;font-weight:800}
+.cd-total b{font:800 26px var(--font-en)}
+.cd-total b i{font-style:normal}
+.cd-clear{border:0;background:none;color:var(--mist);font-size:13px;text-decoration:underline;padding:6px}
+body.cart-open{overflow:hidden}
+
+/* ملخص الطلب في الفورم */
+.order-sum{padding:16px;border-radius:16px;border:1px solid rgba(255,255,255,.25);background:rgba(2,15,36,.35)}
+.os-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:15px}
+.os-edit{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:10px;padding:6px 12px;font-size:13px;font-weight:700}
+.os-edit:hover{background:#fff;color:var(--navy-800)}
+.order-sum ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.order-sum li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;font-size:14px;padding-bottom:8px;border-bottom:1px dashed rgba(255,255,255,.15)}
+.order-sum li em{font-style:normal;color:var(--sky);font-weight:700;font-size:13px}
+.order-sum li b{font-family:var(--font-en)}
+.os-total{display:flex;justify-content:space-between;margin-top:10px;font-weight:800;font-size:17px}
+.os-total b{font-family:var(--font-en);font-size:20px;color:var(--sky)}
+.os-empty{margin:4px 0;opacity:.8;font-size:14px;line-height:1.8}
+.os-empty a{color:var(--sky);text-decoration:underline}
+.order-sum .shake,#orderSummary.shake{animation:shake .4s}
+
+@media (max-width:760px){
+  .cart-fab{bottom:calc(86px + env(safe-area-inset-bottom));width:56px;height:56px}
+  .buy-price b{font-size:24px}
+}
+
+
+/* =========================================================
+   معطر الملابس — نسيم البحر (2 لتر) / الزهور (4 لتر)
+   ========================================================= */
+.bgSea{background:radial-gradient(62% 58% at 30% 44%,#a6f3ff 0%,#22aef2 26%,#0b63c6 56%,#031a4c 100%),linear-gradient(160deg,#08336f,#020e2a)}
+.bgRose{background:radial-gradient(62% 58% at 30% 44%,#ffdbe8 0%,#ff7fae 26%,#c53570 56%,#3f0b26 100%),linear-gradient(160deg,#4c102d,#1a0510)}
+.sc-title.two .cc-sea{background-image:linear-gradient(165deg,#e8fbff 0%,#8fe3ff 32%,#2fb2f5 64%,#0b73d6 100%);filter:drop-shadow(0 12px 28px rgba(0,25,70,.6)) drop-shadow(0 0 24px rgba(80,200,255,.4))}
+.sc-title.two .cc-rose{background-image:linear-gradient(165deg,#fff0f6 0%,#ffc2d8 32%,#ff7fae 64%,#e0457f 100%);filter:drop-shadow(0 12px 28px rgba(70,5,35,.6)) drop-shadow(0 0 24px rgba(255,140,185,.4))}
+.fabric .sc-halo{background:radial-gradient(circle,rgba(255,255,255,.55),transparent 66%)}
+
+/* قطرات ماء زرقاء (نسيم البحر) */
+.fx-wdrop i{position:absolute;top:-8%;width:var(--s,12px);height:calc(var(--s,12px)*1.35);border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 35% 28%,#fff 0 14%,#a8ecff 42%,#1d9cf2 100%);box-shadow:0 0 14px rgba(90,205,255,.75);animation:petal var(--t,11s) linear infinite;animation-delay:var(--dl,0s);opacity:.95}
+/* بتلات زهور (الزهور) */
+.fx-blossom i{position:absolute;top:-8%;width:var(--s,22px);height:calc(var(--s,22px)*1.2);border-radius:150% 0 150% 0;background:linear-gradient(135deg,#fff 0%,#ffd1e1 45%,#ff8db6 100%);box-shadow:inset -3px -3px 6px rgba(150,20,80,.28),0 6px 14px rgba(90,0,40,.25);animation:petal var(--t,12s) linear infinite;animation-delay:var(--dl,0s);opacity:.95}
+.fx-blossom i:nth-child(3n){border-radius:50% 50% 50% 0;background:radial-gradient(circle at 35% 30%,#fff 0 18%,#ffc4d9 60%,#ff7fae 100%)}
+
+/* موج ماء متحرك تحت المشهد (شريحة نسيم البحر بس) */
+.sc-wave{position:absolute;left:0;right:0;bottom:0;height:24%;overflow:hidden;opacity:0;transition:opacity 1s;pointer-events:none;z-index:1;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 60%);mask-image:linear-gradient(180deg,transparent,#000 60%)}
+.scent-stage[data-i="0"] .sc-wave{opacity:1}
+.sc-wave i{position:absolute;left:-200px;right:-200px;bottom:0;height:100%;
+  background:radial-gradient(ellipse 120px 34px at 50% 100%,rgba(255,255,255,.34) 0 60%,transparent 64%) 0 100%/240px 70px repeat-x;animation:waveMove 9s linear infinite}
+.sc-wave i+i{bottom:-14px;opacity:.7;background-size:180px 56px;animation-duration:13s;animation-direction:reverse}
+@keyframes waveMove{to{transform:translateX(240px)}}
+@media (prefers-reduced-motion:reduce){.sc-wave i{animation:none}}
+
+
+/* =========================================================
+   قايمة الأصناف جنب اسم المنتج (لون / ريحة)
+   ========================================================= */
+.var-wrap{position:relative}
+.var-wrap .c-info h3,.var-wrap h3{margin:4px 0 6px}
+.var-btn{display:inline-flex;align-items:center;gap:10px;max-width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;line-height:inherit;text-align:right;cursor:pointer}
+.var-name{border-bottom:2px dashed rgba(255,255,255,.28);transition:border-color .3s}
+.var-btn:hover .var-name,.var-btn:focus-visible .var-name{border-color:var(--sky)}
+.var-chev{flex:none;position:relative;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.34);transition:background .3s,transform .4s var(--ease),border-color .3s}
+.var-chev::before{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-7px 0 0 -4px;border-right:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(45deg)}
+.var-btn:hover .var-chev{background:rgba(127,220,245,.35);border-color:var(--sky)}
+.var-wrap.open .var-chev{transform:rotate(180deg);background:#fff}
+.var-wrap.open .var-chev::before{border-color:var(--navy-800)}
+.var-list{position:absolute;z-index:30;right:0;top:calc(100% + 4px);min-width:230px;max-width:100%;margin:0;padding:6px;list-style:none;border-radius:18px;background:rgba(4,22,52,.97);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.28);box-shadow:0 24px 50px -12px rgba(0,5,25,.85);animation:varIn .28s var(--ease)}
+.var-list[hidden]{display:none}
+.var-list button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border:0;border-radius:13px;background:none;color:#fff;font:700 16px/1.3 var(--font-ar);text-align:right;cursor:pointer;transition:background .2s,color .2s}
+.var-list button:hover,.var-list button:focus-visible{background:rgba(127,220,245,.22);outline:none}
+.var-list button[aria-selected="true"]{background:#fff;color:var(--navy-800)}
+.var-list em{font-style:normal;font-size:12px;font-weight:800;color:var(--sky);white-space:nowrap}
+.var-list button[aria-selected="true"] em{color:#0a6bb5}
+.card.var-open{z-index:6;overflow:visible}
+.card.var-open .c-vis{border-radius:30px 30px 0 0}
+.card.in-cart::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1.5px rgba(127,220,245,.55)}
+@keyframes varIn{from{opacity:0;transform:translateY(-8px) scale(.97)}to{opacity:1;transform:none}}
+.c-vis img{transition:opacity .2s,transform .7s var(--ease)}
+@media (prefers-reduced-motion:reduce){.var-list{animation:none}}
+
+
+/* =========================================================
+   قسم المنتجات — أنيميشن هادي وخفيف (بدون 3D لكل كارت ولا blur تقيل)
+   ========================================================= */
+@property --hue{syntax:'<color>';inherits:true;initial-value:#7fdcf5}
+
+/* ظهور ناعم بدون blur */
+.products .reveal{filter:none;transform:translateY(22px);transition:opacity .8s var(--ease) var(--d,0s),transform .8s var(--ease) var(--d,0s)}
+.products .reveal.in{transform:none}
+
+/* الكارت: زجاج بسيط بدل backdrop-filter، وبدون ميلان 3D */
+.card{-webkit-backdrop-filter:none;backdrop-filter:none;transform-style:flat;will-change:auto;
+  background:linear-gradient(160deg,rgba(255,255,255,.2),rgba(255,255,255,.07));
+  transition:opacity .5s var(--ease),transform .5s var(--ease),box-shadow .5s var(--ease),--hue .6s ease}
+.card.reveal{transform:translateY(24px)}
+.card.reveal.in{transform:none}
+.card.reveal.in:hover{transform:translateY(-6px)}
+.card.reveal.in.leaving{opacity:0;transform:scale(.97) translateY(8px);transition:opacity .22s ease,transform .22s ease;pointer-events:none}
+.card::after{background:radial-gradient(420px circle at 50% 0%,rgba(255,255,255,.22),transparent 55%);transition:opacity .5s ease}
+
+/* مشهد الكارت مسطّح */
+.c-vis{-webkit-perspective:none;perspective:none}
+.c-stage{-webkit-transform-style:flat;transform-style:flat;will-change:auto;transform:none}
+.c-glow{filter:none;transition:opacity .6s ease,transform .9s var(--ease)}
+.c-floor{-webkit-filter:none;filter:none;-webkit-transform:none;transform:none}
+.c-vis img:not(.c-boxes){animation:none;transform:none;
+  transition:opacity .28s ease,transform .6s var(--ease)}
+.card:hover .c-vis img:not(.c-boxes){transform:translateY(-6px) scale(1.04)}
+.c-vis img.c-boxes,.card:hover .c-vis img.c-boxes{-webkit-transform:translateX(-50%) scale(1.12);transform:translateX(-50%) scale(1.12)}
+.card.in .c-vis .p3d{animation:none}
+
+/* تبديل الصنف: الاسم والوصف والسعر والصورة بيعملوا cross-fade ناعم */
+.var-name,.c-cat,.buy-price b,.buy-price small{display:inline-block;transition:opacity .22s ease,transform .22s ease}
+.buy-price small{display:block}
+.card.swapping .var-name,.card.swapping .c-cat,.card.swapping .buy-price b,.card.swapping .buy-price small{opacity:0;transform:translateY(6px)}
+.card.swapping .c-vis img:not(.c-boxes){opacity:0;transform:translateY(10px) scale(.96)}
+.card.swapping .c-glow{opacity:.3}
+
+@media (prefers-reduced-motion:reduce){
+  .card.reveal.in:hover,.card:hover .c-vis img:not(.c-boxes){transform:none}
+}
+
+/* زرار الهيدر «اطلب عبر واتساب» أخضر */
+.header .header-cta{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;border-color:transparent;box-shadow:0 10px 26px -10px rgba(37,211,102,.75);transition:transform .3s var(--ease),box-shadow .3s ease,filter .3s ease}
+.header .header-cta:hover{filter:brightness(1.06);box-shadow:0 14px 30px -10px rgba(37,211,102,.9)}
+
+/* العنوان فوق والكلام الصغير تحته */
+.products .sec-head{flex-direction:column;align-items:flex-start;gap:14px;margin:22px 0 28px}
+.products .sec-head p{max-width:680px}
+
+/* كبسولة الهيدر الزرقاء ظاهرة دايمًا (حتى فوق في أول الصفحة) */
+.header{background:rgba(4,26,56,.62);border-color:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);box-shadow:0 20px 50px -20px rgba(0,8,30,.8)}
+.lite .header{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(4,26,56,.82)}
+
+/* قسم «عن برايت»: الاسم كبير فوق والكلام تحته */
+.story-brand{position:relative;z-index:1;margin:18px 0 0;font-family:var(--font-ar);font-weight:400;font-size:clamp(72px,13vw,200px);line-height:1.05;
+  background:linear-gradient(165deg,#fff 0%,#d6f4ff 40%,#7fdcf5 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 12px 30px rgba(0,10,40,.45))}
+.statement{font-size:clamp(20px,2.6vw,34px);line-height:1.9;max-width:760px;margin:22px 0 clamp(56px,8vw,100px);
+  padding-inline-start:22px;border-inline-start:3px solid transparent;border-image:linear-gradient(180deg,#7fdcf5,rgba(127,220,245,0)) 1;color:#fff}
+.statement .w.hl{color:var(--sky);font-weight:800}
+@media (max-width:600px){.statement{padding-inline-start:16px;line-height:1.85}}
+
+/* «برايت هوم» بخط Cairo Bold وأصغر، ومن غير قصّ للحروف من تحت */
+.story-brand{font-family:var(--font-body);font-weight:800;font-size:clamp(52px,8.5vw,120px);line-height:1.4;padding-bottom:.08em;letter-spacing:0;margin-top:10px}

@@ -2,13 +2,7 @@
    Bright Home — برايت هوم · main.js
    ========================================================= */
 
-/* ---------------------------------------------------------
-   ⚙️ الإعدادات — غيّر رقم واتساب هنا فقط
-   الصيغة الدولية بدون + أو مسافات. مثال مصر: 201012345678
-   --------------------------------------------------------- */
-const CONFIG = {
-  WHATSAPP_NUMBER: '',   // ← ضع رقم واتساب برايت هنا
-};
+/* الإعدادات (رقم واتساب، قاعدة الطلبات، ...) في js/config.js */
 
 (() => {
 'use strict';
@@ -39,6 +33,7 @@ function toast(msg, ms = 3200) {
 /* ---------------------------------------------------------
    Text splitting (English letters + scroll-lit statement)
    --------------------------------------------------------- */
+const HL = new Set(['لمعانًا', 'ونظافة', 'نعومة', 'يديك', 'رائحة', 'ملابسك']);
 (function splitText() {
   const en = $('#hEn');
   if (en) {
@@ -54,7 +49,7 @@ function toast(msg, ms = 3200) {
     const words = st.textContent.trim().split(/\s+/); st.textContent = '';
     const brand = words[0] === 'برايت' && words[1] === 'هوم' ? 2 : 0;   /* «برايت هوم» بخط Cairo بولد والباقي عادي */
     words.forEach((w, i) => {
-      const s = document.createElement('span'); s.className = i < brand ? 'w br' : 'w'; s.textContent = w;
+      const s = document.createElement('span'); s.className = (i < brand ? 'w br' : 'w') + (HL.has(w.replace(/[،,.]/g, '')) ? ' hl' : ''); s.textContent = w;
       st.appendChild(s); if (i < words.length - 1) st.appendChild(document.createTextNode(' '));
     });
   }
@@ -107,8 +102,7 @@ const drum = $('#wDrum'), clothes = $('#wClothes'), water = $('#wWater'), foam =
 const knob = $('#wKnob'), timeEl = $('#wTime'), modeEl = $('#wMode'), washer = $('#washer'), glass = $('#wGlass');
 const titleEl = $('#heroTitle'), actionsEl = $('#heroActions'), hintEl = $('#heroHint'), diveEl = $('#dive'), meter = $('#heroMeter');
 const vig = $('.hero-vignette');
-const cls = $$('.cl', clothes);
-const clPos = cls.map(c => { const cs = getComputedStyle(c); return [parseFloat(cs.getPropertyValue('--x')) || 0, parseFloat(cs.getPropertyValue('--y')) || 0]; });
+const cls = $$('.dsh', clothes);
 let sc = { s: 1, tx: 0, ty: 0, portrait: false }, door = { x: 0, y: 0, r: 100 };
 
 function fitScene() {
@@ -140,25 +134,22 @@ function heroProgress() {
   heroTarget = clamp(-r.top, 0, Math.max(0, r.height));
   return r;
 }
-const modes = [[.15, 'FILL'], [.45, 'WASH'], [.65, 'RINSE'], [.88, 'SPIN'], [2, 'END']];
+const modes = [[.15, 'FILL'], [.45, 'WASH'], [.65, 'RINSE'], [.88, 'DRY'], [2, 'END']];
 function updateHero(time) {
   const ps = clamp(heroP / heroSpan()), t = ps;
 
-  /* الدرام والهدوم بتلف مع السكرول مباشرة (طالع ونازل) */
+  /* دراع الرش بيلف (من الأمام بيبان بيتمدد ويضيق) والأطباق بترتعش خفيف وقت الغسيل */
   const ang = heroP * 1.7;
-  drum.style.transform = `rotate(${ang}deg)`;
-  clothes.style.transform = `rotate(${ang * .55}deg)`;
+  drum.style.transform = `scaleX(${Math.cos(ang / 26).toFixed(3)})`;
+  const wsh = reduce ? 0 : clamp((t - .12) / .06) * (1 - clamp((t - .64) / .08));
   cls.forEach((c, i) => {
-    const [sx, sy] = clPos[i];
-    const a = ang * (.9 + i * .07) + i * 60;
-    const dx = Math.sin(a / 38 + i) * 16, dy = Math.cos(a / 44 + i * 1.7) * 14;
-    c.style.transform = `translate(${sx + dx}px,${sy + dy}px) rotate(${-ang * .55 + a * .5}deg)`;
+    c.style.transform = `translate(${(Math.sin(ang / 9 + i * 1.3) * 1.6 * wsh).toFixed(2)}px,${(Math.cos(ang / 11 + i) * 1.1 * wsh).toFixed(2)}px) rotate(${(Math.sin(ang / 7 + i * 2) * 2.2 * wsh).toFixed(2)}deg)`;
   });
 
   /* water */
   let lvl = 0;
   if (t < .15) lvl = (t / .15) * .5; else if (t < .6) lvl = .5; else if (t < .86) lvl = .5 * (1 - (t - .6) / .26);
-  water.style.height = (lvl * 100) + '%';
+  water.style.height = (lvl * 44) + '%';
   foam.style.opacity = (t > .1 && t < .72) ? 1 : 0;
 
   /* display */
@@ -166,12 +157,6 @@ function updateHero(time) {
   timeEl.textContent = '00:' + String(remain).padStart(2, '0');
   modeEl.textContent = (modes.find(m => t < m[0]) || modes[4])[1];
   knob.style.transform = `rotate(${t * 540}deg)`;
-
-  /* shake during SPIN */
-  const sp = clamp((t - .64) / .06) * (1 - clamp((t - .88) / .06));
-  const sh = reduce ? 0 : sp;
-  washer.style.translate = `${Math.sin(time / 32) * 2.2 * sh}px ${Math.cos(time / 40) * 1.2 * sh}px`;
-  washer.style.rotate = `${Math.sin(time / 46) * .35 * sh}deg`;
 
   /* التلميح يختفي أول ما العميل يبدأ ينزل؛ باقي العناصر بتتحرك مع الصفحة عادي */
   if (hintEl) { hintEl.style.animation = heroP > 8 ? 'none' : ''; hintEl.style.opacity = heroP > 8 ? 0 : ''; }
@@ -213,11 +198,13 @@ const scenes = $$('.scent').map(sec => {
     'fx-lime': [9, el => { el.style.left = rand(0, 96) + '%'; el.style.setProperty('--s', rand(34, 66) + 'px'); el.style.setProperty('--t', rand(11, 18) + 's'); el.style.setProperty('--dl', (-rand(0, 16)) + 's'); el.style.setProperty('--dx', rand(-140, 160) + 'px'); }],
     'fx-leaf': [14, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(14, 26) + 'px'); el.style.setProperty('--t', rand(9, 15) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-120, 160) + 'px'); }],
     'fx-drop': [18, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(8, 16) + 'px'); el.style.setProperty('--t', rand(8, 14) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-100, 120) + 'px'); }],
+    'fx-wdrop': [20, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(9, 18) + 'px'); el.style.setProperty('--t', rand(8, 14) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-100, 120) + 'px'); }],
+    'fx-blossom': [24, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(14, 32) + 'px'); el.style.setProperty('--t', rand(9, 16) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-120, 160) + 'px'); }],
     'fx-bub': [18, el => { el.style.left = rand(2, 96) + '%'; el.style.setProperty('--s', rand(14, 44) + 'px'); el.style.setProperty('--t', rand(8, 15) + 's'); el.style.setProperty('--dl', (-rand(0, 15)) + 's'); el.style.setProperty('--dx', rand(-90, 90) + 'px'); }],
   };
   $$('.sc-fx > div', sec).forEach(box => {
     for (const k in FX) if (box.classList.contains(k)) {
-      const [n, fn] = FX[k], cnt = lite ? Math.ceil(n * .6) : n;
+      const [n, fn] = FX[k], cnt = Math.ceil(n * (lite ? .3 : .45));
       for (let i = 0; i < cnt; i++) { const el = document.createElement('i'); fn(el, i); box.appendChild(el); }
     }
   });
@@ -245,12 +232,11 @@ const scenes = $$('.scent').map(sec => {
     S.tiltX = lerp(S.tiltX, S.tX, .08); S.tiltY = lerp(S.tiltY, S.tY, .08);
     S.jugs.forEach((j, i) => {
       const d = i - S.F, ad = Math.abs(d);
-      const x = -d * w * .78, z = -ad * 160, k = 1 - Math.min(ad, 1.4) * .26;
-      j.style.transform = `translate3d(calc(-50% + ${x}px),-50%,${z}px) rotateY(${-d * 16 + S.tiltX * 5}deg) rotateX(${S.tiltY * -3}deg) scale(${k})`;
-      j.style.opacity = clamp(1 - ad * .5, 0, 1);
+      const x = -d * w * .6, z = -ad * 60, k = 1 - Math.min(ad, 1.4) * .08;
+      j.style.transform = `translate3d(calc(-50% + ${x}px),-50%,${z}px) rotateY(${-d * 4 + S.tiltX * 1.2}deg) rotateX(${S.tiltY * -.8}deg) scale(${k})`;
+      j.style.opacity = clamp(1 - ad * 1.7, 0, 1);
       j.style.zIndex = 10 - Math.round(ad * 3);
-      j.style.filter = ad > .4 ? `brightness(${1 - Math.min(ad, 1) * .45})` : '';
-    });
+          });
     if (S.hint) S.hint.style.opacity = S.T < .05 && S.F < .05 ? 1 : 0;
   };
   S.go = i => {
@@ -313,34 +299,37 @@ function movePill() {
   const on = $('.filters button.is-on'); if (!on) return;
   pill.style.left = on.offsetLeft + 'px'; pill.style.width = on.offsetWidth + 'px';
 }
+let fTok = 0;
+const EASE = 'cubic-bezier(.22,1,.36,1)';
 fBtns.forEach(b => b.addEventListener('click', () => {
   if (b.classList.contains('is-on')) return;
   fBtns.forEach(x => x.classList.toggle('is-on', x === b)); movePill();
-  const f = b.dataset.f;
-  const first = new Map(cards.map(c => [c, c.hidden ? null : c.getBoundingClientRect()]));
-  cards.forEach(c => { c.hidden = !(f === 'all' || c.dataset.cat === f); });
-  cards.forEach(c => {
-    if (c.hidden) return;
-    c.classList.add('in');
-    const a = first.get(c), l = c.getBoundingClientRect();
-    if (!c.animate) return;
-    if (a) c.animate([{ transform: `translate(${a.left - l.left}px,${a.top - l.top}px)` }, { transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.22,1,.36,1)' });
-    else c.animate([{ opacity: 0, transform: 'translateY(30px) scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.22,1,.36,1)' });
-  });
+  const f = b.dataset.f, tok = ++fTok, show = c => f === 'all' || c.dataset.cat === f;
+  const leaving = cards.filter(c => !c.hidden && !show(c));
+  cards.forEach(c => { if (show(c)) c.classList.remove('leaving'); });
+  const apply = () => {
+    if (tok !== fTok) return;
+    const first = new Map(cards.map(c => [c, c.hidden ? null : c.getBoundingClientRect()]));
+    cards.forEach(c => { c.classList.remove('leaving'); c.hidden = !show(c); });
+    let n = 0;
+    cards.forEach(c => {
+      if (c.hidden) return;
+      c.classList.add('in');
+      if (reduce || !c.animate) return;
+      const a = first.get(c), l = c.getBoundingClientRect();
+      if (a) {
+        const dx = a.left - l.left, dy = a.top - l.top;
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) c.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 520, easing: EASE });
+      } else c.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 520, delay: (n++) * 50, easing: EASE, fill: 'backwards' });
+    });
+  };
+  if (reduce || !leaving.length) apply();
+  else { leaving.forEach(c => c.classList.add('leaving')); setTimeout(apply, 220); }
 }));
 requestAnimationFrame(movePill); addEventListener('load', movePill);
 document.fonts && document.fonts.ready.then(movePill);
 
 if (finePointer) {
-  cards.forEach(c => {
-    c.addEventListener('pointermove', e => {
-      const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      c.style.setProperty('--ry', ((x - .5) * -10).toFixed(2) + 'deg');
-      c.style.setProperty('--rx', ((y - .5) * 10).toFixed(2) + 'deg');
-      c.style.setProperty('--mx', (x * 100) + '%'); c.style.setProperty('--my', (y * 100) + '%');
-    });
-    c.addEventListener('pointerleave', () => { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); });
-  });
   $$('.magnetic').forEach(m => {
     m.addEventListener('pointermove', e => {
       const r = m.getBoundingClientRect();
@@ -351,29 +340,175 @@ if (finePointer) {
 }
 
 /* =========================================================
-   ORDER — product buttons, quantity, WhatsApp
+   ORDER — الأسعار، شريط الشراء، السلة، واتساب
    ========================================================= */
-const form = $('#orderForm'), sel = $('#fProduct'), qVal = $('#qVal'), note = $('#formNote');
-let qty = 1;
-const setQty = n => { qty = clamp(n, 1, 99); qVal.textContent = qty; };
-$('#qMinus').addEventListener('click', () => setQty(qty - 1));
-$('#qPlus').addEventListener('click', () => setQty(qty + 1));
+/* الأسعار بالجنيه للكرتونة الواحدة (الكرتونة = pack × unit).
+   لو عايز شرائح سعر حسب العدد: زوّد tiers: [[أقل عدد كراتين, سعر الكرتونة], ...] وهيتطبّق تلقائي (الأعلى أولًا). */
+const P = (price, pack, unit, tiers) => ({ price, pack, unit, tiers: tiers || [] });
+const PRICES = {
+  'مزيل الدهون الصعبة — جركن 10 لتر':            P(160, 1, 'جركن'),
+  'مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر': P(285, 1, 'جركن'),
+  'مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر': P(285, 1, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 750 مل':          P(231, 12, 'زجاجة'),
+  'مزيل الدهون الصعبة — الأخضر 750 مل':          P(231, 12, 'زجاجة'),
+  'مزيل الدهون الصعبة — الأخضر 2 لتر':           P(315, 6, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 2 لتر':           P(315, 6, 'جركن'),
+  'مزيل الدهون الصعبة — الأخضر 4 لتر':           P(380, 4, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 4 لتر':           P(380, 4, 'جركن'),
+  'سائل غسول لليدين — عود 5 لتر':                P(480, 4, 'جركن'),
+  'سائل غسول لليدين — عنبر أحمر 5 لتر':          P(480, 4, 'جركن'),
+  'سائل غسول لليدين — لافندر 5 لتر':             P(480, 4, 'جركن'),
+  'معطر ملابس — نسيم البحر 2 لتر':               P(380, 6, 'جركن'),
+  'معطر ملابس — الزهور 4 لتر':                   P(420, 4, 'جركن'),
+  'معطر ملابس — الزهور 2 لتر':                   P(380, 6, 'جركن'),
+  'معطر ملابس — نسيم البحر 4 لتر':               P(420, 4, 'جركن'),
+  'معطر ملابس — 5 لتر':                          P(65, 1, 'قارورة'),
+};
+const disp = n => n.replace(/ — /g, ' ');
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const unitPrice = (it, n) => { const t = it.tiers.filter(x => n >= x[0]).sort((a, b) => b[0] - a[0])[0]; return t ? t[1] : it.price; };
+const lineTotal = (name, n) => unitPrice(PRICES[name], n) * n;
+const MAXQ = 999;
+const toQ = v => clamp(parseInt(String(v).replace(/\D/g, ''), 10) || 1, 1, MAXQ);
 
-function pickProduct(name) {
-  const opt = [...sel.options].find(o => o.textContent.trim() === name);
-  if (opt) sel.value = opt.value;
-  orderSec.scrollIntoView({ behavior: 'smooth' });
-  toast('تم اختيار: ' + name);
+/* ---- السلة (بتتحفظ في المتصفح) ---- */
+var cartHook = null;
+let cart = {};
+try { const s = JSON.parse(localStorage.getItem('bh_cart') || '{}'); Object.keys(s).forEach(k => { if (PRICES[k]) cart[k] = toQ(s[k]); }); } catch (e) {}
+const saveCart = () => { try { localStorage.setItem('bh_cart', JSON.stringify(cart)); } catch (e) {} };
+const cartNames = () => Object.keys(cart);
+const cartCount = () => cartNames().reduce((a, k) => a + cart[k], 0);
+const cartTotal = () => cartNames().reduce((a, k) => a + lineTotal(k, cart[k]), 0);
+
+const qtyHTML = v => `<div class="qty q-s"><button type="button" data-d="-1" aria-label="تقليل">−</button><input type="text" inputmode="numeric" value="${v}" maxlength="3" aria-label="عدد الكراتين"><button type="button" data-d="1" aria-label="زيادة">+</button></div>`;
+const packTxt = it => `${it.pack} ${it.unit}`;
+
+/* ---- شريط الشراء: بيتركّب مكان زرار «اطلب المنتج» ---- */
+function buildBuy(name) {
+  const it = PRICES[name], d = document.createElement('div');
+  d.className = 'buy'; d.dataset.sku = name;
+  d.innerHTML = `<div class="buy-price"><b>${fmt(it.price)}</b><span>جنيه</span><small>للكرتونة · ${packTxt(it)}</small></div>
+    <div class="buy-lbl">عدد الكراتين</div>
+    <div class="buy-row">${qtyHTML(1)}<button type="button" class="btn btn-card buy-add"><span>ضع في السلة</span><span class="arr">+</span></button></div>
+    <div class="buy-sum"></div>`;
+  return d;
 }
-$$('.order-product, .kp').forEach(b => b.addEventListener('click', () => pickProduct(b.dataset.product)));
+function buySum(d) {
+  const n = toQ($('input', d).value), name = d.dataset.sku;
+  $('.buy-sum', d).textContent = n > 1 ? `${n} كرتونة = ${fmt(lineTotal(name, n))} جنيه` : '';
+}
+$$('#grid .order-product').forEach(b => {
+  const name = b.dataset.product; if (!PRICES[name]) return;
+  const d = buildBuy(name); b.parentNode.classList.add('has-buy'); b.replaceWith(d);
+});
 
+/* ---- منتج من مشهد المطبخ أو من السلايدرات: نروح لكارته في قسم المنتجات (الشراء من الكروت بس) ---- */
+$$('.kp, .order-product').forEach(b => b.addEventListener('click', () => {
+  const vc = cards.find(c => c._vars && c._vars.some(v => v.sku === b.dataset.product));
+  if (vc) vc._setVar(vc._vars.findIndex(v => v.sku === b.dataset.product));
+  const buy = $(`#grid .buy[data-sku="${b.dataset.product}"]`); if (!buy) return;
+  const card = buy.closest('.card');
+  const f = $('.filters button[data-f="all"]'); if (f && !f.classList.contains('is-on')) f.click();
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 2200);
+}));
+
+/* ---- عناصر السلة والدروار ---- */
+const fab = $('#cartFab'), drawer = $('#cartDrawer'), cList = $('#cartList'), cTotal = $('#cartTotal'), cBadge = $('#cartBadge'), cEmpty = $('#cartEmpty'), cFoot = $('#cartFoot');
+const oSum = $('#orderSummary'), form = $('#orderForm'), note = $('#formNote');
+const openCart = on => { drawer.classList.toggle('on', on); drawer.setAttribute('aria-hidden', on ? 'false' : 'true'); document.body.classList.toggle('cart-open', on); };
+fab.addEventListener('click', () => openCart(true));
+$$('[data-cart-close]').forEach(e => e.addEventListener('click', () => openCart(false)));
+addEventListener('keydown', e => { if (e.key === 'Escape') openCart(false); });
+$('#cartGo').addEventListener('click', () => { openCart(false); orderSec.scrollIntoView({ behavior: 'smooth' }); });
+$('#cartClear').addEventListener('click', () => { cart = {}; renderCart(); });
+$('#sumEdit').addEventListener('click', () => openCart(true));
+
+function lineHTML(k) {
+  const it = PRICES[k], n = cart[k];
+  return `<li class="ci" data-sku="${k}"><div class="ci-top"><div class="ci-name">${disp(k)}<small>${fmt(unitPrice(it, n))} جنيه للكرتونة · ${packTxt(it)}</small></div><button type="button" class="ci-del" aria-label="حذف">×</button></div>
+    <div class="ci-bot">${qtyHTML(n)}<b class="ci-sum">${fmt(lineTotal(k, n))} <span>جنيه</span></b></div></li>`;
+}
+function renderCart(bump) {
+  const names = cartNames(), cnt = cartCount();
+  cList.innerHTML = names.map(lineHTML).join('');
+  cEmpty.hidden = names.length > 0; cFoot.hidden = !names.length;
+  cTotal.textContent = fmt(cartTotal());
+  cBadge.textContent = cnt; cBadge.hidden = !cnt;
+  fab.classList.toggle('has', cnt > 0);
+  if (bump) { fab.classList.remove('bump'); void fab.offsetWidth; fab.classList.add('bump'); }
+  cartHook && cartHook();
+  oSum.innerHTML = names.length
+    ? `<ul>${names.map(k => `<li><span>${disp(k)}</span><em>${cart[k]} كرتونة</em><b>${fmt(lineTotal(k, cart[k]))} جنيه</b></li>`).join('')}</ul><div class="os-total"><span>الإجمالي</span><b>${fmt(cartTotal())} جنيه</b></div>`
+    : `<p class="os-empty">السلة فاضية — اختار منتجاتك من <a href="#products">قسم المنتجات</a> وحدد عدد الكراتين.</p>`;
+  $('#sumEdit').hidden = !names.length;
+  saveCart();
+}
+function setLine(k, n) {
+  if (n <= 0) delete cart[k]; else cart[k] = toQ(n);
+  const li = $(`.ci[data-sku="${k}"]`, cList);
+  if (!cart[k]) { renderCart(); return; }
+  if (li) { $('.ci-sum', li).firstChild.textContent = fmt(lineTotal(k, cart[k])) + ' '; $('small', li).textContent = `${fmt(unitPrice(PRICES[k], cart[k]))} جنيه للكرتونة · ${packTxt(PRICES[k])}`; }
+  cTotal.textContent = fmt(cartTotal()); cBadge.textContent = cartCount();
+  oSum.innerHTML = ''; renderCart_summaryOnly(); saveCart(); cartHook && cartHook();
+}
+function renderCart_summaryOnly() {
+  const names = cartNames();
+  oSum.innerHTML = `<ul>${names.map(k => `<li><span>${disp(k)}</span><em>${cart[k]} كرتونة</em><b>${fmt(lineTotal(k, cart[k]))} جنيه</b></li>`).join('')}</ul><div class="os-total"><span>الإجمالي</span><b>${fmt(cartTotal())} جنيه</b></div>`;
+}
+
+/* ---- أزرار العدّاد + إضافة للسلة + حذف (event delegation) ---- */
+document.addEventListener('click', e => {
+  const qb = e.target.closest('.q-s button');
+  if (qb) {
+    const box = qb.closest('.q-s'), inp = $('input', box), n = toQ(+inp.value + (+qb.dataset.d));
+    inp.value = n;
+    const li = box.closest('.ci'); if (li) setLine(li.dataset.sku, n);
+    const by = box.closest('.buy'); if (by) buySum(by);
+    return;
+  }
+  const add = e.target.closest('.buy-add');
+  if (add) {
+    const by = add.closest('.buy'), k = by.dataset.sku, n = toQ($('input', by).value);
+    cart[k] = clamp((cart[k] || 0) + n, 1, MAXQ);
+    $('input', by).value = 1; buySum(by); renderCart(true);
+    toast(`تمت الإضافة للسلة ✓ ${n} كرتونة ${disp(k)}`);
+    return;
+  }
+  const del = e.target.closest('.ci-del');
+  if (del) setLine(del.closest('.ci').dataset.sku, 0);
+});
+document.addEventListener('input', e => {
+  const inp = e.target.closest && e.target.closest('.q-s input'); if (!inp) return;
+  const clean = inp.value.replace(/\D/g, '').slice(0, 3); if (clean !== inp.value) inp.value = clean;
+  const by = inp.closest('.buy'); if (by) buySum(by);
+});
+document.addEventListener('change', e => {
+  const inp = e.target.closest && e.target.closest('.q-s input'); if (!inp) return;
+  const n = toQ(inp.value); inp.value = n;
+  const li = inp.closest('.ci'); if (li) setLine(li.dataset.sku, n);
+  const by = inp.closest('.buy'); if (by) buySum(by);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches && e.target.matches('.buy .q-s input')) { e.preventDefault(); $('.buy-add', e.target.closest('.buy')).click(); } });
+renderCart();
+
+/* ---- رسالة الطلب (هادية ومنظمة لواتساب) ---- */
+function buildMsg(o) {
+  const when = new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
+  const items = o.items.map((x, i) => `${i + 1}. ${x.name}\n    ${x.cartons} كرتونة × ${fmt(x.price)} = ${fmt(x.total)} جنيه`).join('\n');
+  return [`*طلب جديد من برايت هوم*`, `الوقت: ${when}`, '',
+    `الاسم: ${o.name}`, `الموبايل: ${o.phone}`, `العنوان: ${o.address}`, '',
+    `الطلب:`, items, '',
+    `إجمالي الكراتين: ${o.cartons}`, `*الإجمالي: ${fmt(o.total)} جنيه*`,
+    ...(o.note ? ['', `ملاحظات: ${o.note}`] : [])].join('\n');
+}
+/* ---- إرسال الطلب على واتساب ---- */
 form.addEventListener('submit', e => {
   e.preventDefault();
   const fd = new FormData(form);
   const name = (fd.get('name') || '').toString().trim();
   const phone = (fd.get('phone') || '').toString().trim();
   const address = (fd.get('address') || '').toString().trim();
-  const product = (fd.get('product') || '').toString().trim();
   const extra = (fd.get('note') || '').toString().trim();
 
   let bad = null;
@@ -381,9 +516,13 @@ form.addEventListener('submit', e => {
   mark('fName', name.length < 2);
   mark('fPhone', phone.replace(/\D/g, '').length < 8);
   mark('fAddress', address.length < 5);
+  if (!cartNames().length) { oSum.classList.remove('shake'); void oSum.offsetWidth; oSum.classList.add('shake'); toast('السلة فاضية — ضيف منتج واحد على الأقل'); return; }
   if (bad) { bad.focus(); toast('من فضلك كمّل البيانات المطلوبة'); return; }
 
-  const msg = `السلام عليكم، عاوز أطلب من برايت هوم 🌿\n\nالاسم: ${name}\nرقم الموبايل: ${phone}\nالعنوان: ${address}\nالمنتج: ${product}\nالكمية: ${qty}\n${extra ? 'ملاحظات: ' + extra + '\n' : ''}\nمن فضلكم أكدوا التوفر والسعر والتوصيل. شكرًا.`;
+  const order = { name, phone, address, note: extra, cartons: cartCount(), total: cartTotal(),
+    items: cartNames().map(k => { const it = PRICES[k], n = cart[k]; return { name: disp(k), cartons: n, pack: it.pack, unit: it.unit, price: unitPrice(it, n), total: lineTotal(k, n) }; }) };
+  const msg = buildMsg(order);
+  const sendWA = () => {
   const num = (CONFIG.WHATSAPP_NUMBER || '').replace(/\D/g, '');
   if (!/^\d{10,15}$/.test(num)) {
     note.classList.add('warn');
@@ -392,6 +531,18 @@ form.addEventListener('submit', e => {
     return;
   }
   window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+  cart = {}; renderCart(); form.reset(); note.classList.remove('warn');
+  note.textContent = 'تم تجهيز طلبك ✓ اضغط «إرسال» في واتساب لتأكيده.'; toast('تم تجهيز طلبك ✓');
+  };
+  if (CONFIG.ORDER_API) {
+    const btn = $('button[type=submit]', form); btn.disabled = true;
+    fetch(CONFIG.ORDER_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: msg }) })
+      .then(r => { if (!r.ok) throw 0; cart = {}; renderCart(); form.reset(); note.classList.remove('warn'); note.textContent = 'تم إرسال طلبك ✓ هنتواصل معاك لتأكيده.'; toast('تم إرسال طلبك بنجاح ✓'); })
+      .catch(() => { toast('تعذّر الإرسال التلقائي — هنفتح واتساب'); sendWA(); })
+      .finally(() => { btn.disabled = false; });
+    return;
+  }
+  sendWA();
 });
 $$('.field input,.field textarea').forEach(i => i.addEventListener('input', () => i.closest('.field').classList.remove('err')));
 
@@ -405,6 +556,8 @@ const SIDE = {
   amber:  { a: '#f5ebdc', b: '#a08a6c', d: .30, ar: 616 / 900 },
   green:  { a: '#7fe08e', b: '#1c7a36', d: .55, ar: 233 / 710, bottle: 1 },
   yellow: { a: '#fff08a', b: '#a98400', d: .55, ar: 229 / 692, bottle: 1 },
+  sea:    { a: '#7fd4fb', b: '#0e5fb8', d: .30, ar: 616 / 900 },
+  rose:   { a: '#ffd0dc', b: '#c0587c', d: .30, ar: 616 / 900 },
 };
 const hex2rgb = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
 const mixc = (a, b, t) => 'rgb(' + a.map((v, i) => Math.round(lerp(v, b[i], t))).join(',') + ')';
@@ -455,7 +608,7 @@ function resize3D() { p3ds.forEach(size3D); }
    ودخول «بوب» ناعم بالـ CSS. مفيش أي لفّ ولا حركة مرحة.
    ========================================================= */
 const cardScenes = [];
-cards.forEach((card, i) => {
+cards.forEach(card => {
   const vis = card.querySelector('.c-vis'), img = vis && vis.querySelector('img:not(.c-boxes)');
   if (!vis || !img) return;
   const boxes = vis.querySelector('.c-boxes');
@@ -463,35 +616,101 @@ cards.forEach((card, i) => {
   const floor = document.createElement('i'); floor.className = 'c-floor'; floor.setAttribute('aria-hidden', 'true');
   vis.insertBefore(stage, img);
   stage.appendChild(floor); if (boxes) stage.appendChild(boxes); stage.appendChild(img);
-  const j3 = build3D(img); if (j3) j3.k = .4;   /* ميل الجركن جوه الكارت خفيف عشان الطبقات ما تبانش */
-  const s = { card, stage, j3, ry: 0, rx: 0, ty: 0, tx: 0, inside: false, live: false, ph: i * 1.3 };
-  card.addEventListener('pointerenter', () => { s.inside = true; });
-  card.addEventListener('pointerleave', () => { s.inside = false; });
-  card.addEventListener('pointermove', e => {
-    const r = vis.getBoundingClientRect();
-    s.ty = clamp((e.clientX - r.left) / r.width - .5, -.7, .7) * 12;
-    s.tx = clamp((e.clientY - r.top) / r.height - .5, -.7, .7) * -7;
-  }, { passive: true });
-  cardScenes.push(s);
+  img.removeAttribute('loading');
+  cardScenes.push({ card, stage, j3: null });
 });
-if ('IntersectionObserver' in window) {
-  const bs = new Map(cardScenes.map(s => [s.card, s]));
-  const io = new IntersectionObserver(es => es.forEach(e => { bs.get(e.target).live = e.isIntersecting; }), { rootMargin: '60px' });
-  cardScenes.forEach(s => io.observe(s.card));
-} else cardScenes.forEach(s => { s.live = true; });
-let lastCard = 0;
-function cardLoop(time) {
-  requestAnimationFrame(cardLoop);
-  if (document.hidden) return;
-  if (lite && time - lastCard < 32) return; lastCard = time;
-  for (const s of cardScenes) {
-    if (!s.live) continue;
-    const ty = s.inside ? s.ty : Math.sin(time / 3200 + s.ph) * 3, tx = s.inside ? s.tx : -2 + Math.sin(time / 4100 + s.ph * 1.7) * 1.2;
-    s.ry = lerp(s.ry, ty, s.inside ? .1 : .04); s.rx = lerp(s.rx, tx, .07);
-    s.stage.style.transform = `rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg)`;
-  }
+/* =========================================================
+   أصناف الكارت: قايمة بتنزل جنب الاسم (لون / ريحة) — كل صنف ليه سعر وكمية،
+   وتقدر تضيف صنف للسلة وبعدين تغيّر للصنف التاني وتضيفه كمان. الصور بتتبدّل لو الصنف ليه صورة.
+   ========================================================= */
+function reskin3D(o, img) {
+  if (!o) return;
+  const k = ((img.getAttribute('src') || '').match(/products\/(\w+)\./) || [])[1] || 'jug10l';
+  o.sd = SIDE[k] || SIDE.white;
+  o.host.style.setProperty('--m', 'url("' + img.src + '")');
+  const c1 = hex2rgb(o.sd.a), c2 = hex2rgb(o.sd.b);
+  $$('.p3d-d', o.host).forEach((d, i) => d.style.setProperty('--c', mixc(c2, c1, i / Math.max(1, o.N - 1))));
+  size3D(o);
 }
-if (!reduce) requestAnimationFrame(cardLoop);
+const varCards = [];
+const closeVars = except => varCards.forEach(c => { if (c !== except) c._close(); });
+cards.forEach(card => {
+  let vars; try { vars = JSON.parse(card.dataset.variants || 'null'); } catch (e) { vars = null; }
+  const h3 = $('.c-info h3', card), cat = $('.c-cat', card), by = $('.buy', card), img = $('.c-vis img:not(.c-boxes)', card);
+  if (!vars || vars.length < 2 || !h3 || !by) return;
+  vars = vars.filter(v => PRICES[v.sku]); if (vars.length < 2) return;
+  const sc = cardScenes.find(x => x.card === card), j3 = sc && sc.j3;
+  card._vars = vars; card._i = 0;
+
+  const wrap = document.createElement('div'); wrap.className = 'var-wrap';
+  h3.parentNode.insertBefore(wrap, h3); wrap.appendChild(h3);
+  const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'var-btn';
+  btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML = '<span class="var-name"></span><i class="var-chev" aria-hidden="true"></i>';
+  h3.textContent = ''; h3.appendChild(btn);
+  const list = document.createElement('ul'); list.className = 'var-list'; list.setAttribute('role', 'listbox'); list.hidden = true;
+  vars.forEach((v, i) => {
+    const li = document.createElement('li'), ob = document.createElement('button');
+    ob.type = 'button'; ob.setAttribute('role', 'option'); ob.dataset.i = i;
+    ob.innerHTML = '<span></span><em></em>'; $('span', ob).textContent = v.label;
+    li.appendChild(ob); list.appendChild(li);
+  });
+  wrap.appendChild(list);
+
+  card._close = () => { list.hidden = true; btn.setAttribute('aria-expanded', 'false'); wrap.classList.remove('open'); card.classList.remove('var-open'); };
+  const open = () => { closeVars(card); list.hidden = false; btn.setAttribute('aria-expanded', 'true'); wrap.classList.add('open'); card.classList.add('var-open'); };
+  const paint = (i, quiet) => {
+    const v = vars[i], it = PRICES[v.sku];
+    $('.var-name', btn).textContent = v.label;
+    if (cat && v.cat) cat.textContent = v.cat;
+    if (v.hue) card.style.setProperty('--hue', v.hue);
+    if (img && v.img && !img.src.endsWith(v.img)) { img.src = v.img; if (v.alt) img.alt = v.alt; reskin3D(j3, img); }
+    by.dataset.sku = v.sku;
+    $('.buy-price b', by).textContent = fmt(it.price);
+    $('.buy-price small', by).textContent = 'للكرتونة · ' + packTxt(it);
+    $('input', by).value = 1; buySum(by);
+    $$('.var-list button', wrap).forEach((b, k) => b.setAttribute('aria-selected', k === i ? 'true' : 'false'));
+    if (!quiet) cartHook && cartHook();
+  };
+  card._tk = 0;
+  card._setVar = (i, quiet) => {
+    i = clamp(i, 0, vars.length - 1); const v = vars[i]; card._i = i;
+    if (quiet || reduce) { paint(i, quiet); return; }
+    const tk = ++card._tk;
+    card.classList.add('swapping');
+    const fade = new Promise(r => setTimeout(r, 230));
+    const load = new Promise(r => {
+      if (!(img && v.img && !img.src.endsWith(v.img))) return r();
+      const pre = new Image(); pre.onload = pre.onerror = () => r(); pre.src = v.img;
+      setTimeout(r, 1500);
+    });
+    Promise.all([fade, load]).then(() => {
+      if (tk !== card._tk) return;
+      paint(i, false);
+      requestAnimationFrame(() => requestAnimationFrame(() => { if (tk === card._tk) card.classList.remove('swapping'); }));
+    });
+  };
+  btn.addEventListener('click', e => { e.stopPropagation(); list.hidden ? open() : card._close(); });
+  btn.addEventListener('keydown', e => { if (e.key === 'ArrowDown' && list.hidden) { e.preventDefault(); open(); const s0 = $('[aria-selected="true"]', list) || $('button', list); s0 && s0.focus(); } });
+  list.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; e.stopPropagation(); card._setVar(+b.dataset.i); card._close(); btn.focus(); });
+  list.addEventListener('keydown', e => {
+    const bs = $$('button', list), k = bs.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); bs[(k + 1) % bs.length].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); bs[(k - 1 + bs.length) % bs.length].focus(); }
+    else if (e.key === 'Escape') { card._close(); btn.focus(); }
+  });
+  card._setVar(0, true); varCards.push(card);
+});
+document.addEventListener('click', () => closeVars());
+addEventListener('keydown', e => { if (e.key === 'Escape') closeVars(); });
+/* تنبيه صغير جنب الصنف اللي اتضاف للسلة */
+cartHook = () => varCards.forEach(card => {
+  const bs = $$('.var-list button', card); let any = 0;
+  card._vars.forEach((v, i) => { const n = cart[v.sku] || 0; any += n; const em = $('em', bs[i]); if (em) em.textContent = n ? 'في السلة: ' + n : ''; });
+  card.classList.toggle('in-cart', any > 0);
+});
+cartHook();
+
 
 
 
@@ -608,7 +827,8 @@ function buildSolid(img, idx, scene) {
   sj.addEventListener('click', e => { if (o.moved > 6) { e.stopImmediatePropagation(); e.preventDefault(); } }, true);
   solids.push(o); return o;
 }
-scenes.forEach(S => S.jugs.forEach((j, i) => buildSolid($('img', j), i, S)));
+/* أقسام مزيل الدهون بتعرض صور العلب الأصلية مسطّحة (التجسيم كان بيشوّه شكلها) */
+scenes.forEach(S => { if (!S.sec.classList.contains('dish')) S.jugs.forEach((j, i) => buildSolid($('img', j), i, S)); });
 const sizeSolids = () => solids.forEach(o => o.size());
 addEventListener('resize', sizeSolids); addEventListener('load', sizeSolids);
 if ('ResizeObserver' in window) { const ro = new ResizeObserver(sizeSolids); $$('.sj').forEach(e => ro.observe(e)); }
@@ -622,10 +842,10 @@ function spinJugs(time) {
     const S = o.scene; if (!S.visible) continue;
     const ad = Math.abs(o.idx - S.F); if (ad > 1.7) continue;
     const active = o.idx === S.idx, side = o.idx < S.F ? -1 : 1;
-    const sway = reduce ? 0 : Math.sin(time / 2800 + o.ph) * (active ? 3.2 : 1.8);   /* تمايل ناعم جدًا */
+    const sway = reduce ? 0 : Math.sin(time / 4200 + o.ph) * (active ? 1 : .6);   /* تمايل ناعم جدًا */
     if (!o.grab) o.drag *= Math.pow(.9, dt);   /* بعد ما تسيبه: يرجع لوضعه بهدوء */
-    const ry = sway + o.drag - (active ? 3 : 6 * side);
-    const rx = -2 + (reduce ? 0 : Math.sin(time / 3400 + o.ph * 1.7) * 1.1) + S.tiltY * -2.5;
+    const ry = sway + o.drag - (active ? 0 : 2.5 * side);
+    const rx = -2 + (reduce ? 0 : Math.sin(time / 5000 + o.ph * 1.7) * .4) + S.tiltY * -.8;
     o.draw(ry, rx, 1 - Math.min(ad, 1) * .12);
     const a = ((ry % 360) + 540) % 360 - 180;
     o.sh.style.transform = `translateX(-50%) scaleX(${(1 + Math.abs(Math.sin(a * Math.PI / 180)) * .08).toFixed(3)})`;

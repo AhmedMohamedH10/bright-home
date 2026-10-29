@@ -36,17 +36,17 @@
       <span class="brand-word"><b>برايت هوم</b><small dir="ltr">Bright Home</small></span>
     </a>
     <nav class="nav" aria-label="التنقل الرئيسي">
-      <a href="#story">عن برايت</a>
+      <a href="#story">عن برايت هوم</a>
       <a href="#scents">غسول اليدين</a>
       <a href="#dish2">مزيل الدهون</a>
+      <a href="#fabric">معطر الملابس</a>
       <a href="#products">المنتجات</a>
-      <a href="#order">اطلب الآن</a>
     </nav>
     <a class="btn btn-light btn-sm header-cta magnetic" href="#order">اطلب عبر واتساب <span class="arr">↙</span></a>
   </header>
 
   <main>
-    <!-- ============ HERO : المطبخ + الغسالة ============ -->
+    <!-- ============ HERO : المطبخ + غسالة الأطباق ============ -->
     <section class="hero" id="home" aria-label="مشهد المطبخ">
       <div class="hero-pin" id="heroPin">
 
@@ -97,30 +97,27 @@
               <img width="229" height="692" src="assets/products/yellow.webp" alt="مزيل الدهون الصعبة — الأصفر 750 مل" draggable="false"><i class="kp-shadow"></i><span class="kp-tag">اطلب ↙</span>
             </button>
 
-            <!-- الغسالة -->
-            <div class="washer" id="washer" aria-hidden="true">
+            <!-- غسالة الأطباق -->
+            <div class="washer dw" id="washer" aria-hidden="true">
               <i class="w-shadow"></i>
               <div class="w-body">
                 <div class="w-panel">
-                  <span class="w-drawer"><i></i></span>
                   <span class="w-display"><b id="wTime">00:42</b><small id="wMode">FILL</small></span>
+                  <span class="w-btns"><i></i><i></i><i></i></span>
                   <span class="w-knob" id="wKnob"><i></i></span>
                   <span class="w-led"></span>
                 </div>
                 <div class="w-door" id="wDoor">
-                  <span class="w-hinge a"></span><span class="w-hinge b"></span>
+                  <span class="w-handle"></span>
                   <div class="w-ring"><div class="w-gasket"><div class="w-glass" id="wGlass">
                     <div class="w-inner"></div>
-                    <div class="w-drum" id="wDrum"><i class="w-lift" style="--a:0deg"></i><i class="w-lift" style="--a:120deg"></i><i class="w-lift" style="--a:240deg"></i></div>
-                    <div class="w-clothes" id="wClothes">
-                      <span class="cl c1"><u></u></span><span class="cl c2"><u></u></span><span class="cl c3"><u></u></span>
-                      <span class="cl c4"><u></u></span><span class="cl c5"><u></u></span><span class="cl c6"><u></u></span>
-                    </div>
+                    <div class="w-rack u"></div><div class="w-rack l"></div>
+                    <div class="w-clothes" id="wClothes"><i class="dsh cup c0" style="left:22px"></i><i class="dsh cup c1" style="left:66px"></i><i class="dsh cup c2" style="left:110px"></i><i class="dsh cup c0" style="left:154px"></i><i class="dsh cup c1" style="left:198px"></i><i class="dsh plate p0" style="left:24px"></i><i class="dsh plate p1" style="left:55px"></i><i class="dsh plate p2" style="left:86px"></i><i class="dsh plate p0" style="left:117px"></i><i class="dsh plate p1" style="left:148px"></i><i class="dsh plate p2" style="left:179px"></i><i class="dsh plate p0" style="left:210px"></i></div>
+                    <div class="w-drum" id="wDrum"></div>
                     <div class="w-water" id="wWater"><div class="w-wave"></div></div>
                     <div class="w-foam" id="wFoam"><i style="--x:12%;--s:14px;--t:0s"></i><i style="--x:28%;--s:9px;--t:.7s"></i><i style="--x:44%;--s:18px;--t:1.4s"></i><i style="--x:58%;--s:11px;--t:2.1s"></i><i style="--x:72%;--s:16px;--t:.4s"></i><i style="--x:84%;--s:8px;--t:1.8s"></i><i style="--x:36%;--s:7px;--t:2.7s"></i></div>
                     <div class="w-glare"></div>
                   </div></div></div>
-                  <span class="w-handle"></span>
                 </div>
                 <div class="w-brand" dir="ltr">Bright Home</div>
               </div>
@@ -142,7 +139,7 @@
           <a class="btn btn-primary magnetic" href="#order">اطلب منتج برايت الآن<span class="arr">↙</span></a>
           <a class="btn btn-ghost magnetic" href="#products">اكتشف منتجات برايت<span class="arr">↓</span></a>
         </div>
-        <div class="hero-hint" id="heroHint"><span class="mouse"><i></i></span><em>انزل وشوف الغسالة بتلف</em></div>
+        <div class="hero-hint" id="heroHint"><span class="mouse"><i></i></span><em>انزل وشوف غسالة الأطباق شغالة</em></div>
         <div class="hero-meter" aria-hidden="true"><i id="heroMeter"></i></div>
         <div class="hero-vignette" aria-hidden="true"></div>
       </div>
@@ -159,8 +156,9 @@
     <!-- ============ التجربة ============ -->
     <section class="story pad" id="story">
       <div class="wrap">
-        <div class="eyebrow reveal"><span>01</span>عن برايت</div>
-        <p class="statement" id="statement">برايت هوم لتجعل صحونك أكثر لمعانآ ونظافة وعطورها المختارة بعناية لتحافظ علي نعومة يديك ورائحة ملابسك</p>
+        <div class="eyebrow reveal"><span>01</span>عن برايت هوم</div>
+        <h2 class="story-brand reveal">برايت هوم</h2>
+        <p class="statement" id="statement">لتجعل صحونك أكثر لمعانًا ونظافة، وعطورها المختارة بعناية لتحافظ على نعومة يديك ورائحة ملابسك</p>
 
         <div class="features">
           <article class="feature glass reveal" style="--d:0s">
@@ -254,15 +252,15 @@
           <div class="sc-grid wrap">
             <div class="sc-copy">
               <div class="sc-panel is-on" data-i="0">
-                <span class="sc-cat">مزيل الدهون الصعبة</span>
-                <h3 class="sc-title t-green">الأخضر</h3>
+                <span class="sc-cat">برائحة</span>
+                <h3 class="sc-title long two"><span class="lm">الليمون</span><span class="cc cc-g">الأخضر</span></h3>
                 <p>رغوة غزيرة بتقطّع الدهون العنيدة من أول غسلة، وتسيب الأطباق والحلل لامعة ونضيفة.</p>
                 <ul class="chips"><li>رغوة غزيرة</li><li>يزيل الدهون</li><li>لمعان</li></ul>
                 <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="مزيل الدهون الصعبة — الأخضر 2 لتر">اطلب المنتج <span class="arr">↙</span></button><small>عبوة 2 لتر</small></div>
               </div>
               <div class="sc-panel" data-i="1">
-                <span class="sc-cat">مزيل الدهون الصعبة</span>
-                <h3 class="sc-title t-yellow">الأصفر</h3>
+                <span class="sc-cat">برائحة</span>
+                <h3 class="sc-title long two"><span class="lm">الليمون</span><span class="cc cc-y">الأصفر</span></h3>
                 <p>قوة تنظيف عالية بلمسة صفراء منعشة، للأطباق والحلل والأسطح اللي محتاجة عناية زيادة.</p>
                 <ul class="chips"><li>تنظيف قوي</li><li>منعش</li><li>لمعان</li></ul>
                 <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="مزيل الدهون الصعبة — الأصفر 2 لتر">اطلب المنتج <span class="arr">↙</span></button><small>عبوة 2 لتر</small></div>
@@ -298,15 +296,15 @@
           <div class="sc-grid wrap">
             <div class="sc-copy">
               <div class="sc-panel is-on" data-i="0">
-                <span class="sc-cat">مزيل الدهون الصعبة</span>
-                <h3 class="sc-title t-green">الأخضر</h3>
+                <span class="sc-cat">برائحة</span>
+                <h3 class="sc-title long two"><span class="lm">الليمون</span><span class="cc cc-g">الأخضر</span></h3>
                 <p>رغوة غزيرة بتقطّع الدهون العنيدة من أول غسلة، وتسيب الأطباق والحلل لامعة ونضيفة.</p>
                 <ul class="chips"><li>رغوة غزيرة</li><li>يزيل الدهون</li><li>لمعان</li></ul>
                 <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="مزيل الدهون الصعبة — الأخضر 4 لتر">اطلب المنتج <span class="arr">↙</span></button><small>عبوة 4 لتر</small></div>
               </div>
               <div class="sc-panel" data-i="1">
-                <span class="sc-cat">مزيل الدهون الصعبة</span>
-                <h3 class="sc-title t-yellow">الأصفر</h3>
+                <span class="sc-cat">برائحة</span>
+                <h3 class="sc-title long two"><span class="lm">الليمون</span><span class="cc cc-y">الأصفر</span></h3>
                 <p>قوة تنظيف عالية بلمسة صفراء منعشة، للأطباق والحلل والأسطح اللي محتاجة عناية زيادة.</p>
                 <ul class="chips"><li>تنظيف قوي</li><li>منعش</li><li>لمعان</li></ul>
                 <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="مزيل الدهون الصعبة — الأصفر 4 لتر">اطلب المنتج <span class="arr">↙</span></button><small>عبوة 4 لتر</small></div>
@@ -343,14 +341,14 @@
             <div class="sc-copy">
               <div class="sc-panel is-on" data-i="0">
                 <span class="sc-cat">برائحة</span>
-                <h3 class="sc-title t-yellow long">الليمون الأصفر</h3>
+                <h3 class="sc-title long two"><span class="lm">الليمون</span><span class="cc cc-y">الأصفر</span></h3>
                 <p>جركن 20 لتر للمطاعم والمحلات والاستخدام الكبير، برائحة الليمون الأصفر المنعشة وقوة إزالة الدهون الصعبة.</p>
                 <ul class="chips"><li>ليمون أصفر</li><li>اقتصادي</li><li>للمحلات</li></ul>
                 <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر">اطلب المنتج <span class="arr">↙</span></button><small>جركن 20 لتر</small></div>
               </div>
               <div class="sc-panel" data-i="1">
                 <span class="sc-cat">برائحة</span>
-                <h3 class="sc-title t-lime long">الليمون الأخضر</h3>
+                <h3 class="sc-title long two"><span class="lm">الليمون</span><span class="cc cc-l">الأخضر</span></h3>
                 <p>نفس الجركن الاقتصادي 20 لتر برائحة الليمون الأخضر الحادة، لتنظيف أعمق وأوفر.</p>
                 <ul class="chips"><li>ليمون أخضر</li><li>اقتصادي</li><li>للمحلات</li></ul>
                 <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر">اطلب المنتج <span class="arr">↙</span></button><small>جركن 20 لتر</small></div>
@@ -371,18 +369,64 @@
     </section>
 
     <!-- ============ المنتجات ============ -->
+    <!-- ============ معطر الملابس — 2 لتر (نسيم البحر) / 4 لتر (الزهور) ============ -->
+    <section class="scent dish fabric" id="fabric" aria-label="معطر الملابس" style="--n:2;--ar:0.6844">
+      <div class="scent-track">
+        <div class="scent-stage" data-i="0">
+          <div class="sc-bgs" aria-hidden="true"><i class="sc-bg bgSea"></i><i class="sc-bg bgRose"></i></div>
+          <div class="sc-fx" aria-hidden="true"><div class="fx-wdrop" data-s="0"></div><div class="fx-blossom" data-s="1"></div><div class="fx-bub"></div><div class="fx-spark"></div></div>
+          <div class="sc-rays" aria-hidden="true"></div>
+          <div class="sc-wave" aria-hidden="true"><i></i><i></i></div>
+
+          <div class="sc-head wrap">
+            <div class="eyebrow"><span>02</span>معطر ومنعم الملابس</div>
+            <span class="sc-count" dir="ltr">01 / 02</span>
+          </div>
+
+          <div class="sc-grid wrap">
+            <div class="sc-copy">
+              <div class="sc-panel is-on" data-i="0">
+                <span class="sc-cat">برائحة</span>
+                <h3 class="sc-title long two"><span class="lm">نسيم</span><span class="cc cc-sea">البحر</span></h3>
+                <p>معطر ومنعم للملابس برائحة نسيم البحر المنعشة، بيسيب هدومك ناعمة وريحتها فايحة بعد الغسيل.</p>
+                <ul class="chips"><li>تنعيم</li><li>انتعاش</li><li>ثبات طويل</li></ul>
+                <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="معطر ملابس — نسيم البحر 2 لتر">اطلب المنتج <span class="arr">↙</span></button><small>عبوة 2 لتر</small></div>
+              </div>
+              <div class="sc-panel" data-i="1">
+                <span class="sc-cat">برائحة</span>
+                <h3 class="sc-title long two"><span class="lm">عطر</span><span class="cc cc-rose">الزهور</span></h3>
+                <p>معطر ومنعم للملابس برائحة الزهور الرقيقة، بتفضل ريحتها معاك طول اليوم وهدومك ملمسها حرير.</p>
+                <ul class="chips"><li>رائحة الزهور</li><li>نعومة</li><li>عبوة عائلية</li></ul>
+                <div class="sc-cta"><button class="btn btn-primary order-product magnetic" type="button" data-product="معطر ملابس — الزهور 4 لتر">اطلب المنتج <span class="arr">↙</span></button><small>عبوة 4 لتر</small></div>
+              </div>
+            </div>
+
+            <div class="sc-jugs">
+              <i class="sc-halo" aria-hidden="true"></i><i class="sc-ring" aria-hidden="true"></i><i class="sc-ring r2" aria-hidden="true"></i><i class="sc-floor" aria-hidden="true"></i>
+              <button class="sj" type="button" data-i="0" aria-label="معطر ملابس نسيم البحر 2 لتر"><span class="sj-in"><img width="616" height="900" src="assets/products/sea.webp" alt="معطر ملابس — نسيم البحر 2 لتر" draggable="false"></span></button>
+              <button class="sj" type="button" data-i="1" aria-label="معطر ملابس الزهور 4 لتر"><span class="sj-in"><img width="616" height="900" src="assets/products/rose.webp" alt="معطر ملابس — الزهور 4 لتر" draggable="false"></span></button>
+            </div>
+          </div>
+
+          <nav class="sc-dots" aria-label="اختيار الرائحة"><button type="button" aria-label="نسيم البحر 2 لتر"></button><button type="button" aria-label="الزهور 4 لتر"></button></nav>
+          <div class="sc-hint">كمّل سكرول<i></i></div>
+        </div>
+      </div>
+    </section>
+
     <section class="products pad" id="products">
       <div class="wrap">
         <div class="eyebrow reveal"><span>03</span> اختيارات برايت</div>
         <div class="sec-head">
-          <h2 class="reveal">اختار لمعة <em>بيتك.</em></h2>
-          <p class="reveal" style="--d:.1s">اكتشف منتجات برايت واطلب العبوة اللي تناسب احتياجك — من المطبخ لحد الحمام.</p>
+          <h2 class="reveal"><em>بيتك</em> برايت هوم</h2>
+          <p class="reveal" style="--d:.1s">إليك منتجات برايت هوم للعناية بملابسك بروائح مختارة مع أفضل تقنية لإزالة الدهون على الصحون</p>
         </div>
 
         <div class="filters reveal" role="tablist" aria-label="تصنيف المنتجات" style="--d:.15s">
           <button class="is-on" role="tab" data-f="all" type="button">الكل</button>
           <button role="tab" data-f="degrease" type="button">مزيل الدهون</button>
           <button role="tab" data-f="soap" type="button">غسول اليدين</button>
+          <button role="tab" data-f="fresh" type="button">معطر ملابس</button>
           <i class="f-pill" aria-hidden="true"></i>
         </div>
 
@@ -392,60 +436,45 @@
             <div class="c-info"><span class="c-cat">جركن اقتصادي · برائحة الليمون</span><h3>مزيل الدهون الصعبة</h3><p>العبوة الكبيرة الاقتصادية لتنظيف أعمق وأوفر.</p>
               <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — جركن 10 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:.1s;--hue:#ffe45e">
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — الأصفر 750 مل&quot;,&quot;label&quot;:&quot;مزيل الدهون الأصفر&quot;,&quot;cat&quot;:&quot;تنظيف قوي · عبوة 750 مل&quot;,&quot;img&quot;:&quot;assets/products/yellow.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — الأصفر 750 مل&quot;,&quot;hue&quot;:&quot;#ffe45e&quot;},{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — الأخضر 750 مل&quot;,&quot;label&quot;:&quot;مزيل الدهون الأخضر&quot;,&quot;cat&quot;:&quot;تنظيف قوي · عبوة 750 مل&quot;,&quot;img&quot;:&quot;assets/products/green.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — الأخضر 750 مل&quot;,&quot;hue&quot;:&quot;#6cf08a&quot;}]" data-cat="degrease" style="--d:0.1s;--hue:#ffe45e">
             <div class="c-vis"><span class="c-tag">750 مل</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="229" height="692" class="slim" src="assets/products/yellow.webp" alt="مزيل الدهون الصعبة — الأصفر 750 مل" loading="lazy"></div>
             <div class="c-info"><span class="c-cat">تنظيف قوي · عبوة 750 مل</span><h3>مزيل الدهون الأصفر</h3><p>للمناطق اللي محتاجة عناية إضافية.</p>
               <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — الأصفر 750 مل">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:.2s;--hue:#6cf08a">
-            <div class="c-vis"><span class="c-tag">750 مل</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="233" height="710" class="slim" src="assets/products/green.webp" alt="مزيل الدهون الصعبة — الأخضر 750 مل" loading="lazy"></div>
-            <div class="c-info"><span class="c-cat">تنظيف قوي · عبوة 750 مل</span><h3>مزيل الدهون الأخضر</h3><p>للمطبخ والأسطح الصعبة كل يوم.</p>
-              <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — الأخضر 750 مل">اطلب المنتج <span class="arr">↙</span></button></div>
-          </article>
-          <article class="card tilt reveal" data-cat="soap" style="--d:0s;--hue:#c9a8ff">
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;سائل غسول لليدين — لافندر 5 لتر&quot;,&quot;label&quot;:&quot;غسول اللافندر&quot;,&quot;cat&quot;:&quot;سائل غسول لليدين · 5 لتر&quot;,&quot;img&quot;:&quot;assets/products/lavender.webp&quot;,&quot;alt&quot;:&quot;سائل غسول لليدين — لافندر 5 لتر&quot;,&quot;hue&quot;:&quot;#c9a8ff&quot;},{&quot;sku&quot;:&quot;سائل غسول لليدين — عنبر أحمر 5 لتر&quot;,&quot;label&quot;:&quot;غسول العنبر الأحمر&quot;,&quot;cat&quot;:&quot;سائل غسول لليدين · 5 لتر&quot;,&quot;img&quot;:&quot;assets/products/amber.webp&quot;,&quot;alt&quot;:&quot;سائل غسول لليدين — عنبر أحمر 5 لتر&quot;,&quot;hue&quot;:&quot;#ff7b93&quot;},{&quot;sku&quot;:&quot;سائل غسول لليدين — عود 5 لتر&quot;,&quot;label&quot;:&quot;غسول العود&quot;,&quot;cat&quot;:&quot;سائل غسول لليدين · 5 لتر&quot;,&quot;img&quot;:&quot;assets/products/oud.webp&quot;,&quot;alt&quot;:&quot;سائل غسول لليدين — عود 5 لتر&quot;,&quot;hue&quot;:&quot;#9fb6d8&quot;}]" data-cat="soap" style="--d:0.2s;--hue:#c9a8ff">
             <div class="c-vis"><span class="c-tag">5 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/lavender.webp" alt="سائل غسول لليدين — لافندر 5 لتر" loading="lazy"></div>
             <div class="c-info"><span class="c-cat">سائل غسول لليدين · 5 لتر</span><h3>غسول اللافندر</h3><p>هدوء وانتعاش بنفحة لافندر ناعمة.</p>
               <button class="btn btn-card order-product" type="button" data-product="سائل غسول لليدين — لافندر 5 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
-          <article class="card tilt reveal" data-cat="soap" style="--d:.1s;--hue:#ff7b93">
-            <div class="c-vis"><span class="c-tag">5 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/amber.webp" alt="سائل غسول لليدين — عنبر أحمر 5 لتر" loading="lazy"></div>
-            <div class="c-info"><span class="c-cat">سائل غسول لليدين · 5 لتر</span><h3>غسول العنبر الأحمر</h3><p>دفء الورد والرمان بلمسة عنبر فاخرة.</p>
-              <button class="btn btn-card order-product" type="button" data-product="سائل غسول لليدين — عنبر أحمر 5 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
-          </article>
-          <article class="card tilt reveal" data-cat="soap" style="--d:.2s;--hue:#9fb6d8">
-            <div class="c-vis"><span class="c-tag">5 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/oud.webp" alt="سائل غسول لليدين — عود 5 لتر" loading="lazy"></div>
-            <div class="c-info"><span class="c-cat">سائل غسول لليدين · 5 لتر</span><h3>غسول العود</h3><p>عود شرقي عميق بدخان أنيق.</p>
-              <button class="btn btn-card order-product" type="button" data-product="سائل غسول لليدين — عود 5 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
-          </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:0s;--hue:#6cf08a">
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — الأخضر 2 لتر&quot;,&quot;label&quot;:&quot;الأخضر 2 لتر&quot;,&quot;cat&quot;:&quot;مزيل الدهون الصعبة · عبوة 2 لتر&quot;,&quot;img&quot;:&quot;assets/products/g2.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — الأخضر 2 لتر&quot;,&quot;hue&quot;:&quot;#6cf08a&quot;},{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — الأصفر 2 لتر&quot;,&quot;label&quot;:&quot;الأصفر 2 لتر&quot;,&quot;cat&quot;:&quot;مزيل الدهون الصعبة · عبوة 2 لتر&quot;,&quot;img&quot;:&quot;assets/products/y2.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — الأصفر 2 لتر&quot;,&quot;hue&quot;:&quot;#ffe45e&quot;}]" data-cat="degrease" style="--d:0s;--hue:#6cf08a">
             <div class="c-vis"><span class="c-tag">2 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/g2.webp" alt="مزيل الدهون الصعبة — الأخضر 2 لتر" loading="lazy"></div>
             <div class="c-info"><span class="c-cat">مزيل الدهون الصعبة · عبوة 2 لتر</span><h3>الأخضر 2 لتر</h3><p>رغوة غزيرة للأطباق والحلل كل يوم.</p>
               <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — الأخضر 2 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:0.1s;--hue:#ffe45e">
-            <div class="c-vis"><span class="c-tag">2 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/y2.webp" alt="مزيل الدهون الصعبة — الأصفر 2 لتر" loading="lazy"></div>
-            <div class="c-info"><span class="c-cat">مزيل الدهون الصعبة · عبوة 2 لتر</span><h3>الأصفر 2 لتر</h3><p>قوة تنظيف عالية بلمسة منعشة.</p>
-              <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — الأصفر 2 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
-          </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:0.2s;--hue:#6cf08a">
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — الأخضر 4 لتر&quot;,&quot;label&quot;:&quot;الأخضر 4 لتر&quot;,&quot;cat&quot;:&quot;مزيل الدهون الصعبة · عبوة 4 لتر&quot;,&quot;img&quot;:&quot;assets/products/g4.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — الأخضر 4 لتر&quot;,&quot;hue&quot;:&quot;#6cf08a&quot;},{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — الأصفر 4 لتر&quot;,&quot;label&quot;:&quot;الأصفر 4 لتر&quot;,&quot;cat&quot;:&quot;مزيل الدهون الصعبة · عبوة 4 لتر&quot;,&quot;img&quot;:&quot;assets/products/y4.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — الأصفر 4 لتر&quot;,&quot;hue&quot;:&quot;#ffe45e&quot;}]" data-cat="degrease" style="--d:0.1s;--hue:#6cf08a">
             <div class="c-vis"><span class="c-tag">4 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/g4.webp" alt="مزيل الدهون الصعبة — الأخضر 4 لتر" loading="lazy"></div>
             <div class="c-info"><span class="c-cat">مزيل الدهون الصعبة · عبوة 4 لتر</span><h3>الأخضر 4 لتر</h3><p>العبوة العائلية الأوفر للبيت.</p>
               <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — الأخضر 4 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:0s;--hue:#ffe45e">
-            <div class="c-vis"><span class="c-tag">4 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/y4.webp" alt="مزيل الدهون الصعبة — الأصفر 4 لتر" loading="lazy"></div>
-            <div class="c-info"><span class="c-cat">مزيل الدهون الصعبة · عبوة 4 لتر</span><h3>الأصفر 4 لتر</h3><p>للمطبخ الكبير والاستهلاك اليومي.</p>
-              <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — الأصفر 4 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
-          </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:0.1s;--hue:#ffd84a">
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر&quot;,&quot;label&quot;:&quot;ليمون أصفر 20 لتر&quot;,&quot;cat&quot;:&quot;جركن اقتصادي · برائحة الليمون الأصفر&quot;,&quot;img&quot;:&quot;assets/products/lemon20.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر&quot;,&quot;hue&quot;:&quot;#ffd84a&quot;},{&quot;sku&quot;:&quot;مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر&quot;,&quot;label&quot;:&quot;ليمون أخضر 20 لتر&quot;,&quot;cat&quot;:&quot;جركن اقتصادي · برائحة الليمون الأخضر&quot;,&quot;img&quot;:&quot;assets/products/lime20.webp&quot;,&quot;alt&quot;:&quot;مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر&quot;,&quot;hue&quot;:&quot;#b6f04a&quot;}]" data-cat="degrease" style="--d:0.2s;--hue:#ffd84a">
             <div class="c-vis"><span class="c-tag">جركن 20 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="750" height="900" src="assets/products/lemon20.webp" alt="مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر" loading="lazy"></div>
             <div class="c-info"><span class="c-cat">جركن اقتصادي · برائحة الليمون الأصفر</span><h3>ليمون أصفر 20 لتر</h3><p>للمطاعم والمحلات والاستخدام الكبير.</p>
               <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
-          <article class="card tilt reveal" data-cat="degrease" style="--d:0.2s;--hue:#b6f04a">
-            <div class="c-vis"><span class="c-tag">جركن 20 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="750" height="900" src="assets/products/lime20.webp" alt="مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر" loading="lazy"></div>
-            <div class="c-info"><span class="c-cat">جركن اقتصادي · برائحة الليمون الأخضر</span><h3>ليمون أخضر 20 لتر</h3><p>تنظيف أعمق وأوفر برائحة الليمون الأخضر.</p>
-              <button class="btn btn-card order-product" type="button" data-product="مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر">اطلب المنتج <span class="arr">↙</span></button></div>
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;معطر ملابس — نسيم البحر 2 لتر&quot;,&quot;label&quot;:&quot;نسيم البحر 2 لتر&quot;,&quot;cat&quot;:&quot;معطر ملابس · نسيم البحر&quot;},{&quot;sku&quot;:&quot;معطر ملابس — الزهور 2 لتر&quot;,&quot;label&quot;:&quot;الزهور 2 لتر&quot;,&quot;cat&quot;:&quot;معطر ملابس · رائحة الزهور&quot;}]" data-cat="fresh" style="--d:0s;--hue:#5ec8ff">
+            <div class="c-vis"><span class="c-tag">2 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/sea.webp" alt="معطر ملابس — نسيم البحر 2 لتر" loading="lazy"></div>
+            <div class="c-info"><span class="c-cat">معطر ملابس · نسيم البحر</span><h3>نسيم البحر 2 لتر</h3><p>رائحة البحر المنعشة بتفضل في هدومك.</p>
+              <button class="btn btn-card order-product" type="button" data-product="معطر ملابس — نسيم البحر 2 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
+          </article>
+          <article class="card tilt reveal has-var" data-variants="[{&quot;sku&quot;:&quot;معطر ملابس — الزهور 4 لتر&quot;,&quot;label&quot;:&quot;الزهور 4 لتر&quot;,&quot;cat&quot;:&quot;معطر ملابس · رائحة الزهور&quot;},{&quot;sku&quot;:&quot;معطر ملابس — نسيم البحر 4 لتر&quot;,&quot;label&quot;:&quot;نسيم البحر 4 لتر&quot;,&quot;cat&quot;:&quot;معطر ملابس · نسيم البحر&quot;}]" data-cat="fresh" style="--d:0.1s;--hue:#ff9bc4">
+            <div class="c-vis"><span class="c-tag">4 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img width="616" height="900" src="assets/products/rose.webp" alt="معطر ملابس — الزهور 4 لتر" loading="lazy"></div>
+            <div class="c-info"><span class="c-cat">معطر ملابس · رائحة الزهور</span><h3>الزهور 4 لتر</h3><p>العبوة الأوفر للاستخدام العائلي برائحة الزهور.</p>
+              <button class="btn btn-card order-product" type="button" data-product="معطر ملابس — الزهور 4 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
+          </article>
+          <article class="card tilt reveal" data-cat="fresh" style="--d:0.2s;--hue:#b8e0ff">
+            <div class="c-vis"><span class="c-tag">5 لتر</span><i class="c-glow"></i><img class="c-boxes" src="assets/img/boxes.webp" width="801" height="900" alt="" aria-hidden="true" draggable="false" loading="lazy"><img class="ph" width="616" height="616" src="assets/img/logo.webp" alt="معطر ملابس — 5 لتر" loading="lazy"></div>
+            <div class="c-info"><span class="c-cat">معطر ملابس · 5 لتر</span><h3>معطر ملابس 5 لتر</h3><p>قارورة 5 لتر لعطر طويل الثبات.</p>
+              <button class="btn btn-card order-product" type="button" data-product="معطر ملابس — 5 لتر">اطلب المنتج <span class="arr">↙</span></button></div>
           </article>
         </div>
       </div>
@@ -458,33 +487,19 @@
         <div class="order-main">
           <div class="eyebrow reveal"><span>04</span> اطلب برايت</div>
           <h2 class="reveal" style="--d:.05s">طلبك على<br><em>قد إيدك.</em></h2>
-          <p class="lead reveal" style="--d:.1s">اختار المنتج، اكتب بياناتك، وهنجهز رسالة طلب واضحة تبعتها مباشرة على واتساب.</p>
+          <p class="lead reveal" style="--d:.1s">ضيف منتجاتك للسلة بعدد الكراتين، اكتب بياناتك، وهنجهز رسالة طلب واضحة بالأسعار والإجمالي تبعتها مباشرة على واتساب.</p>
 
           <form id="orderForm" class="form glass reveal" style="--d:.15s" novalidate>
             <div class="field"><input id="fName" name="name" autocomplete="name" placeholder=" " required><label for="fName">اسمك</label></div>
             <div class="field"><input id="fPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder=" " required><label for="fPhone">رقم الموبايل</label></div>
             <div class="field"><input id="fAddress" name="address" autocomplete="street-address" placeholder=" " required><label for="fAddress">المحافظة والمنطقة والعنوان</label></div>
-            <div class="row2">
-              <div class="field select"><select id="fProduct" name="product" required>
-                <option>مزيل الدهون الصعبة — الأخضر 2 لتر</option>
-                <option>مزيل الدهون الصعبة — الأصفر 2 لتر</option>
-                <option>مزيل الدهون الصعبة — الأخضر 4 لتر</option>
-                <option>مزيل الدهون الصعبة — الأصفر 4 لتر</option>
-                <option>مزيل الدهون الصعبة — جركن 10 لتر</option>
-                <option>مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر</option>
-                <option>مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر</option>
-                <option>مزيل الدهون الصعبة — الأصفر 750 مل</option>
-                <option>مزيل الدهون الصعبة — الأخضر 750 مل</option>
-                <option>سائل غسول لليدين — لافندر 5 لتر</option>
-                <option>سائل غسول لليدين — عنبر أحمر 5 لتر</option>
-                <option>سائل غسول لليدين — عود 5 لتر</option>
-                <option>عاوز أعرف المنتجات المتاحة</option>
-              </select><label for="fProduct">المنتج المطلوب</label></div>
-              <div class="qty" aria-label="الكمية"><button type="button" id="qMinus" aria-label="تقليل">−</button><output id="qVal">1</output><button type="button" id="qPlus" aria-label="زيادة">+</button></div>
+            <div class="order-sum" id="orderSummaryBox">
+              <div class="os-head"><b>طلبك</b><button type="button" id="sumEdit" class="os-edit" hidden>تعديل السلة</button></div>
+              <div id="orderSummary" aria-live="polite"></div>
             </div>
             <div class="field"><textarea id="fNote" name="note" rows="2" placeholder=" "></textarea><label for="fNote">ملاحظات إضافية (اختياري)</label></div>
-            <button class="btn btn-wa" type="submit"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.100-1 .2-3.300-.7-2.800-1.200-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800 0-1.300.7-1.900.9-2.200.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.300 0 .5l-.3.500-.4.400c-.1.100-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.100 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg> جهّز طلبي على واتساب <span class="arr">↙</span></button>
-            <p class="note" id="formNote">مفيش بيانات بتتخزن. واتساب هيفتح برسالة جاهزة تراجعها وتبعتها بنفسك.</p>
+            <button class="btn btn-wa" type="submit"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.100-1 .2-3.300-.7-2.800-1.200-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800 0-1.300.7-1.900.9-2.200.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.300 0 .5l-.3.500-.4.400c-.1.100-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.100 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg> أرسل الطلب على واتساب <span class="arr">↙</span></button>
+            <p class="note" id="formNote">بعد الإرسال هنراجع طلبك ونتواصل معاك لتأكيد التوفر والتوصيل.</p>
           </form>
         </div>
 
@@ -494,8 +509,8 @@
             <img src="assets/img/logo.webp" alt="Bright Home — برايت هوم" loading="lazy">
           </div>
           <ol class="steps">
-            <li><b>1</b><div><strong>اختار منتجك</strong><span>من الكروت أو من القايمة.</span></div></li>
-            <li><b>2</b><div><strong>اكتب بياناتك</strong><span>الاسم والعنوان والكمية.</span></div></li>
+            <li><b>1</b><div><strong>اختار منتجك</strong><span>حدد عدد الكراتين وضعها في السلة.</span></div></li>
+            <li><b>2</b><div><strong>اكتب بياناتك</strong><span>الاسم والموبايل والعنوان.</span></div></li>
             <li><b>3</b><div><strong>ابعت على واتساب</strong><span>نأكد معاك التوفر والتوصيل.</span></div></li>
           </ol>
         </aside>
@@ -540,8 +555,23 @@
   </footer>
 
   <div class="mobile-cta"><a class="btn btn-wa" href="#order">اطلب برايت عبر واتساب <span class="arr">↙</span></a></div>
+  <button class="cart-fab" id="cartFab" type="button" aria-label="فتح السلة"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L20.5 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><span class="cart-badge" id="cartBadge" hidden>0</span></button>
+  <div class="cart-back" data-cart-close></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="سلة الطلب">
+    <header class="cd-head"><h3>سلة الطلب</h3><button type="button" class="cd-x" data-cart-close aria-label="إغلاق">×</button></header>
+    <div class="cd-body">
+      <p class="cd-empty" id="cartEmpty">السلة فاضية. حدد عدد الكراتين واضغط «ضع في السلة».</p>
+      <ul class="cd-list" id="cartList"></ul>
+    </div>
+    <footer class="cd-foot" id="cartFoot" hidden>
+      <div class="cd-total"><span>الإجمالي</span><b><i id="cartTotal">0</i> جنيه</b></div>
+      <button type="button" class="btn btn-wa" id="cartGo">أكمل الطلب <span class="arr">↙</span></button>
+      <button type="button" class="cd-clear" id="cartClear">تفريغ السلة</button>
+    </footer>
+  </aside>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="js/config.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
