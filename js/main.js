@@ -200,7 +200,7 @@ const scenes = $$('.scent').map(sec => {
     'fx-drop': [18, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(8, 16) + 'px'); el.style.setProperty('--t', rand(8, 14) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-100, 120) + 'px'); }],
     'fx-wdrop': [20, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(9, 18) + 'px'); el.style.setProperty('--t', rand(8, 14) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-100, 120) + 'px'); }],
     'fx-blossom': [24, el => { el.style.left = rand(0, 100) + '%'; el.style.setProperty('--s', rand(14, 32) + 'px'); el.style.setProperty('--t', rand(9, 16) + 's'); el.style.setProperty('--dl', (-rand(0, 14)) + 's'); el.style.setProperty('--dx', rand(-120, 160) + 'px'); }],
-    'fx-bub': [18, el => { el.style.left = rand(2, 96) + '%'; el.style.setProperty('--s', rand(14, 44) + 'px'); el.style.setProperty('--t', rand(8, 15) + 's'); el.style.setProperty('--dl', (-rand(0, 15)) + 's'); el.style.setProperty('--dx', rand(-90, 90) + 'px'); }],
+    'fx-bub': [8, el => { el.style.left = rand(2, 96) + '%'; el.style.setProperty('--s', rand(14, 44) + 'px'); el.style.setProperty('--t', rand(8, 15) + 's'); el.style.setProperty('--dl', (-rand(0, 15)) + 's'); el.style.setProperty('--dx', rand(-90, 90) + 'px'); }],
   };
   $$('.sc-fx > div', sec).forEach(box => {
     for (const k in FX) if (box.classList.contains(k)) {
@@ -209,20 +209,18 @@ const scenes = $$('.scent').map(sec => {
     }
   });
 
-  /* التقدّم مع السكرول: كل جركن ليه شريحة، والتبديل بيحصل في آخر 38% منها */
-  S.progress = () => {
-    const r = S.track.getBoundingClientRect(), n = S.n;
-    const p = clamp(-r.top / (r.height - vh));
-    const seg = Math.min(n - 1, Math.floor(p * n)), u = p * n - seg;
-    let f = seg;
-    if (seg < n - 1) f += smooth(clamp((u - .62) / .38));
-    S.T = Math.max(0, f);
-    return r;
-  };
+  /* تبديل تلقائي: كل جركن بيظهر كام ثانية وبعدين اللي بعده (من غير سكرول). السحب/الضغط على النقط بيحرّك يدوي وبيعيد العدّاد. */
+  const WRAP = (v, n) => ((v % n) + n + n / 2) % n - n / 2;   /* أقصر مسافة دائرية */
+  S.d = i => WRAP(i - S.F, S.n);
+  S.last = performance.now();
+  S.progress = () => S.track.getBoundingClientRect();
+  S.next = (k = 1) => { S.T = Math.round(S.T) + k; S.last = performance.now(); };
+  S.auto = now => { if (!reduce && S.visible && !S.hold && !document.hidden && now - S.last > 5600) S.next(1); };
   S.update = () => {
-    S.F = lerp(S.F, S.T, .12);
+    const _n = performance.now(), _dt = Math.min(50, _n - (S._t || _n) || 16.7); S._t = _n;
+    S.F = lerp(S.F, S.T, 1 - Math.pow(1 - .055, _dt / 16.7));   /* حركة أبطأ وأنعم، ثابتة على أي معدّل إطارات */
     if (Math.abs(S.F - S.T) < .0005) S.F = S.T;
-    const idx = Math.round(S.F);
+    const idx = ((Math.round(S.F) % S.n) + S.n) % S.n;
     if (idx !== S.idx) {
       S.idx = idx; S.stage.dataset.i = idx;
       S.panels.forEach((p, i) => p.classList.toggle('is-on', i === idx));
@@ -231,21 +229,26 @@ const scenes = $$('.scent').map(sec => {
     const w = S.jugs[0].offsetWidth || 300;
     S.tiltX = lerp(S.tiltX, S.tX, .08); S.tiltY = lerp(S.tiltY, S.tY, .08);
     S.jugs.forEach((j, i) => {
-      const d = i - S.F, ad = Math.abs(d);
-      const x = -d * w * .6, z = -ad * 60, k = 1 - Math.min(ad, 1.4) * .08;
+      const d = S.d(i), ad = Math.abs(d);
+      const x = -d * w * .5, z = -ad * 60, k = 1 - Math.min(ad, 1.4) * .06;
       j.style.transform = `translate3d(calc(-50% + ${x}px),-50%,${z}px) rotateY(${-d * 4 + S.tiltX * 1.2}deg) rotateX(${S.tiltY * -.8}deg) scale(${k})`;
-      j.style.opacity = clamp(1 - ad * 1.7, 0, 1);
+      const _o = clamp(1 - ad, 0, 1); j.style.opacity = _o * _o * (3 - 2 * _o);   /* تلاشي متقاطع ناعم بين الجركنين */
       j.style.zIndex = 10 - Math.round(ad * 3);
           });
     if (S.hint) S.hint.style.opacity = S.T < .05 && S.F < .05 ? 1 : 0;
   };
-  S.go = i => {
-    const r = S.track.getBoundingClientRect();
-    const top = scrollY + r.top, span = r.height - vh;
-    scrollTo({ top: top + ((i + .32) / S.n) * span, behavior: 'smooth' });
-  };
+  S.go = i => S.next(WRAP(i - S.idx, S.n));
   S.dots.forEach((b, i) => b.addEventListener('click', () => S.go(i)));
   S.jugs.forEach((b, i) => b.addEventListener('click', () => S.go(i)));
+  /* سحب بالصباع يمين/شمال يبدّل المنتج */
+  let sx = null, sy = 0;
+  S.stage.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; S.hold = true; }, { passive: true });
+  S.stage.addEventListener('touchend', e => {
+    S.hold = false; S.last = performance.now(); if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null;
+    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.4) S.next(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  S.stage.addEventListener('touchcancel', () => { S.hold = false; sx = null; }, { passive: true });
   if (finePointer) S.stage.addEventListener('pointermove', e => { const r = S.box.getBoundingClientRect(); S.tX = ((e.clientX - r.left) / r.width - .5) * 2; S.tY = ((e.clientY - r.top) / r.height - .5) * 2; }, { passive: true });
   if ('IntersectionObserver' in window) new IntersectionObserver(es => { S.visible = es[0].isIntersecting; }, { rootMargin: '80px' }).observe(S.stage);
   return S;
@@ -286,7 +289,7 @@ function frame(time) {
     if (heroVisible) updateHero(time);
     updateStatement();
   }
-  for (const S of scNear) S.update();
+  for (const S of scNear) { S.auto(time); S.update(); }
   if (Math.abs(heroTarget - heroP) < .3 && Math.abs(scrollVel) < .1) ticking = false;
   requestAnimationFrame(frame);
 }
@@ -389,7 +392,7 @@ function buildBuy(name) {
   d.className = 'buy'; d.dataset.sku = name;
   d.innerHTML = `<div class="buy-price"><b>${fmt(it.price)}</b><span>جنيه</span><small>للكرتونة · ${packTxt(it)}</small></div>
     <div class="buy-lbl">عدد الكراتين</div>
-    <div class="buy-row">${qtyHTML(1)}<button type="button" class="btn btn-card buy-add"><span>ضع في السلة</span><span class="arr">+</span></button></div>
+    <div class="buy-row">${qtyHTML(1)}<button type="button" class="btn btn-card buy-add" aria-label="ضع في السلة"><span class="ba-t">ضع في السلة</span><span class="arr">+</span><svg class="ba-i" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L20.5 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg></button></div>
     <div class="buy-sum"></div>`;
   return d;
 }
@@ -840,8 +843,8 @@ function spinJugs(time) {
   if (lite && time - (spinJugs.l || 0) < 32) return; spinJugs.l = time;
   for (const o of solids) {
     const S = o.scene; if (!S.visible) continue;
-    const ad = Math.abs(o.idx - S.F); if (ad > 1.7) continue;
-    const active = o.idx === S.idx, side = o.idx < S.F ? -1 : 1;
+    const dd = S.d(o.idx), ad = Math.abs(dd); if (ad > 1.7) continue;
+    const active = o.idx === S.idx, side = dd < 0 ? -1 : 1;
     const sway = reduce ? 0 : Math.sin(time / 4200 + o.ph) * (active ? 1 : .6);   /* تمايل ناعم جدًا */
     if (!o.grab) o.drag *= Math.pow(.9, dt);   /* بعد ما تسيبه: يرجع لوضعه بهدوء */
     const ry = sway + o.drag - (active ? 0 : 2.5 * side);
@@ -891,7 +894,7 @@ const cv = $('#fx'), cx = cv.getContext('2d');
 let dpr = 1, bubbles = [];
 
 /* ---------- فقاقيع الماوس / الصباع ---------- */
-const trail = [], pops = [], MAXT = lite ? 28 : 64;
+const trail = [], pops = [], MAXT = lite ? 10 : 20;
 let ptrIn = false, ptrX = 0, ptrY = 0, lbx = -1, lby = -1, bAcc = 0, lastIdle = 0, lastFx = 0;
 function spawnBubble(x, y, speed, ang) {
   const burst = ang != null, sp = burst ? rand(1.2, 3) : 0;
@@ -909,14 +912,14 @@ function movePtr(x, y, touch) {
   ptrX = x; ptrY = y; ptrIn = true; mx = x; my = y; hasPtr = true;
   if (lbx < 0) { lbx = x; lby = y; }
   const d = Math.hypot(x - lbx, y - lby); bAcc += d; lbx = x; lby = y;
-  const step = touch ? 24 : 15;
+  const step = touch ? 60 : 44;
   while (bAcc > step) { bAcc -= step; if (trail.length < MAXT) spawnBubble(x + rand(-7, 7), y + rand(-7, 7), d); }
   if (bAcc > step * 3) bAcc = 0;
 }
 if (!reduce) {
   addEventListener('pointermove', e => { if (e.pointerType !== 'touch') movePtr(e.clientX, e.clientY, false); }, { passive: true });
-  addEventListener('pointerdown', e => { if (e.pointerType !== 'touch') burstAt(e.clientX, e.clientY, 7); }, { passive: true });
-  addEventListener('touchstart', e => { const t = e.touches[0]; if (!t) return; lbx = t.clientX; lby = t.clientY; ptrX = mx = t.clientX; ptrY = my = t.clientY; ptrIn = hasPtr = true; burstAt(t.clientX, t.clientY, 5); }, { passive: true });
+  addEventListener('pointerdown', e => { if (e.pointerType !== 'touch') burstAt(e.clientX, e.clientY, 4); }, { passive: true });
+  addEventListener('touchstart', e => { const t = e.touches[0]; if (!t) return; lbx = t.clientX; lby = t.clientY; ptrX = mx = t.clientX; ptrY = my = t.clientY; ptrIn = hasPtr = true; burstAt(t.clientX, t.clientY, 3); }, { passive: true });
   addEventListener('touchmove', e => { const t = e.touches[0]; if (t) movePtr(t.clientX, t.clientY, true); }, { passive: true });
   const endTouch = () => { lbx = -1; ptrIn = false; hasPtr = false; };
   addEventListener('touchend', endTouch, { passive: true }); addEventListener('touchcancel', endTouch, { passive: true });
@@ -924,7 +927,7 @@ if (!reduce) {
 }
 function drawTrail(time) {
   const dt = Math.min(48, time - lastFx || 16); lastFx = time;
-  if (ptrIn && !('ontouchstart' in window && !finePointer) && time - lastIdle > 380 && trail.length < MAXT) { lastIdle = time; spawnBubble(ptrX + rand(-10, 10), ptrY + rand(-6, 6), 0); }
+  if (ptrIn && !('ontouchstart' in window && !finePointer) && time - lastIdle > 1300 && trail.length < MAXT) { lastIdle = time; spawnBubble(ptrX + rand(-10, 10), ptrY + rand(-6, 6), 0); }
   const k = dt / 16;
   for (let i = trail.length - 1; i >= 0; i--) {
     const b = trail[i];
@@ -958,16 +961,16 @@ function drawTrail(time) {
 function sizeCanvas() {
   dpr = Math.min(devicePixelRatio || 1, 1.5);
   cv.width = vw * dpr; cv.height = vh * dpr;
-  const n = vw < 700 ? 12 : 26;
+  const n = vw < 700 ? 5 : 11;
   bubbles = Array.from({ length: n }, () => mkBubble(true));
 }
 function mkBubble(init) {
-  return { x: rand(0, vw), y: init ? rand(0, vh) : vh + rand(20, 200), r: rand(3, 16), sp: rand(.25, .9), ph: rand(0, 6.28), sw: rand(8, 26), a: rand(.25, .55) };
+  return { x: rand(0, vw), y: init ? rand(0, vh) : vh + rand(20, 200), r: rand(3, 16), sp: rand(.18, .55), ph: rand(0, 6.28), sw: rand(8, 26), a: rand(.25, .55) };
 }
 function fx(time) {
   if (document.hidden) return requestAnimationFrame(fx);
   cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, vw, vh);
-  const boost = clamp(Math.abs(scrollVel) * .08, 0, 4);
+  const boost = clamp(Math.abs(scrollVel) * .03, 0, 1.2);
   for (const b of bubbles) {
     b.y -= b.sp * (1 + boost) + (scrollVel > 0 ? 0 : -scrollVel * .1);
     const x = b.x + Math.sin(time / 1400 + b.ph) * b.sw;

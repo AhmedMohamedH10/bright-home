@@ -340,8 +340,8 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
    SCENTS — pinned scroll scene
    ========================================================= */
 .scent{position:relative;background:#041a38}
-.scent-track{height:calc(var(--n,3)*120vh + 60vh);position:relative}
-.scent-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:center;padding-top:84px}
+.scent-track{position:relative}
+.scent-stage{position:relative;height:100vh;height:100svh;overflow:hidden;isolation:isolate;display:flex;flex-direction:column;justify-content:center;padding-top:84px}
 .sc-bgs,.sc-bg,.sc-fx,.sc-fx>div,.sc-rays{position:absolute;top:0;right:0;bottom:0;left:0}
 .sc-bg{opacity:0;transition:opacity 1.2s var(--ease-io)}
 .bg0{background:radial-gradient(70% 60% at 30% 45%,#31567f 0%,#173357 45%,#08142a 100%)}
@@ -399,7 +399,7 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .sc-dots{position:absolute;z-index:6;left:50%;bottom:34px;transform:translateX(-50%);display:flex;gap:12px}
 .sc-dots button{width:10px;height:10px;border-radius:99px;border:0;padding:0;background:rgba(255,255,255,.35);transition:width .5s var(--ease),background .4s}
 .scent-stage[data-i="0"] .sc-dots button:nth-child(1),.scent-stage[data-i="1"] .sc-dots button:nth-child(2),.scent-stage[data-i="2"] .sc-dots button:nth-child(3){width:38px;background:#fff}
-.sc-hint{position:absolute;z-index:6;right:clamp(16px,4vw,48px);bottom:30px;display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.7);transition:opacity .5s}
+.sc-hint{display:none!important;position:absolute;z-index:6;right:clamp(16px,4vw,48px);bottom:30px;display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.7);transition:opacity .5s}
 .sc-hint i{width:1px;height:34px;background:linear-gradient(180deg,#fff,transparent);animation:wheel 1.8s ease-in-out infinite}
 
 /* =========================================================
@@ -688,7 +688,7 @@ img,svg,canvas,video{max-width:100%}
    ========================================================= */
 .sj-in{position:relative}
 .jug-gl{position:absolute;left:-14%;top:-8%;width:128%;height:116%;display:block;pointer-events:none;z-index:2}
-.sj img{transition:opacity .35s}
+.sj img{transition:opacity .6s}
 .sj-in.gl-on img{pointer-events:none}
 .jug-shadow{position:absolute;left:50%;bottom:-3%;width:88%;height:7%;border-radius:50%;pointer-events:none;z-index:1;
   background:radial-gradient(ellipse,rgba(0,5,25,.62),transparent 70%);-webkit-filter:blur(7px);filter:blur(7px);transform:translateX(-50%)}
@@ -711,7 +711,7 @@ img,svg,canvas,video{max-width:100%}
 .fx-lime i{background:radial-gradient(circle,#f1ffc4 0 14%,transparent 15%),repeating-conic-gradient(#dcff8a 0 15deg,#8fdc3c 15deg 22deg);box-shadow:0 0 0 3px #2f9e2f,0 0 0 6px #c9f58a,0 10px 20px rgba(0,50,10,.45)}
 .fx-leaf i{position:absolute;top:-8%;width:var(--s,18px);height:calc(var(--s,18px)*1.9);border-radius:0 100% 0 100%;background:linear-gradient(135deg,#b4ff8f,#1e9d3c);box-shadow:inset -3px -3px 6px rgba(0,50,10,.4);animation:petal var(--t,12s) linear infinite;animation-delay:var(--dl,0s);opacity:.92}
 .fx-drop i{position:absolute;top:-8%;width:var(--s,12px);height:calc(var(--s,12px)*1.35);border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 35% 28%,#fff 0 14%,#ffe45e 42%,#f5a300 100%);box-shadow:0 0 14px rgba(255,200,40,.7);animation:petal var(--t,11s) linear infinite;animation-delay:var(--dl,0s);opacity:.95}
-.fx-bub i{position:absolute;bottom:-12%;width:var(--s,26px);height:var(--s,26px);border-radius:50%;background:radial-gradient(circle at 30% 26%,rgba(255,255,255,.95) 0 7%,rgba(255,255,255,.1) 30%,rgba(255,255,255,.03) 62%,rgba(255,255,255,.3) 100%);border:1px solid rgba(255,255,255,.45);box-shadow:inset 0 0 10px rgba(255,255,255,.25),0 0 14px rgba(255,255,255,.12);animation:bubRise var(--t,10s) ease-in-out infinite;animation-delay:var(--dl,0s);opacity:0}
+.fx-bub i{position:absolute;bottom:-12%;width:var(--s,26px);height:var(--s,26px);border-radius:50%;background:radial-gradient(circle at 30% 26%,rgba(255,255,255,.95) 0 7%,rgba(255,255,255,.1) 30%,rgba(255,255,255,.03) 62%,rgba(255,255,255,.3) 100%);border:1px solid rgba(255,255,255,.45);box-shadow:inset 0 0 10px rgba(255,255,255,.25),0 0 14px rgba(255,255,255,.12);animation:bubRise calc(var(--t,10s)*1.5) ease-in-out infinite;animation-delay:var(--dl,0s);opacity:0}
 @keyframes bubRise{0%{transform:translate(0,0) scale(.5);opacity:0}8%{opacity:.95}30%{transform:translate(calc(var(--dx,40px)*.6),-34vh) scale(.95)}60%{transform:translate(calc(var(--dx,40px)*-.4),-70vh) scale(1.05)}100%{transform:translate(calc(var(--dx,40px)*.3),-118vh) scale(1.15);opacity:0}}
 .dish .sc-halo{background:radial-gradient(circle,rgba(255,255,255,.5),transparent 66%)}
 .dish .sj img{filter:drop-shadow(0 40px 40px rgba(0,0,0,.5))}
@@ -782,8 +782,8 @@ img,svg,canvas,video{max-width:100%}
 .sc-ring::before{display:none}
 .sc-ring{border-color:rgba(255,255,255,.18);animation-duration:80s}
 .sc-ring.r2{animation-duration:120s}
-.sc-panel{transform:translateY(14px);filter:none;transition:opacity .7s var(--ease),transform .7s var(--ease)}
-.sc-panel.is-on{transform:none}
+.sc-panel{transform:translateY(14px);filter:none;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.sc-panel.is-on{transform:none;transition-delay:.3s}
 .fx-spark i{animation-duration:6s}
 @media (prefers-reduced-motion:reduce){.sj-in{animation:none}}
 
@@ -986,3 +986,51 @@ body.cart-open{overflow:hidden}
 
 /* «برايت هوم» بخط Cairo Bold وأصغر، ومن غير قصّ للحروف من تحت */
 .story-brand{font-family:var(--font-body);font-weight:800;font-size:clamp(52px,8.5vw,120px);line-height:1.4;padding-bottom:.08em;letter-spacing:0;margin-top:10px}
+
+/* ===== زرار السلة: على الموبايل أيقونة سلة زرقاء في دايرة بيضا بدل الكلمة ===== */
+.buy-add .ba-i{display:none}
+@media (max-width:760px){
+  .buy-add{flex:0 0 52px;width:52px;height:52px;min-width:52px;padding:0;border-radius:50%;justify-content:center;align-self:center;
+    background:#fff;color:#1565d8;box-shadow:0 8px 20px -6px rgba(0,10,40,.55)}
+  .buy-add .ba-t,.buy-add .arr{display:none}
+  .buy-add .ba-i{display:block;width:26px;height:26px}
+  .buy-row{justify-content:space-between;align-items:center}
+}
+
+/* ===== كروت المنتجات على الموبايل: جركن كامل جوه الإطار وأصغر من الكراتين، مع أرضية وظل ===== */
+@media (max-width:900px){
+  .c-vis{height:340px}
+  .c-stage{display:block}
+  .c-vis img:not(.c-boxes),.c-vis .p3d{position:absolute;left:50%;bottom:44px;height:232px!important;width:auto!important;max-width:62%!important;
+    -webkit-transform:translateX(-50%)!important;transform:translateX(-50%)!important;margin:0;object-fit:contain}
+  .c-vis .p3d{aspect-ratio:var(--ar,.68)}
+  .c-vis img.c-boxes,.card:hover .c-vis img.c-boxes{height:236px;bottom:30px;-webkit-transform:translateX(-50%) scale(1.05);transform:translateX(-50%) scale(1.05);opacity:.9}
+  .c-floor{bottom:26px;width:56%;margin-left:-28%}
+  .c-tag{top:14px;right:14px}
+}
+@media (max-width:640px){
+  /* نقط السلايدر فوق زرار «اطلب المنتج» مش فوقه */
+  .scent-stage{padding-bottom:120px}
+  .sc-dots{bottom:34px}
+}
+
+/* ===== ظهور الكلام مع الجركن: بوب متتابع ناعم ===== */
+.sc-panel{transform:none;filter:none;transition:opacity .45s ease}
+.sc-panel.is-on{transform:none;transition:opacity .5s ease .25s}
+.sc-panel>*{opacity:0;transform:translateY(28px) scale(.9);transform-origin:50% 100%;
+  transition:opacity .3s ease,transform .35s var(--ease-io)}
+.sc-panel.is-on>*{opacity:1;transform:none;
+  transition:opacity .6s ease var(--pd,.3s),transform .95s cubic-bezier(.34,1.56,.64,1) var(--pd,.3s)}
+.sc-panel.is-on>:nth-child(1){--pd:.30s}
+.sc-panel.is-on>:nth-child(2){--pd:.40s}
+.sc-panel.is-on>:nth-child(3){--pd:.52s}
+.sc-panel.is-on>:nth-child(4){--pd:.62s}
+.sc-panel.is-on>:nth-child(5){--pd:.72s}
+.sc-panel.is-on>:nth-child(n+6){--pd:.82s}
+.sc-panel.is-on .chips li{animation:chipPop .8s cubic-bezier(.34,1.56,.64,1) both}
+.sc-panel.is-on .chips li:nth-child(1){animation-delay:.7s}
+.sc-panel.is-on .chips li:nth-child(2){animation-delay:.8s}
+.sc-panel.is-on .chips li:nth-child(3){animation-delay:.9s}
+.sc-panel.is-on .chips li:nth-child(n+4){animation-delay:1s}
+@keyframes chipPop{from{opacity:0;transform:scale(.6) translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sc-panel>*,.sc-panel.is-on>*{transition:opacity .3s;transform:none}.sc-panel.is-on .chips li{animation:none}}
