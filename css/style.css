@@ -1034,3 +1034,21 @@ body.cart-open{overflow:hidden}
 .sc-panel.is-on .chips li:nth-child(n+4){animation-delay:1s}
 @keyframes chipPop{from{opacity:0;transform:scale(.6) translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.sc-panel>*,.sc-panel.is-on>*{transition:opacity .3s;transform:none}.sc-panel.is-on .chips li{animation:none}}
+
+/* ===== عرض الجراكن بالصورة الأصلية: ظل أرضية ولمعة ناعمة ===== */
+.sj-in{overflow:visible}
+.sj-in::after{content:"";position:absolute;left:50%;bottom:-2%;width:78%;height:7%;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(closest-side,rgba(0,0,20,.5),rgba(0,0,20,0));filter:blur(6px);z-index:0;pointer-events:none}
+.sj img{position:relative;z-index:1;filter:drop-shadow(0 26px 30px rgba(0,0,20,.45)) drop-shadow(0 0 1px rgba(255,255,255,.25))}
+
+/* ===== تخفيف + حدّة الجراكن على الموبايل ===== */
+@media (max-width:900px),(hover:none){
+  .sc-jugs{perspective:none}
+  .sj{will-change:transform,opacity;transform-style:flat}
+  .sj-in{animation:none;transform-style:flat;will-change:auto}
+  .sj img{filter:none;image-rendering:auto;transition:none}
+  .sj-in::after{filter:none;height:6%;background:radial-gradient(closest-side,rgba(0,0,20,.55),rgba(0,0,20,0))}
+  .chips li{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(255,255,255,.12)}
+  .sc-rays,.sc-ring{display:none}
+  .sc-fx .fx-spark i:nth-child(n+7){display:none}
+}

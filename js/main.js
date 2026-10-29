@@ -228,10 +228,18 @@ const scenes = $$('.scent').map(sec => {
     }
     const w = S.jugs[0].offsetWidth || 300;
     S.tiltX = lerp(S.tiltX, S.tX, .08); S.tiltY = lerp(S.tiltY, S.tY, .08);
+    /* لو مفيش حركة (الجركن واقف) منكتبش ستايل كل فريم — ده اللي كان بيهنّج الموبايل */
+    const moving = S.F !== S.T || Math.abs(S.tiltX - S.tX) > .002 || Math.abs(S.tiltY - S.tY) > .002;
+    if (!moving && S._drawn) return;
+    S._drawn = !moving;
+    const mob = matchMedia('(max-width:900px),(hover:none)').matches;
     S.jugs.forEach((j, i) => {
       const d = S.d(i), ad = Math.abs(d);
       const x = -d * w * .5, z = -ad * 60, k = 1 - Math.min(ad, 1.4) * .06;
-      j.style.transform = `translate3d(calc(-50% + ${x}px),-50%,${z}px) rotateY(${-d * 4 + S.tiltX * 1.2}deg) rotateX(${S.tiltY * -.8}deg) scale(${k})`;
+      /* موبايل: تحريك 2D بسيط (من غير دوران/عمق/تصغير) → الصورة تفضل حادة وخفيفة */
+      j.style.transform = mob ? `translate3d(calc(-50% + ${x.toFixed(1)}px),-50%,0)`
+        : `translate3d(calc(-50% + ${x}px),-50%,${z}px) rotateY(${-d * 4 + S.tiltX * 1.2}deg) rotateX(${S.tiltY * -.8}deg) scale(${k})`;
+      j.style.visibility = ad >= 1 ? 'hidden' : 'visible';
       const _o = clamp(1 - ad, 0, 1); j.style.opacity = _o * _o * (3 - 2 * _o);   /* تلاشي متقاطع ناعم بين الجركنين */
       j.style.zIndex = 10 - Math.round(ad * 3);
           });
@@ -831,7 +839,8 @@ function buildSolid(img, idx, scene) {
   solids.push(o); return o;
 }
 /* أقسام مزيل الدهون بتعرض صور العلب الأصلية مسطّحة (التجسيم كان بيشوّه شكلها) */
-scenes.forEach(S => { if (!S.sec.classList.contains('dish')) S.jugs.forEach((j, i) => buildSolid($('img', j), i, S)); });
+/* تم إيقاف مجسّم WebGL — الجراكن بتتعرض بصورة العلبة الأصلية النظيفة (أفضل شكل وأخف). لإرجاعه: شيل علامة الكومنت اللي تحت. */
+// scenes.forEach(S => { if (!S.sec.classList.contains('dish')) S.jugs.forEach((j, i) => buildSolid($('img', j), i, S)); });
 const sizeSolids = () => solids.forEach(o => o.size());
 addEventListener('resize', sizeSolids); addEventListener('load', sizeSolids);
 if ('ResizeObserver' in window) { const ro = new ResizeObserver(sizeSolids); $$('.sj').forEach(e => ro.observe(e)); }
@@ -959,7 +968,7 @@ function drawTrail(time) {
   cx.globalAlpha = 1;
 }
 function sizeCanvas() {
-  dpr = Math.min(devicePixelRatio || 1, 1.5);
+  dpr = Math.min(devicePixelRatio || 1, matchMedia('(hover:none)').matches ? 1 : 1.5);
   cv.width = vw * dpr; cv.height = vh * dpr;
   const n = vw < 700 ? 5 : 11;
   bubbles = Array.from({ length: n }, () => mkBubble(true));
