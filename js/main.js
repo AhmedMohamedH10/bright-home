@@ -24,6 +24,35 @@ if (lite) document.documentElement.classList.add('lite');
 let vw = innerWidth, vh = innerHeight;
 
 /* ---------------------------------------------------------
+   شاشة التحميل: لوجو + «برايت هوم» + Bright Home لحد ما الخطوط والصور الأساسية تحمّل
+   (حد أدنى ~0.7 ثانية عشان ما تومضش، وحد أقصى 6 ثواني عشان ما تعلّقش)
+   --------------------------------------------------------- */
+(function loaderInit() {
+  const ld = document.getElementById('loader'), root = document.documentElement;
+  if (!ld) { root.classList.remove('is-loading'); return; }
+  const t0 = performance.now(); let done = false;
+  const showText = () => ld.classList.add('fonts');
+  if (document.fonts && document.fonts.load) {
+    Promise.all([document.fonts.load('700 40px Ghayaty'), document.fonts.load('400 24px Arakans')]).then(showText, showText);
+    setTimeout(showText, 1200);
+  } else showText();
+  const finish = () => {
+    if (done) return; done = true;
+    const wait = Math.max(0, 700 - (performance.now() - t0));
+    setTimeout(() => {
+      root.classList.remove('is-loading'); ld.classList.add('out');
+      setTimeout(() => ld.remove(), 700);
+    }, wait);
+  };
+  const heroImgs = [...document.querySelectorAll('#home img')].filter(i => !i.complete);
+  const imgsReady = Promise.all(heroImgs.map(i => (i.decode ? i.decode() : Promise.resolve()).catch(() => {})));
+  const winLoad = document.readyState === 'complete' ? Promise.resolve() : new Promise(r => addEventListener('load', r, { once: true }));
+  const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  Promise.all([winLoad, imgsReady, fontsReady]).then(finish, finish);
+  setTimeout(finish, 6000);
+})();
+
+/* ---------------------------------------------------------
    Toast
    --------------------------------------------------------- */
 const toastEl = $('#toast'); let toastT;
@@ -77,10 +106,23 @@ if (finePointer && glow) {
   (function loop() { gx = lerp(gx, tx, .12); gy = lerp(gy, ty, .12); glow.style.transform = `translate(${gx}px,${gy}px)`; requestAnimationFrame(loop); })();
 }
 const navLinks = $$('.nav a');
+/* على الموبايل الناف قابل للسحب: نخلّي الرابط الحالي في نص الشريط */
+const navBox = $('.nav');
+function centerNav() {
+  if (!navBox || navBox.scrollWidth <= navBox.clientWidth + 2) return;
+  const a = navBox.querySelector('a.on'); if (!a) return;
+  const ar = a.getBoundingClientRect(), nr = navBox.getBoundingClientRect();
+  const d = (ar.left + ar.width / 2) - (nr.left + nr.width / 2);
+  if (Math.abs(d) > 6) navBox.scrollBy({ left: d, behavior: reduce ? 'auto' : 'smooth' });
+}
+
 {
   const secs = navLinks.map(a => $(a.getAttribute('href'))).filter(Boolean).concat($$('[data-nav]'));
   const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + (e.target.dataset.nav || e.target.id)));
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + (e.target.dataset.nav || e.target.id)));
+      centerNav();
+    }
   }), { rootMargin: '-45% 0px -50% 0px' });
   secs.forEach(s => io.observe(s));
 }
@@ -130,6 +172,11 @@ function fitScene() {
   const ar = Math.max(40, Math.min(avail * .56, (vw - 36) / 5.5, 190));
   pin.style.setProperty('--t-top', (vw < 700 ? 74 : 88) + 'px');
   pin.style.setProperty('--t-ar', ar + 'px'); pin.style.setProperty('--t-en', Math.max(15, ar * .27) + 'px');
+  /* موبايل (طولي): العنوان ينزل في الجدار الفاضي فوق الغسالة مباشرة بدل ما يفضل فوق الدواليب */
+  if (portrait && vw < 700 && titleEl) {
+    const washTop = ty + wTop * s, bh = titleEl.offsetHeight;
+    pin.style.setProperty('--t-top', Math.max(74, Math.round(washTop - bh - 12)) + 'px');
+  }
   sc = { s, tx, ty, portrait };
   scene.style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
   cam.style.transform = 'none';
@@ -444,10 +491,9 @@ const PRICES = {
   'سائل غسول لليدين — عنبر أحمر 5 لتر':          P(480, 4, 'جركن'),
   'سائل غسول لليدين — لافندر 5 لتر':             P(480, 4, 'جركن'),
   'معطر ملابس — نسيم البحر 2 لتر':               P(380, 6, 'جركن'),
-  'معطر ملابس — الزهور 4 لتر':                   P(420, 4, 'جركن'),
-  'معطر ملابس — الزهور 2 لتر':                   P(380, 6, 'جركن'),
+  'معطر ملابس — الورد 4 لتر':                   P(420, 4, 'جركن'),
+  'معطر ملابس — الورد 2 لتر':                   P(380, 6, 'جركن'),
   'معطر ملابس — نسيم البحر 4 لتر':               P(420, 4, 'جركن'),
-  'معطر ملابس — 5 لتر':                          P(65, 1, 'قارورة'),
 };
 const disp = n => n.replace(/ — /g, ' ');
 const fmt = n => Math.round(n).toLocaleString('en-US');
@@ -459,7 +505,7 @@ const toQ = v => clamp(parseInt(String(v).replace(/\D/g, ''), 10) || 1, 1, MAXQ)
 /* ---- السلة (بتتحفظ في المتصفح) ---- */
 var cartHook = null;
 let cart = {};
-try { const s = JSON.parse(localStorage.getItem('bh_cart') || '{}'); Object.keys(s).forEach(k => { if (PRICES[k]) cart[k] = toQ(s[k]); }); } catch (e) {}
+try { const s = JSON.parse(localStorage.getItem('bh_cart') || '{}'); Object.keys(s).forEach(k => { const nk = k.replace('الزهور', 'الورد'); if (PRICES[nk]) cart[nk] = toQ(s[k]); });  /* بيحوّل الاسم القديم (الزهور) لو محفوظ في سلة قديمة */ } catch (e) {}
 const saveCart = () => { try { localStorage.setItem('bh_cart', JSON.stringify(cart)); } catch (e) {} };
 const cartNames = () => Object.keys(cart);
 const cartCount = () => cartNames().reduce((a, k) => a + cart[k], 0);
@@ -611,7 +657,7 @@ form.addEventListener('submit', e => {
   const num = (CONFIG.WHATSAPP_NUMBER || '').replace(/\D/g, '');
   if (!/^\d{10,15}$/.test(num)) {
     note.classList.add('warn');
-    note.textContent = 'رقم واتساب لسه مش متضاف في الموقع (CONFIG في js/main.js). الرسالة اتنسخت — ابعتها يدويًا لرقم برايت.';
+    note.textContent = 'رقم واتساب لسه مش متضاف في الموقع (CONFIG في js/main.js). الرسالة اتنسخت — ابعتها يدويًا لرقم برايت هوم.';
     (navigator.clipboard ? navigator.clipboard.writeText(msg) : Promise.reject()).then(() => toast('تم نسخ رسالة الطلب ✓'), () => toast('رقم واتساب غير مُضاف بعد'));
     return;
   }
@@ -1113,6 +1159,28 @@ if (!reduce) requestAnimationFrame(fx);
     a.href = 'https://wa.me/' + num; a.target = '_blank'; a.rel = 'noopener';
     if (n) { n.textContent = '+' + num; n.hidden = false; }
   }
+}
+/* موبايل طولي: كل أقسام العطور تاخد نفس ارتفاع منطقة الكلام (أطول واحد) فالجركن والعناوين تفضل في نفس المكان في كل قسم */
+{
+  const mq = matchMedia('(max-width:640px) and (orientation:portrait)');
+  const root = document.documentElement;
+  const syncCopy = () => {
+    root.style.removeProperty('--copy-h');
+    if (!mq.matches) return;
+    const h = Math.max(0, ...$$('.sc-copy').map(c => c.offsetHeight));
+    if (h) root.style.setProperty('--copy-h', h + 'px');
+  };
+  let tmr; const later = () => { clearTimeout(tmr); tmr = setTimeout(syncCopy, 120); };
+  syncCopy(); addEventListener('resize', later); addEventListener('orientationchange', later); addEventListener('load', syncCopy);
+  document.fonts && document.fonts.ready.then(syncCopy);
+}
+/* بيانات المنتج: تبديل بين مزيل الدهون وغسول اليدين */
+{
+  const tabs = $$('.pinfo-tabs button'), panels = $$('.pinfo-panel');
+  tabs.forEach(b => b.addEventListener('click', () => {
+    tabs.forEach(t => { const on = t === b; t.classList.toggle('is-on', on); t.setAttribute('aria-selected', on); });
+    panels.forEach(pn => { pn.hidden = pn.dataset.p !== b.dataset.p; });
+  }));
 }
 /* الرجوع للأعلى / اللوجو: قفزة فورية بدل سكرول طويل يمرّ على المشهد كله */
 $$('.to-top, .brand').forEach(a => a.addEventListener('click', e => {

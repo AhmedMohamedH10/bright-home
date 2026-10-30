@@ -289,7 +289,7 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .h-ar{font-family:var(--font-ar);font-weight:700;font-size:var(--t-ar,96px);line-height:1.12;letter-spacing:0;display:inline-flex;gap:.22em;
   filter:drop-shadow(0 0 1.5px rgba(2,20,60,.95)) drop-shadow(0 4px 0 rgba(2,24,70,.6)) drop-shadow(0 14px 28px rgba(0,20,60,.7))}
 .mask{display:inline-block;overflow:hidden;padding:.12em .06em 0;margin:-.12em -.06em 0}
-.mask>span{display:inline-block;transform:translateY(115%);animation:maskUp 1.3s var(--ease) forwards;background:linear-gradient(180deg,var(--title-top,#f0fbff) 0%,var(--title-mid,#8fdcff) 38%,var(--title-mid2,#3aa8f2) 72%,var(--title-bot,#1c6fd6) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.05em}
+.mask>span{display:inline-block;transform:translateY(115%);animation:maskUp 1.3s var(--ease) forwards;background:linear-gradient(180deg,#ffffff 0%,#c9f4ff 24%,#5fd2ff 54%,#2f9eff 80%,#1f7af2 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.05em}
 .mask:nth-child(1)>span{animation-delay:.7s}.mask:nth-child(2)>span{animation-delay:.85s}
 @keyframes maskUp{to{transform:none}}
 .h-en{font-family:var(--font-en);font-size:var(--t-en,clamp(34px,2.8vw,46px));letter-spacing:.14em;color:#fff;margin-top:2px;text-shadow:0 6px 24px rgba(0,20,60,.7);display:inline-flex}
@@ -871,7 +871,7 @@ body.cart-open{overflow:hidden}
 
 
 /* =========================================================
-   معطر الملابس — نسيم البحر (2 لتر) / الزهور (4 لتر)
+   معطر الملابس — نسيم البحر (2 لتر) / الورد (4 لتر)
    ========================================================= */
 .bgSea{background:radial-gradient(62% 58% at 30% 44%,#a6f3ff 0%,#22aef2 26%,#0b63c6 56%,#031a4c 100%),linear-gradient(160deg,#08336f,#020e2a)}
 .bgRose{background:radial-gradient(62% 58% at 30% 44%,#ffdbe8 0%,#ff7fae 26%,#c53570 56%,#3f0b26 100%),linear-gradient(160deg,#4c102d,#1a0510)}
@@ -881,7 +881,7 @@ body.cart-open{overflow:hidden}
 
 /* قطرات ماء زرقاء (نسيم البحر) */
 .fx-wdrop i{position:absolute;top:-8%;width:var(--s,12px);height:calc(var(--s,12px)*1.35);border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 35% 28%,#fff 0 14%,#a8ecff 42%,#1d9cf2 100%);box-shadow:0 0 14px rgba(90,205,255,.75);animation:petal var(--t,11s) linear infinite;animation-delay:var(--dl,0s);opacity:.95}
-/* بتلات زهور (الزهور) */
+/* بتلات زهور (الورد) */
 .fx-blossom i{position:absolute;top:-8%;width:var(--s,22px);height:calc(var(--s,22px)*1.2);border-radius:150% 0 150% 0;background:linear-gradient(135deg,#fff 0%,#ffd1e1 45%,#ff8db6 100%);box-shadow:inset -3px -3px 6px rgba(150,20,80,.28),0 6px 14px rgba(90,0,40,.25);animation:petal var(--t,12s) linear infinite;animation-delay:var(--dl,0s);opacity:.95}
 .fx-blossom i:nth-child(3n){border-radius:50% 50% 50% 0;background:radial-gradient(circle at 35% 30%,#fff 0 18%,#ffc4d9 60%,#ff7fae 100%)}
 
@@ -1134,3 +1134,121 @@ a,button,input,textarea,select,[role="button"]{touch-action:manipulation;-webkit
   background:url("../assets/img/kitchen-p.webp") 0 0/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;opacity:1!important;
   -webkit-mask-image:none!important;mask-image:none!important;filter:none!important}
 .scene.p .k-tiles::before,.scene.p .k-tiles::after{display:none!important}
+
+
+/* =========================================================
+   بيانات المنتج — الاستخدام / المكونات / التحذيرات
+   ========================================================= */
+.pinfo{background:linear-gradient(180deg,#041a38 0%,#020f24 100%)}
+.pinfo-head{text-align:center;margin-bottom:28px}
+.pinfo-head h2{margin-top:14px;font-size:clamp(30px,4.4vw,52px);line-height:1.25}
+.pinfo-head h2 em{font-style:normal;color:var(--sky)}
+.pinfo-tabs{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:0 auto 26px;padding:5px;width:fit-content;max-width:100%;border-radius:99px;background:rgba(2,15,36,.35);border:1px solid rgba(255,255,255,.2)}
+.pinfo-tabs button{border:0;background:none;padding:11px 22px;border-radius:99px;font-weight:800;font-size:14px;color:rgba(255,255,255,.8);transition:background .3s,color .3s}
+.pinfo-tabs button.is-on{background:var(--sky);color:var(--navy-800)}
+.pinfo-panel{padding:clamp(20px,3vw,36px);animation:pi-in .5s var(--ease)}
+.pinfo-panel[hidden]{display:none}
+@keyframes pi-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pi-scents,.pi-feats{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.pi-scents{margin-bottom:18px}
+.pi-scents li{padding:7px 16px;border-radius:99px;font-size:13px;font-weight:800;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08)}
+.pi-scents li.g{border-color:#8ed36a;color:#c8f3ae}
+.pi-scents li.y{border-color:#f3d95c;color:#fff0a0}
+.pi-feats{margin-bottom:26px}
+.pi-feats li{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:16px;background:rgba(127,220,245,.12);font-size:13px;font-weight:700}
+.pi-feats svg{color:var(--sky);flex:none}
+.pi-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.pi-col{padding:22px 22px 18px;border-radius:20px;background:rgba(2,15,36,.35);border:1px solid rgba(255,255,255,.14)}
+.pi-col h3{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:18px}
+.pi-col h3 i{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:rgba(127,220,245,.16);color:var(--sky)}
+.pi-col li{position:relative;padding-inline-start:18px;margin-bottom:9px;font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.92)}
+.pi-col li::before{content:"";position:absolute;inset-inline-start:0;top:.7em;width:7px;height:7px;border-radius:50%;background:var(--sky)}
+.pi-col.warn{border-color:rgba(255,196,87,.45)}
+.pi-col.warn h3 i{background:rgba(255,196,87,.16);color:#ffc457}
+.pi-col.warn li::before{background:#ffc457}
+.pinfo-brand{margin-top:22px;text-align:center;font-size:13px;color:var(--mist)}
+@media (max-width:860px){.pi-cols{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.pinfo-panel{animation:none}}
+
+
+/* =========================================================
+   موبايل (طولي) — أقسام العطور/المنتجات: ترتيب ثابت بدون تداخل
+   الهيدر ← صف (رقم القسم + العدّاد) ← الجركن ← «برائحة» + الاسم + الوصف + الزرار
+   الجركن بياخد المساحة الباقية، فمهما كان ارتفاع الشاشة (شريط المتصفح) مفيش حاجة بتركب على حاجة.
+   ========================================================= */
+@media (max-width:640px) and (orientation:portrait){
+  .scent-stage{justify-content:flex-start;padding-top:120px;padding-bottom:64px}
+  .sc-head{top:76px}
+  .sc-grid{height:100%;padding-top:0;gap:8px;align-content:stretch;align-items:center;grid-template-rows:minmax(0,1fr) auto}
+  .sc-jugs{order:-1;height:auto;min-height:0;align-self:stretch}
+  .sj{height:min(100%,290px);width:auto;aspect-ratio:var(--ar,.6844)}
+  .sc-copy{height:auto;display:grid;align-self:end}
+  .sc-panel{position:relative;inset:auto;grid-area:1/1;justify-content:flex-start;min-width:0}
+  /* «برائحة»: لون واضح ثابت بدل التدرّج الفضي الباهت */
+  .sc-cat{background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:#fff;color:#fff;
+    font-size:18px;text-shadow:0 2px 10px rgba(0,0,0,.55);filter:none;animation:none}
+}
+@media (max-width:640px) and (orientation:portrait) and (max-height:720px){
+  .sc-panel{gap:5px}
+  .sc-title{font-size:clamp(44px,13vw,60px)}
+  .sc-title.long{font-size:clamp(30px,8.6vw,46px)}
+  .sc-panel p{font-size:13px;line-height:1.6}
+  .sc-panel .chips li{padding:4px 12px;font-size:12px}
+  .sc-cat{font-size:16px}
+}
+@media (max-width:640px) and (orientation:portrait) and (max-height:600px){
+  .sc-panel .chips{display:none}
+}
+
+@media (max-width:640px) and (orientation:portrait){
+  .sc-copy{min-height:var(--copy-h,0px)}
+  .sc-head .eyebrow{white-space:nowrap;gap:8px}
+  .sc-count{font-size:15px;letter-spacing:.14em;white-space:nowrap}
+}
+@media (max-width:340px){
+  .sc-head .eyebrow{font-size:11.5px}
+  .sc-head .eyebrow span{padding:3px 8px}
+  .sc-count{font-size:13px}
+}
+
+
+/* =========================================================
+   ناف الهيدر على الموبايل/التابلت: شريط روابط قابل للسحب أفقيًا جوه الهيدر (بدل ما كان مخفي)
+   ========================================================= */
+@media (max-width:1024px){
+  .header{gap:10px}
+  .nav{display:flex;flex:1 1 auto;min-width:0;gap:2px;padding:4px 0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 16px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 16px),transparent 100%)}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{flex:0 0 auto;white-space:nowrap;padding:8px 12px;font-size:13px}
+}
+@media (max-width:640px){
+  .header{justify-content:space-between;padding:0 10px 0 12px}
+  .brand{gap:8px;flex:0 0 auto}
+  .brand-word b{font-size:18px}
+  .brand-word small{font-size:10px;letter-spacing:.1em;margin-top:2px}
+  .nav a{padding:8px 11px;font-size:12.5px}
+}
+@media (max-width:360px){
+  .brand img{width:32px;height:32px}
+  .brand-word b{font-size:16px}
+  .brand-word small{font-size:9px;letter-spacing:.06em}
+  .nav a{padding:7px 9px;font-size:12px}
+}
+
+/* =========================================================
+   تخفيف الموبايل (وضع lite): نوقف الحركات الدايمة الزخرفية اللي بتكلّف رسم كل فريم
+   (جسيمات الأقسام، هالة/حلقات العطور، تمايل الجراكن، ميدالية الطلب، لمبة/نبتة المطبخ)
+   ========================================================= */
+.lite .sc-fx{display:none!important}
+.lite .sj-in,.lite .c-vis img,.lite .medal img,.lite .medal-ring,.lite .sc-ring,.lite .sc-halo,
+.lite .k-lamp,.lite .k-plant u,.lite .w-led,.lite .mouse i,.lite .sc-hint i{animation:none!important}
+.lite .ld-logo{animation:ldFloat 2.4s ease-in-out infinite!important}
+
+/* منتجات الموبايل: شيل الـ drop-shadow من صور الكروت (فلتر تقيل لكل صورة) والظل الكبير للكارت؛ الأرضية .c-floor بتغني عنهم */
+.lite .c-vis img,.lite .p3d img{-webkit-filter:none!important;filter:none!important}
+.lite .card{box-shadow:0 14px 26px -16px rgba(0,10,40,.7)!important}
+/* لون عنوان الهيرو: أفتح وأوضح على خلفية المطبخ الزرقا + توهّج خفيف */
+.h-ar{filter:drop-shadow(0 4px 12px rgba(0,25,80,.55))}
+/* هيدر الموبايل بعد التمرير: خلفية أثبت عشان الكلام اللي تحته ما يبانش من ورا الروابط */
+.lite .header.stuck{background:rgba(4,26,56,.95)}
