@@ -474,31 +474,29 @@ if (finePointer) {
 /* =========================================================
    ORDER — الأسعار، شريط الشراء، السلة، واتساب
    ========================================================= */
-/* الأسعار بالجنيه للكرتونة الواحدة (الكرتونة = pack × unit).
-   لو عايز شرائح سعر حسب العدد: زوّد tiers: [[أقل عدد كراتين, سعر الكرتونة], ...] وهيتطبّق تلقائي (الأعلى أولًا). */
-const P = (price, pack, unit, tiers) => ({ price, pack, unit, tiers: tiers || [] });
+/* محتوى الكرتونة الواحدة: P(العدد, الوحدة). مفيش أسعار في الموقع — الطلب بعدد الكراتين بس. */
+const P = (pack, unit) => ({ pack, unit });
 const PRICES = {
-  'مزيل الدهون الصعبة — جركن 10 لتر':            P(160, 1, 'جركن'),
-  'مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر': P(285, 1, 'جركن'),
-  'مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر': P(285, 1, 'جركن'),
-  'مزيل الدهون الصعبة — الأصفر 750 مل':          P(231, 12, 'زجاجة'),
-  'مزيل الدهون الصعبة — الأخضر 750 مل':          P(231, 12, 'زجاجة'),
-  'مزيل الدهون الصعبة — الأخضر 2 لتر':           P(315, 6, 'جركن'),
-  'مزيل الدهون الصعبة — الأصفر 2 لتر':           P(315, 6, 'جركن'),
-  'مزيل الدهون الصعبة — الأخضر 4 لتر':           P(380, 4, 'جركن'),
-  'مزيل الدهون الصعبة — الأصفر 4 لتر':           P(380, 4, 'جركن'),
-  'سائل غسول لليدين — عود 5 لتر':                P(480, 4, 'جركن'),
-  'سائل غسول لليدين — عنبر أحمر 5 لتر':          P(480, 4, 'جركن'),
-  'سائل غسول لليدين — لافندر 5 لتر':             P(480, 4, 'جركن'),
-  'معطر ملابس — نسيم البحر 2 لتر':               P(380, 6, 'جركن'),
-  'معطر ملابس — الورد 4 لتر':                   P(420, 4, 'جركن'),
-  'معطر ملابس — الورد 2 لتر':                   P(380, 6, 'جركن'),
-  'معطر ملابس — نسيم البحر 4 لتر':               P(420, 4, 'جركن'),
+  'مزيل الدهون الصعبة — جركن 10 لتر':            P(1, 'جركن'),
+  'مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر': P(1, 'جركن'),
+  'مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر': P(1, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 750 مل':          P(12, 'زجاجة'),
+  'مزيل الدهون الصعبة — الأخضر 750 مل':          P(12, 'زجاجة'),
+  'مزيل الدهون الصعبة — الأخضر 2 لتر':           P(6, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 2 لتر':           P(6, 'جركن'),
+  'مزيل الدهون الصعبة — الأخضر 4 لتر':           P(4, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 4 لتر':           P(4, 'جركن'),
+  'سائل غسول لليدين — عود 5 لتر':                P(4, 'جركن'),
+  'سائل غسول لليدين — عنبر أحمر 5 لتر':          P(4, 'جركن'),
+  'سائل غسول لليدين — لافندر 5 لتر':             P(4, 'جركن'),
+  'معطر ملابس — نسيم البحر 2 لتر':               P(6, 'جركن'),
+  'معطر ملابس — الورد 4 لتر':                   P(4, 'جركن'),
+  'معطر ملابس — الورد 2 لتر':                   P(6, 'جركن'),
+  'معطر ملابس — نسيم البحر 4 لتر':               P(4, 'جركن'),
 };
 const disp = n => n.replace(/ — /g, ' ');
 const fmt = n => Math.round(n).toLocaleString('en-US');
-const unitPrice = (it, n) => { const t = it.tiers.filter(x => n >= x[0]).sort((a, b) => b[0] - a[0])[0]; return t ? t[1] : it.price; };
-const lineTotal = (name, n) => unitPrice(PRICES[name], n) * n;
+const lineTotal = (name, n) => PRICES[name].pack * n;   /* إجمالي القطع في السطر */
 const MAXQ = 999;
 const toQ = v => clamp(parseInt(String(v).replace(/\D/g, ''), 10) || 1, 1, MAXQ);
 
@@ -509,16 +507,17 @@ try { const s = JSON.parse(localStorage.getItem('bh_cart') || '{}'); Object.keys
 const saveCart = () => { try { localStorage.setItem('bh_cart', JSON.stringify(cart)); } catch (e) {} };
 const cartNames = () => Object.keys(cart);
 const cartCount = () => cartNames().reduce((a, k) => a + cart[k], 0);
-const cartTotal = () => cartNames().reduce((a, k) => a + lineTotal(k, cart[k]), 0);
+const cartTotal = () => cartNames().reduce((a, k) => a + cart[k], 0);   /* إجمالي الكراتين */
 
 const qtyHTML = v => `<div class="qty q-s"><button type="button" data-d="-1" aria-label="تقليل">−</button><input type="text" inputmode="numeric" value="${v}" maxlength="3" aria-label="عدد الكراتين"><button type="button" data-d="1" aria-label="زيادة">+</button></div>`;
 const packTxt = it => `${it.pack} ${it.unit}`;
+const unitAr = (it, n) => it.unit;
 
 /* ---- شريط الشراء: بيتركّب مكان زرار «اطلب المنتج» ---- */
 function buildBuy(name) {
   const it = PRICES[name], d = document.createElement('div');
   d.className = 'buy'; d.dataset.sku = name;
-  d.innerHTML = `<div class="buy-price"><b>${fmt(it.price)}</b><span>جنيه</span><small>للكرتونة · ${packTxt(it)}</small></div>
+  d.innerHTML = `<div class="buy-price"><b>${it.pack}</b><span>${it.unit}</span><small>في الكرتونة</small></div>
     <div class="buy-lbl">عدد الكراتين</div>
     <div class="buy-row">${qtyHTML(1)}<button type="button" class="btn btn-card buy-add" aria-label="ضع في السلة"><span class="ba-t">ضع في السلة</span><span class="arr">+</span><svg class="ba-i" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L20.5 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg></button></div>
     <div class="buy-sum"></div>`;
@@ -526,7 +525,7 @@ function buildBuy(name) {
 }
 function buySum(d) {
   const n = toQ($('input', d).value), name = d.dataset.sku;
-  $('.buy-sum', d).textContent = n > 1 ? `${n} كرتونة = ${fmt(lineTotal(name, n))} جنيه` : '';
+  $('.buy-sum', d).textContent = n > 1 ? `${n} كرتونة = ${lineTotal(name, n)} ${PRICES[name].unit}` : '';
 }
 $$('#grid .order-product').forEach(b => {
   const name = b.dataset.product; if (!PRICES[name]) return;
@@ -557,20 +556,20 @@ $('#sumEdit').addEventListener('click', () => openCart(true));
 
 function lineHTML(k) {
   const it = PRICES[k], n = cart[k];
-  return `<li class="ci" data-sku="${k}"><div class="ci-top"><div class="ci-name">${disp(k)}<small>${fmt(unitPrice(it, n))} جنيه للكرتونة · ${packTxt(it)}</small></div><button type="button" class="ci-del" aria-label="حذف">×</button></div>
-    <div class="ci-bot">${qtyHTML(n)}<b class="ci-sum">${fmt(lineTotal(k, n))} <span>جنيه</span></b></div></li>`;
+  return `<li class="ci" data-sku="${k}"><div class="ci-top"><div class="ci-name">${disp(k)}<small>${packTxt(it)} في الكرتونة</small></div><button type="button" class="ci-del" aria-label="حذف">×</button></div>
+    <div class="ci-bot">${qtyHTML(n)}<b class="ci-sum">${lineTotal(k, n)} <span>${it.unit}</span></b></div></li>`;
 }
 function renderCart(bump) {
   const names = cartNames(), cnt = cartCount();
   cList.innerHTML = names.map(lineHTML).join('');
   cEmpty.hidden = names.length > 0; cFoot.hidden = !names.length;
-  cTotal.textContent = fmt(cartTotal());
+  cTotal.textContent = cartTotal();
   cBadge.textContent = cnt; cBadge.hidden = !cnt;
   fab.classList.toggle('has', cnt > 0);
   if (bump) { fab.classList.remove('bump'); void fab.offsetWidth; fab.classList.add('bump'); }
   cartHook && cartHook();
   oSum.innerHTML = names.length
-    ? `<ul>${names.map(k => `<li><span>${disp(k)}</span><em>${cart[k]} كرتونة</em><b>${fmt(lineTotal(k, cart[k]))} جنيه</b></li>`).join('')}</ul><div class="os-total"><span>الإجمالي</span><b>${fmt(cartTotal())} جنيه</b></div>`
+    ? `<ul>${names.map(k => `<li><span>${disp(k)}</span><em>${cart[k]} كرتونة</em><b>${lineTotal(k, cart[k])} ${PRICES[k].unit}</b></li>`).join('')}</ul><div class="os-total"><span>إجمالي الكراتين</span><b>${cartTotal()} كرتونة</b></div>`
     : `<p class="os-empty">السلة فاضية — اختار منتجاتك من <a href="#products">قسم المنتجات</a> وحدد عدد الكراتين.</p>`;
   $('#sumEdit').hidden = !names.length;
   saveCart();
@@ -579,13 +578,13 @@ function setLine(k, n) {
   if (n <= 0) delete cart[k]; else cart[k] = toQ(n);
   const li = $(`.ci[data-sku="${k}"]`, cList);
   if (!cart[k]) { renderCart(); return; }
-  if (li) { $('.ci-sum', li).firstChild.textContent = fmt(lineTotal(k, cart[k])) + ' '; $('small', li).textContent = `${fmt(unitPrice(PRICES[k], cart[k]))} جنيه للكرتونة · ${packTxt(PRICES[k])}`; }
-  cTotal.textContent = fmt(cartTotal()); cBadge.textContent = cartCount();
+  if (li) { $('.ci-sum', li).firstChild.textContent = lineTotal(k, cart[k]) + ' '; $('small', li).textContent = `${packTxt(PRICES[k])} في الكرتونة`; }
+  cTotal.textContent = cartTotal(); cBadge.textContent = cartCount();
   oSum.innerHTML = ''; renderCart_summaryOnly(); saveCart(); cartHook && cartHook();
 }
 function renderCart_summaryOnly() {
   const names = cartNames();
-  oSum.innerHTML = `<ul>${names.map(k => `<li><span>${disp(k)}</span><em>${cart[k]} كرتونة</em><b>${fmt(lineTotal(k, cart[k]))} جنيه</b></li>`).join('')}</ul><div class="os-total"><span>الإجمالي</span><b>${fmt(cartTotal())} جنيه</b></div>`;
+  oSum.innerHTML = `<ul>${names.map(k => `<li><span>${disp(k)}</span><em>${cart[k]} كرتونة</em><b>${lineTotal(k, cart[k])} ${PRICES[k].unit}</b></li>`).join('')}</ul><div class="os-total"><span>إجمالي الكراتين</span><b>${cartTotal()} كرتونة</b></div>`;
 }
 
 /* ---- أزرار العدّاد + إضافة للسلة + حذف (event delegation) ---- */
@@ -626,11 +625,11 @@ renderCart();
 /* ---- رسالة الطلب (هادية ومنظمة لواتساب) ---- */
 function buildMsg(o) {
   const when = new Date().toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
-  const items = o.items.map((x, i) => `${i + 1}. ${x.name}\n    ${x.cartons} كرتونة × ${fmt(x.price)} = ${fmt(x.total)} جنيه`).join('\n');
+  const items = o.items.map((x, i) => `${i + 1}. ${x.name}\n    ${x.cartons} كرتونة (${x.pieces} ${x.unit})`).join('\n');
   return [`*طلب جديد من برايت هوم*`, `الوقت: ${when}`, '',
     `الاسم: ${o.name}`, `الموبايل: ${o.phone}`, `العنوان: ${o.address}`, '',
     `الطلب:`, items, '',
-    `إجمالي الكراتين: ${o.cartons}`, `*الإجمالي: ${fmt(o.total)} جنيه*`,
+    `*إجمالي الكراتين: ${o.cartons}*`,
     ...(o.note ? ['', `ملاحظات: ${o.note}`] : [])].join('\n');
 }
 /* ---- إرسال الطلب على واتساب ---- */
@@ -650,8 +649,8 @@ form.addEventListener('submit', e => {
   if (!cartNames().length) { oSum.classList.remove('shake'); void oSum.offsetWidth; oSum.classList.add('shake'); toast('السلة فاضية — ضيف منتج واحد على الأقل'); return; }
   if (bad) { bad.focus(); toast('من فضلك كمّل البيانات المطلوبة'); return; }
 
-  const order = { name, phone, address, note: extra, cartons: cartCount(), total: cartTotal(),
-    items: cartNames().map(k => { const it = PRICES[k], n = cart[k]; return { name: disp(k), cartons: n, pack: it.pack, unit: it.unit, price: unitPrice(it, n), total: lineTotal(k, n) }; }) };
+  const order = { name, phone, address, note: extra, cartons: cartCount(),
+    items: cartNames().map(k => { const it = PRICES[k], n = cart[k]; return { name: disp(k), cartons: n, pack: it.pack, unit: it.unit, pieces: lineTotal(k, n) }; }) };
   const msg = buildMsg(order);
   const sendWA = () => {
   const num = (CONFIG.WHATSAPP_NUMBER || '').replace(/\D/g, '');
@@ -805,8 +804,8 @@ cards.forEach(card => {
     if (v.hue) card.style.setProperty('--hue', v.hue);
     if (img && v.img && !img.src.endsWith(v.img)) { setImgSrc(img, v.img); if (v.alt) img.alt = v.alt; reskin3D(j3, img); }
     by.dataset.sku = v.sku;
-    $('.buy-price b', by).textContent = fmt(it.price);
-    $('.buy-price small', by).textContent = 'للكرتونة · ' + packTxt(it);
+    $('.buy-price b', by).textContent = it.pack;
+    $('.buy-price span', by).textContent = it.unit;
     $('input', by).value = 1; buySum(by);
     $$('.var-list button', wrap).forEach((b, k) => b.setAttribute('aria-selected', k === i ? 'true' : 'false'));
     if (!quiet) cartHook && cartHook();
@@ -1181,6 +1180,20 @@ if (!reduce) requestAnimationFrame(fx);
     tabs.forEach(t => { const on = t === b; t.classList.toggle('is-on', on); t.setAttribute('aria-selected', on); });
     panels.forEach(pn => { pn.hidden = pn.dataset.p !== b.dataset.p; });
   }));
+}
+/* بيانات المنتج على الموبايل: طيّ/فتح الأعمدة بالضغط على العنوان */
+{
+  const mq = matchMedia('(max-width:860px)'), heads = $$('.pi-col h3');
+  const sync = () => heads.forEach(h => {
+    if (mq.matches) { h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', h.parentElement.classList.contains('open')); }
+    else { h.removeAttribute('role'); h.removeAttribute('tabindex'); h.removeAttribute('aria-expanded'); }
+  });
+  const toggle = h => { if (!mq.matches) return; const c = h.parentElement, on = !c.classList.contains('open'); c.classList.toggle('open', on); h.setAttribute('aria-expanded', on); };
+  heads.forEach(h => {
+    h.addEventListener('click', () => toggle(h));
+    h.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(h); } });
+  });
+  sync(); mq.addEventListener ? mq.addEventListener('change', sync) : mq.addListener(sync);
 }
 /* الرجوع للأعلى / اللوجو: قفزة فورية بدل سكرول طويل يمرّ على المشهد كله */
 $$('.to-top, .brand').forEach(a => a.addEventListener('click', e => {
