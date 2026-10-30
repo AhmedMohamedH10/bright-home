@@ -3,6 +3,8 @@
    Luxury edition · single stylesheet
    ========================================================= */
 
+@font-face{font-family:"Cairo";src:url("../assets/fonts/cairo-arabic.woff") format("woff");font-weight:400 800;font-style:normal;font-display:swap;unicode-range:U+0600-06FF,U+0750-077F,U+200C-200F,U+2010-2014,U+25CC,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:"Cairo";src:url("../assets/fonts/cairo-latin.woff") format("woff");font-weight:400 800;font-style:normal;font-display:swap;unicode-range:U+0020-007E,U+00A0-00FF,U+2018-2019,U+201C-201D,U+2022,U+2026,U+20AC,U+2122,U+2190,U+2193,U+2199,U+2212}
 @font-face{font-family:"Ghayaty";src:url("../assets/fonts/dg-ghayaty-bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
 @font-face{font-family:"Arakans";src:url("../assets/fonts/Arakans.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
 
@@ -244,7 +246,7 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .cl.c4{--x:-40px;--y:20px}.cl.c4 u{background:linear-gradient(135deg,#e6d9ff,#a98be8)}
 .cl.c5{--x:38px;--y:26px;width:58px;height:58px}.cl.c5 u{background:linear-gradient(135deg,#ffffff,#f1c9d7)}
 .cl.c6{--x:2px;--y:-2px;width:54px;height:54px}.cl.c6 u{background:linear-gradient(135deg,#b8e8ff,#5fb5e8)}
-.w-water{position:absolute;left:-10%;right:-10%;bottom:0;height:0;will-change:height;background:linear-gradient(180deg,rgba(130,215,255,.55),rgba(30,130,210,.78));z-index:3}
+.w-water{position:absolute;left:-10%;right:-10%;bottom:0;height:22%;transform:translate3d(0,100%,0);will-change:transform;background:linear-gradient(180deg,rgba(130,215,255,.55),rgba(30,130,210,.78));z-index:3}
 .w-wave{position:absolute;left:0;right:0;top:-14px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='16' viewBox='0 0 80 16'%3E%3Cpath d='M0 8 Q20 0 40 8 T80 8 V16 H0Z' fill='%2382d7ff' fill-opacity='.62'/%3E%3C/svg%3E") 0 0/80px 16px repeat-x;animation:wave 2.4s linear infinite}
 @keyframes wave{to{background-position:-80px 0}}
 .w-foam{position:absolute;top:0;right:0;bottom:0;left:0;z-index:4;opacity:0;transition:opacity .4s}
@@ -1052,3 +1054,83 @@ body.cart-open{overflow:hidden}
   .sc-rays,.sc-ring{display:none}
   .sc-fx .fx-spark i:nth-child(n+7){display:none}
 }
+
+
+/* =========================================================
+   PERF — أداء الموبايل (آخر الملف عشان يكسب على اللي قبله)
+   السبب الرئيسي للتهنيج: blur/backdrop-filter على عناصر كبيرة + أنيميشن دايم بيعيد الرسم + mix-blend
+   ========================================================= */
+
+/* أي قسم برا الشاشة: كل الأنيميشن الدايم يقف (الكلاس بيتحط من main.js) */
+.is-off *,.is-off *::before,.is-off *::after{animation-play-state:paused!important}
+
+/* عناصر اللمس: من غير تأخير/وميض الضغط */
+a,button,input,textarea,select,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+/* الطبقات (will-change) بس على المشهد القريب من الشاشة */
+.scent:not(.near) .sj{will-change:auto}
+
+@media (max-width:900px),(hover:none){
+  /* 1) مفيش backdrop-filter: بيعيد حساب الخلفية كل فريم سكرول (أتقل حاجة على الموبايل) — بنعوّض بخلفية أغمق */
+  .glass,.header,.header.stuck,.btn-ghost,.filters,.chips li,.feature,.toast,.var-list,.card,.cart-drawer,.cd-panel{
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .header,.header.stuck{background:rgba(4,26,56,.92);box-shadow:0 10px 24px -14px rgba(0,8,30,.8)}
+  .btn-ghost{background:rgba(255,255,255,.16)}
+  .filters{background:rgba(2,15,36,.62)}
+  .var-list{background:#041634}
+  .card{background:linear-gradient(160deg,rgba(255,255,255,.2),rgba(255,255,255,.08))}
+
+  /* 2) مفيش blur على عناصر بتتحرك أو بتتحوّل (transition على filter = إعادة رسم كل فريم) */
+  .reveal,.reveal.in,.products .reveal{filter:none!important}
+  .statement .w,.statement .w.on{filter:none!important;transition:opacity .4s}
+  .sc-panel,.sc-panel.is-on{filter:none!important}
+
+  /* 3) كُرات الإضاءة الكبيرة: الـ radial-gradient ناعم أصلًا، فنشيل الـ blur والحركة */
+  .story::before,.story::after,.orb{filter:none!important;animation:none!important}
+  .sc-halo,.medal::before,.c-glow,.fx-smoke i,.k-steam i,.k-lamp b::after,.sj-in::after{filter:none!important}
+  .fx-smoke i:nth-child(n+4){display:none}
+
+  /* 4) mix-blend-mode بيجبر المتصفح يرسم طبقة جانبية كاملة */
+  .k-glowwall{mix-blend-mode:normal!important;opacity:.55}
+  .sc-rays{display:none!important}
+
+  /* 5) أنيميشن بيغيّر background-position = إعادة رسم كل فريم (نصوص لامعة، لمعة الغسالة...) — بنثبّتها */
+  h2 em,.sc-cat,.sc-title.two .lm,.kc-top::after,.w-body::after{animation:none!important}
+
+  /* 6) زينة مطبخ الهيرو: نخفف عدد العناصر المتحركة */
+  .k-dust,.k-lamp b::after{display:none!important}
+  .k-steam i:nth-child(n+2){display:none}
+  .w-foam i:nth-child(n+6){display:none}
+
+  /* 7) ظلال النص التقيلة (3 drop-shadow) → واحدة */
+  .h-ar{filter:drop-shadow(0 6px 14px rgba(0,20,60,.6))!important}
+  .story-brand,.sc-title{filter:none!important;text-shadow:none}
+  .sc-title.two .lm,.sc-title.two .cc-g,.sc-title.two .cc-y,.sc-title.two .cc-l,.sc-title.two .cc-sea,.sc-title.two .cc-rose,
+  .sc-title.t-green,.sc-title.t-yellow,.sc-title.t-lime,#scents .sc-panel .sc-title{filter:drop-shadow(0 6px 14px rgba(0,0,20,.45))!important}
+  .sc-cat{filter:none!important}
+
+  /* 8) طبقات GPU: مفيش will-change دايم على عناصر كتير */
+  .sj{will-change:auto}
+  .scent.near .sj{will-change:transform,opacity}
+  .cam{will-change:auto}
+  .cl,.w-knob{will-change:auto}
+  .cl{filter:none}
+  .hero-title{will-change:auto}
+}
+
+/* وضع ultra (بيتفعّل تلقائيًا لو الفريمات بطيئة فعلًا): نوقف الزينة الدايمة */
+.ultra .sc-fx,.ultra .k-steam,.ultra .k-dust,.ultra .w-foam i:nth-child(n+3),.ultra .ribbon-track,.ultra .k-stream,.ultra .k-drop,
+.ultra .cursor-glow,.ultra #fx{display:none!important}
+.ultra .ribbon-track,.ultra .w-wave,.ultra .w-led,.ultra .sj-in{animation:none!important}
+.ultra .reveal{transition-duration:.01ms!important}
+
+/* =========================================================
+   الهيرو على الموبايل (portrait): المطبخ الثابت (حيطة/بلاط/دواليب/كاونترات/أرضية) صورة واحدة WebP
+   بدل ~40 عنصر CSS (gradients + shadows). الغسالة والمنتجات والبخار فوقها لسه عناصر حية.
+   الصورة متولدة من نفس المشهد (assets/img/kitchen-p.webp 900×1500) — لو غيّرت تصميم المطبخ لازم تعيد توليدها.
+   ========================================================= */
+.scene.p .k-wallglow,.scene.p .k-dust,.scene.p .k-upper,.scene.p .k-floor,.scene.p .k-counter{display:none!important}
+.scene.p .k-tiles{top:0!important;left:0!important;right:auto!important;bottom:auto!important;width:900px!important;height:1500px!important;
+  background:url("../assets/img/kitchen-p.webp") 0 0/100% 100% no-repeat!important;border:0!important;box-shadow:none!important;opacity:1!important;
+  -webkit-mask-image:none!important;mask-image:none!important;filter:none!important}
+.scene.p .k-tiles::before,.scene.p .k-tiles::after{display:none!important}

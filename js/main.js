@@ -17,7 +17,9 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
 const rand = (a, b) => a + Math.random() * (b - a);
 /* أجهزة ضعيفة (رام/معالج قليل): بنقلل الطبقات والجسيمات */
-const lite = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 2);
+/* أي موبايل/تابلت بلمس بيتعامل كجهاز «خفيف» (حتى لو معالجه 8 أنوية — التهنيج بييجي من الرسم مش من المعالج) */
+const touchDev = matchMedia('(hover:none) and (pointer:coarse)').matches && Math.min(screen.width, screen.height) < 900;
+const lite = touchDev || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 2);
 if (lite) document.documentElement.classList.add('lite');
 let vw = innerWidth, vh = innerHeight;
 
@@ -83,14 +85,22 @@ const navLinks = $$('.nav a');
   secs.forEach(s => io.observe(s));
 }
 const orderSec = $('#order'), scTrackEls = $$('.scent-track');
+/* قياسات متخزنة: قراءة getBoundingClientRect / scrollHeight في كل فريم كانت بتجبر المتصفح يحسب التخطيط من أول وجديد = تهنيج */
+let maxScroll = 0, orderPassed = false, lastStuck = null, lastProg = -1, lastCta = null;
+const inScent = new Set();
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(es => es.forEach(e => { orderPassed = e.isIntersecting || e.boundingClientRect.top < 0; ticking = true; }), { rootMargin: '0px 0px -40% 0px' }).observe(orderSec);
+  const ioSc = new IntersectionObserver(es => es.forEach(e => { e.isIntersecting ? inScent.add(e.target) : inScent.delete(e.target); ticking = true; }), { rootMargin: '-49% 0px -49% 0px' });
+  scTrackEls.forEach(t => ioSc.observe(t));
+}
 function chrome() {
-  const y = scrollY, max = document.documentElement.scrollHeight - vh;
-  header.classList.toggle('stuck', y > 40);
-  progBar.style.transform = `scaleX(${max > 0 ? clamp(y / max) : 0})`;
+  const y = scrollY;
+  const st = y > 40; if (st !== lastStuck) { lastStuck = st; header.classList.toggle('stuck', st); }
+  const p = maxScroll > 0 ? Math.round(clamp(y / maxScroll) * 1000) / 1000 : 0;
+  if (p !== lastProg) { lastProg = p; progBar.style.transform = `scaleX(${p})`; }
   if (mCta) {
-    const r = orderSec.getBoundingClientRect();
-    const inScent = scTrackEls.some(t => { const sr = t.getBoundingClientRect(); return sr.top < vh * .5 && sr.bottom > vh * .5; });
-    mCta.classList.toggle('on', y > 120 && !(r.top < vh * .6) && !inScent);
+    const on = y > 120 && !orderPassed && !inScent.size;
+    if (on !== lastCta) { lastCta = on; mCta.classList.toggle('on', on); }
   }
 }
 
@@ -125,61 +135,93 @@ function fitScene() {
   cam.style.transform = 'none';
   const r = glass.getBoundingClientRect(), pr = pin.getBoundingClientRect();
   door = { x: r.left - pr.left + r.width / 2, y: r.top - pr.top + r.height / 2, r: r.width / 2 };
+  measure();
 }
 
 let heroTarget = 0, heroP = 0;          /* px اللي اتسكرلت جوه الهيرو */
-const heroSpan = () => vh * .85;        /* المسافة اللي الغسالة بتخلّص فيها دورتها (عدّاد/مية) */
-function heroProgress() {
+let heroTop = 0, heroH = 0;
+function measure() {
   const r = hero.getBoundingClientRect();
-  heroTarget = clamp(-r.top, 0, Math.max(0, r.height));
-  return r;
+  heroTop = r.top + scrollY; heroH = r.height;
+  maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
+}
+const heroSpan = () => vh * .85;        /* المسافة اللي الغسالة بتخلّص فيها دورتها (عدّاد/مية) */
+const heroBox = { top: 0, bottom: 0 };
+function heroProgress() {
+  /* من غير قراءة تخطيط: الهيرو أول قسم وارتفاعه ثابت (100svh) فبنحسب من scrollY */
+  const y = scrollY;
+  heroTarget = clamp(y - heroTop, 0, Math.max(0, heroH));
+  heroBox.top = heroTop - y; heroBox.bottom = heroTop + heroH - y;
+  return heroBox;
 }
 const modes = [[.15, 'FILL'], [.45, 'WASH'], [.65, 'RINSE'], [.88, 'DRY'], [2, 'END']];
+/* كل كتابة في الستايل هنا بقت بتحصل بس لما القيمة تتغير فعلًا (كانت بتتكتب كل فريم) */
+let lastHP = -1, lastWsh = -1, lastDrum = '', lastWater = '', lastFoam = -1, lastTime = '', lastMode = '', lastKnob = '', lastHint = null, lastMeter = '';
 function updateHero(time) {
+  if (heroP === lastHP) return;      /* مفيش حركة سكرول = مفيش شغل */
+  lastHP = heroP;
   const ps = clamp(heroP / heroSpan()), t = ps;
 
   /* دراع الرش بيلف (من الأمام بيبان بيتمدد ويضيق) والأطباق بترتعش خفيف وقت الغسيل */
   const ang = heroP * 1.7;
-  drum.style.transform = `scaleX(${Math.cos(ang / 26).toFixed(3)})`;
+  const dr = `scaleX(${Math.cos(ang / 26).toFixed(2)})`;
+  if (dr !== lastDrum) { lastDrum = dr; drum.style.transform = dr; }
   const wsh = reduce ? 0 : clamp((t - .12) / .06) * (1 - clamp((t - .64) / .08));
-  cls.forEach((c, i) => {
-    c.style.transform = `translate(${(Math.sin(ang / 9 + i * 1.3) * 1.6 * wsh).toFixed(2)}px,${(Math.cos(ang / 11 + i) * 1.1 * wsh).toFixed(2)}px) rotate(${(Math.sin(ang / 7 + i * 2) * 2.2 * wsh).toFixed(2)}deg)`;
-  });
+  if (wsh !== 0 || lastWsh !== 0) {
+    lastWsh = wsh;
+    cls.forEach((c, i) => {
+      c.style.transform = `translate(${(Math.sin(ang / 9 + i * 1.3) * 1.6 * wsh).toFixed(1)}px,${(Math.cos(ang / 11 + i) * 1.1 * wsh).toFixed(1)}px) rotate(${(Math.sin(ang / 7 + i * 2) * 2.2 * wsh).toFixed(1)}deg)`;
+    });
+  }
 
-  /* water */
+  /* water — بالـ transform بدل height عشان ميعملش إعادة تخطيط كل فريم */
   let lvl = 0;
   if (t < .15) lvl = (t / .15) * .5; else if (t < .6) lvl = .5; else if (t < .86) lvl = .5 * (1 - (t - .6) / .26);
-  water.style.height = (lvl * 44) + '%';
-  foam.style.opacity = (t > .1 && t < .72) ? 1 : 0;
+  const wv = `translate3d(0,${((1 - lvl * 2) * 100).toFixed(1)}%,0)`;
+  if (wv !== lastWater) { lastWater = wv; water.style.transform = wv; }
+  const fo = (t > .1 && t < .72) ? 1 : 0;
+  if (fo !== lastFoam) { lastFoam = fo; foam.style.opacity = fo; }
 
   /* display */
   const remain = Math.max(0, Math.round(42 * (1 - t)));
-  timeEl.textContent = '00:' + String(remain).padStart(2, '0');
-  modeEl.textContent = (modes.find(m => t < m[0]) || modes[4])[1];
-  knob.style.transform = `rotate(${t * 540}deg)`;
+  const tx = '00:' + String(remain).padStart(2, '0');
+  if (tx !== lastTime) { lastTime = tx; timeEl.textContent = tx; }
+  const md = (modes.find(m => t < m[0]) || modes[4])[1];
+  if (md !== lastMode) { lastMode = md; modeEl.textContent = md; }
+  const kn = `rotate(${(t * 540).toFixed(1)}deg)`;
+  if (kn !== lastKnob) { lastKnob = kn; knob.style.transform = kn; }
 
   /* التلميح يختفي أول ما العميل يبدأ ينزل؛ باقي العناصر بتتحرك مع الصفحة عادي */
-  if (hintEl) { hintEl.style.animation = heroP > 8 ? 'none' : ''; hintEl.style.opacity = heroP > 8 ? 0 : ''; }
-  meter.style.transform = `scaleX(${clamp(heroP / Math.max(1, vh))})`;
+  const hd = heroP > 8;
+  if (hintEl && hd !== lastHint) { lastHint = hd; hintEl.style.animation = hd ? 'none' : ''; hintEl.style.opacity = hd ? 0 : ''; }
+  const mt = `scaleX(${clamp(heroP / Math.max(1, vh)).toFixed(3)})`;
+  if (mt !== lastMeter) { lastMeter = mt; meter.style.transform = mt; }
 }
 
 /* =========================================================
    STORY — statement words light up with scroll
    ========================================================= */
 const stWords = $$('#statement .w'), stEl = $('#statement');
+let stNear = true, stLast = -1;
+if (stEl && 'IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { stNear = e.isIntersecting; ticking = true; }), { rootMargin: '0px' }).observe(stEl);
 function updateStatement() {
-  if (!stEl) return;
+  if (!stEl || !stNear) return;
   const r = stEl.getBoundingClientRect();
   if (r.bottom < 0 || r.top > vh) return;
   const p = clamp((vh * .82 - r.top) / (r.height + vh * .32));
   const n = Math.round(p * stWords.length * 1.15);
-  stWords.forEach((w, i) => w.classList.toggle('on', i < n));
+  if (n === stLast) return;
+  /* بنبدّل بس الكلمات اللي حالتها اتغيرت بدل كل الكلمات */
+  const lo = stLast < 0 ? 0 : Math.min(n, stLast), hi = stLast < 0 ? stWords.length : Math.min(stWords.length, Math.max(n, stLast));
+  for (let i = lo; i < hi; i++) stWords[i].classList.toggle('on', i < n);
+  stLast = n;
 }
 
 /* =========================================================
    SCENTS — pinned scene, jugs swap with scroll
    ========================================================= */
 /* كل .scent مشهد مستقل (عطور اليدين / 2 لتر / 4 لتر / 20 لتر): تراك مثبّت + جراكن بتتبدّل مع السكرول */
+const mobQ = matchMedia('(max-width:900px),(hover:none)');
 const scenes = $$('.scent').map(sec => {
   const S = {
     sec, track: $('.scent-track', sec), stage: $('.scent-stage', sec), jugs: $$('.sj', sec), panels: $$('.sc-panel', sec),
@@ -232,7 +274,7 @@ const scenes = $$('.scent').map(sec => {
     const moving = S.F !== S.T || Math.abs(S.tiltX - S.tX) > .002 || Math.abs(S.tiltY - S.tY) > .002;
     if (!moving && S._drawn) return;
     S._drawn = !moving;
-    const mob = matchMedia('(max-width:900px),(hover:none)').matches;
+    const mob = mobQ.matches;
     S.jugs.forEach((j, i) => {
       const d = S.d(i), ad = Math.abs(d);
       const x = -d * w * .5, z = -ad * 60, k = 1 - Math.min(ad, 1.4) * .06;
@@ -258,29 +300,63 @@ const scenes = $$('.scent').map(sec => {
   }, { passive: true });
   S.stage.addEventListener('touchcancel', () => { S.hold = false; sx = null; }, { passive: true });
   if (finePointer) S.stage.addEventListener('pointermove', e => { const r = S.box.getBoundingClientRect(); S.tX = ((e.clientX - r.left) / r.width - .5) * 2; S.tY = ((e.clientY - r.top) / r.height - .5) * 2; }, { passive: true });
-  if ('IntersectionObserver' in window) new IntersectionObserver(es => { S.visible = es[0].isIntersecting; }, { rootMargin: '80px' }).observe(S.stage);
+  S.near = true;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => { S.visible = es[0].isIntersecting; }, { rootMargin: '80px' }).observe(S.stage);
+    /* المشهد القريب بس هو اللي بيتحدّث وبياخد will-change (طبقات GPU أقل = ذاكرة أقل على الموبايل) */
+    new IntersectionObserver(es => { S.near = es[0].isIntersecting; sec.classList.toggle('near', S.near); ticking = true; }, { rootMargin: '50px 0px' }).observe(S.track);
+  }
   return S;
 });
 
 /* =========================================================
    MAIN SCROLL LOOP
    ========================================================= */
-let ticking = true, scrollVel = 0, lastY = scrollY, heroWasVisible = true;
+var ticking = true;
+let scrollVel = 0, lastY = scrollY, heroWasVisible = true;
 addEventListener('scroll', () => { ticking = true; }, { passive: true });
 let lastW = innerWidth, lastH = innerHeight;
+let rsT = 0;
 addEventListener('resize', () => {
   const dW = Math.abs(innerWidth - lastW), dH = Math.abs(innerHeight - lastH);
   /* على الموبايل: ظهور/اختفاء شريط المتصفح بيغيّر الارتفاع بس — منعيدش بناء المشهد */
   if (dW < 2 && dH < 170 && matchMedia('(hover:none)').matches) {
     vh = innerHeight; ticking = true;
+    maxScroll = Math.max(0, document.documentElement.scrollHeight - innerHeight);
     if (cv.height < vh * dpr) cv.height = vh * dpr;
     return;
   }
   lastW = innerWidth; lastH = innerHeight;
-  fitScene(); ticking = true; sizeCanvas(); movePill(); resize3D();
+  /* تدوير الشاشة/تغيير المقاس: ننتظر لحد ما يهدّى (debounce) بدل إعادة بناء كل ما يتغير بكسل */
+  clearTimeout(rsT);
+  rsT = setTimeout(() => { fitScene(); ticking = true; sizeCanvas(); movePill(); resize3D(); }, 120);
 });
+/* لو طول الصفحة اتغيّر (صور/خطوط اتحمّلت) نحدّث القياسات المتخزنة */
+if ('ResizeObserver' in window) { let mT = 0; new ResizeObserver(() => { cancelAnimationFrame(mT); mT = requestAnimationFrame(() => { measure(); ticking = true; }); }).observe(document.body); }
+
+/* مراقب الأداء: لو الفريمات بطيئة فعلًا (أقل من ~30fps لثواني) نشغّل وضع «ultra» ونوقف الزينة */
+let pfT = 0, pfSum = 0, pfN = 0, pfBad = 0;
+function perfWatch(time) {
+  if (document.hidden) { pfT = 0; return; }
+  if (pfT) {
+    const d = time - pfT;
+    if (d < 250) { pfSum += d; pfN++; }
+    if (pfN >= 50) {
+      pfBad = (pfSum / pfN > 31) ? pfBad + 1 : 0;
+      pfSum = pfN = 0;
+      if (pfBad >= 2 && !ultra) goUltra();
+    }
+  }
+  pfT = time;
+}
+let ultra = false;
+function goUltra() {
+  ultra = true; document.documentElement.classList.add('lite', 'ultra');
+  cv.style.display = 'none'; trail.length = 0; pops.length = 0;
+}
 
 function frame(time) {
+  perfWatch(time);
   const y = scrollY; scrollVel = lerp(scrollVel, y - lastY, .2); lastY = y;
   const hr = heroProgress();
   const heroVisible = hr.bottom > -50 && hr.top < vh + 50;
@@ -290,14 +366,12 @@ function frame(time) {
   else heroP = lerp(heroP, heroTarget, .5);
   if (Math.abs(heroTarget - heroP) < .5) heroP = heroTarget;
   heroWasVisible = heroVisible;
-  const scNear = [];
-  for (const S of scenes) { const r = S.progress(); if (r.bottom > -50 && r.top < vh + 50) scNear.push(S); }
-  if (ticking || Math.abs(heroTarget - heroP) > .3 || heroVisible) {
+  if (ticking || Math.abs(heroTarget - heroP) > .3) {
     chrome();
     if (heroVisible) updateHero(time);
     updateStatement();
   }
-  for (const S of scNear) { S.auto(time); S.update(); }
+  for (const S of scenes) if (S.near) { S.auto(time); S.update(); }
   if (Math.abs(heroTarget - heroP) < .3 && Math.abs(scrollVel) < .1) ticking = false;
   requestAnimationFrame(frame);
 }
@@ -627,7 +701,7 @@ cards.forEach(card => {
   const floor = document.createElement('i'); floor.className = 'c-floor'; floor.setAttribute('aria-hidden', 'true');
   vis.insertBefore(stage, img);
   stage.appendChild(floor); if (boxes) stage.appendChild(boxes); stage.appendChild(img);
-  img.removeAttribute('loading');
+  /* نسيب loading="lazy" زي ما هي: الصور تحت الشاشة ماتتحمّلش وماتتفكش لحد ما العميل يقرّب منها */
   cardScenes.push({ card, stage, j3: null });
 });
 /* =========================================================
@@ -642,6 +716,14 @@ function reskin3D(o, img) {
   const c1 = hex2rgb(o.sd.a), c2 = hex2rgb(o.sd.b);
   $$('.p3d-d', o.host).forEach((d, i) => d.style.setProperty('--c', mixc(c2, c1, i / Math.max(1, o.N - 1))));
   size3D(o);
+}
+/* نسخة موبايل أصغر لصور المنتجات الكبيرة (srcset)؛ لازم نحدّث srcset مع src لأن المتصفح بيفضّل srcset */
+const HAS_M = {"amber.webp": [438, 616], "g2.webp": [438, 616], "g4.webp": [438, 616], "jug10l.webp": [441, 620], "lavender.webp": [438, 616], "lemon20.webp": [533, 750], "lime20.webp": [533, 750], "oud.webp": [438, 616], "rose.webp": [438, 616], "sea.webp": [438, 616], "y2.webp": [438, 616], "y4.webp": [438, 616]};
+function setImgSrc(img, url) {
+  const n = (url.match(/products\/([\w-]+\.webp)$/) || [])[1];
+  if (n && HAS_M[n]) img.srcset = 'assets/products/m/' + n + ' ' + HAS_M[n][0] + 'w, ' + url + ' ' + HAS_M[n][1] + 'w';
+  else img.removeAttribute('srcset');
+  img.src = url;
 }
 const varCards = [];
 const closeVars = except => varCards.forEach(c => { if (c !== except) c._close(); });
@@ -675,7 +757,7 @@ cards.forEach(card => {
     $('.var-name', btn).textContent = v.label;
     if (cat && v.cat) cat.textContent = v.cat;
     if (v.hue) card.style.setProperty('--hue', v.hue);
-    if (img && v.img && !img.src.endsWith(v.img)) { img.src = v.img; if (v.alt) img.alt = v.alt; reskin3D(j3, img); }
+    if (img && v.img && !img.src.endsWith(v.img)) { setImgSrc(img, v.img); if (v.alt) img.alt = v.alt; reskin3D(j3, img); }
     by.dataset.sku = v.sku;
     $('.buy-price b', by).textContent = fmt(it.price);
     $('.buy-price small', by).textContent = 'للكرتونة · ' + packTxt(it);
@@ -903,7 +985,7 @@ const cv = $('#fx'), cx = cv.getContext('2d');
 let dpr = 1, bubbles = [];
 
 /* ---------- فقاقيع الماوس / الصباع ---------- */
-const trail = [], pops = [], MAXT = lite ? 10 : 20;
+const trail = [], pops = [], MAXT = lite ? 8 : 20;
 let ptrIn = false, ptrX = 0, ptrY = 0, lbx = -1, lby = -1, bAcc = 0, lastIdle = 0, lastFx = 0;
 function spawnBubble(x, y, speed, ang) {
   const burst = ang != null, sp = burst ? rand(1.2, 3) : 0;
@@ -928,15 +1010,40 @@ function movePtr(x, y, touch) {
 if (!reduce) {
   addEventListener('pointermove', e => { if (e.pointerType !== 'touch') movePtr(e.clientX, e.clientY, false); }, { passive: true });
   addEventListener('pointerdown', e => { if (e.pointerType !== 'touch') burstAt(e.clientX, e.clientY, 4); }, { passive: true });
-  addEventListener('touchstart', e => { const t = e.touches[0]; if (!t) return; lbx = t.clientX; lby = t.clientY; ptrX = mx = t.clientX; ptrY = my = t.clientY; ptrIn = hasPtr = true; burstAt(t.clientX, t.clientY, 3); }, { passive: true });
-  addEventListener('touchmove', e => { const t = e.touches[0]; if (t) movePtr(t.clientX, t.clientY, true); }, { passive: true });
-  const endTouch = () => { lbx = -1; ptrIn = false; hasPtr = false; };
+  /* لمس: فقاعات بس عند «الضغطة» السريعة. أثناء السحب/السكرول مفيش فقاقيع (كانت بتتنافس مع السكرول وتهنّج) */
+  let tx0 = 0, ty0 = 0, tt0 = 0, tmv = 0;
+  addEventListener('touchstart', e => { const t = e.touches[0]; if (!t) return; tx0 = t.clientX; ty0 = t.clientY; tt0 = performance.now(); tmv = 0; mx = t.clientX; my = t.clientY; hasPtr = true; }, { passive: true });
+  addEventListener('touchmove', e => { const t = e.touches[0]; if (t) tmv = Math.max(tmv, Math.hypot(t.clientX - tx0, t.clientY - ty0)); }, { passive: true });
+  const endTouch = e => {
+    hasPtr = false; ptrIn = false; lbx = -1;
+    if (e && e.type === 'touchend' && tmv < 10 && performance.now() - tt0 < 350 && !ultra) burstAt(tx0, ty0, 3);
+  };
   addEventListener('touchend', endTouch, { passive: true }); addEventListener('touchcancel', endTouch, { passive: true });
   document.documentElement.addEventListener('mouseleave', () => { ptrIn = false; hasPtr = false; lbx = -1; });
 }
+/* الفقاقيع بتترسم مرة واحدة كـ sprite وبعدين drawImage (بدل إنشاء gradient لكل فقاعة في كل فريم — ده كان تقيل جدًا على الموبايل) */
+const SPR = 64, spriteCache = {};
+function makeSprite(hue) {
+  const c = document.createElement('canvas'); c.width = c.height = SPR;
+  const g = c.getContext('2d'), m = SPR / 2, R = m - 3;
+  const fill = g.createRadialGradient(m - R * .25, m - R * .3, R * .1, m, m, R);
+  fill.addColorStop(0, 'rgba(255,255,255,.05)'); fill.addColorStop(.72, 'rgba(160,225,255,.12)'); fill.addColorStop(.93, 'rgba(215,242,255,.36)'); fill.addColorStop(1, 'rgba(255,255,255,.55)');
+  g.beginPath(); g.arc(m, m, R, 0, 6.283); g.fillStyle = fill; g.fill();
+  if (hue == null) { g.lineWidth = 2; g.strokeStyle = 'rgba(255,255,255,.6)'; }
+  else {
+    const rg = g.createLinearGradient(m - R, m - R, m + R, m + R);
+    rg.addColorStop(0, `hsla(${hue},95%,78%,.85)`); rg.addColorStop(.5, 'rgba(255,255,255,.18)'); rg.addColorStop(1, `hsla(${(hue + 150) % 360},95%,78%,.8)`);
+    g.lineWidth = 3; g.strokeStyle = rg;
+  }
+  g.stroke();
+  g.beginPath(); g.ellipse(m - R * .36, m - R * .4, R * .24, R * .12, -.7, 0, 6.283); g.fillStyle = 'rgba(255,255,255,.9)'; g.fill();
+  g.beginPath(); g.arc(m + R * .4, m + R * .42, R * .08, 0, 6.283); g.fillStyle = 'rgba(255,255,255,.6)'; g.fill();
+  return c;
+}
+const sprite = hue => { const k = hue == null ? 'w' : Math.round(hue / 40) % 9; return spriteCache[k] || (spriteCache[k] = makeSprite(hue == null ? null : (k * 40))); };
 function drawTrail(time) {
   const dt = Math.min(48, time - lastFx || 16); lastFx = time;
-  if (ptrIn && !('ontouchstart' in window && !finePointer) && time - lastIdle > 1300 && trail.length < MAXT) { lastIdle = time; spawnBubble(ptrX + rand(-10, 10), ptrY + rand(-6, 6), 0); }
+  if (ptrIn && !touchDev && time - lastIdle > 1300 && trail.length < MAXT) { lastIdle = time; spawnBubble(ptrX + rand(-10, 10), ptrY + rand(-6, 6), 0); }
   const k = dt / 16;
   for (let i = trail.length - 1; i >= 0; i--) {
     const b = trail[i];
@@ -946,16 +1053,8 @@ function drawTrail(time) {
     const R = b.r * (1 + b.age / b.max * .14);
     const hit = ptrIn && b.age > 380 && Math.hypot(ptrX - bx, ptrY - b.y) < R + 3;
     if (b.age >= b.max || b.y < -30 || hit) { popAt(b, bx); trail.splice(i, 1); continue; }
-    const fade = Math.min(1, b.age / 140) * (1 - clamp((b.age - b.max * .88) / (b.max * .12)));
-    cx.globalAlpha = fade;
-    let g = cx.createRadialGradient(bx - R * .25, b.y - R * .3, R * .1, bx, b.y, R);
-    g.addColorStop(0, 'rgba(255,255,255,.05)'); g.addColorStop(.72, 'rgba(160,225,255,.12)'); g.addColorStop(.93, 'rgba(215,242,255,.36)'); g.addColorStop(1, 'rgba(255,255,255,.55)');
-    cx.beginPath(); cx.arc(bx, b.y, R, 0, 6.283); cx.fillStyle = g; cx.fill();
-    const rg = cx.createLinearGradient(bx - R, b.y - R, bx + R, b.y + R);
-    rg.addColorStop(0, `hsla(${b.hue},95%,78%,.85)`); rg.addColorStop(.5, 'rgba(255,255,255,.18)'); rg.addColorStop(1, `hsla(${(b.hue + 150) % 360},95%,78%,.8)`);
-    cx.lineWidth = 1.4; cx.strokeStyle = rg; cx.stroke();
-    cx.beginPath(); cx.ellipse(bx - R * .36, b.y - R * .4, R * .24, R * .12, -.7, 0, 6.283); cx.fillStyle = 'rgba(255,255,255,.9)'; cx.fill();
-    cx.beginPath(); cx.arc(bx + R * .4, b.y + R * .42, R * .08, 0, 6.283); cx.fillStyle = 'rgba(255,255,255,.6)'; cx.fill();
+    cx.globalAlpha = Math.min(1, b.age / 140) * (1 - clamp((b.age - b.max * .88) / (b.max * .12)));
+    cx.drawImage(sprite(b.hue), bx - R * 1.1, b.y - R * 1.1, R * 2.2, R * 2.2);
   }
   for (let i = pops.length - 1; i >= 0; i--) {
     const p = pops[i]; p.age += dt;
@@ -976,20 +1075,22 @@ function sizeCanvas() {
 function mkBubble(init) {
   return { x: rand(0, vw), y: init ? rand(0, vh) : vh + rand(20, 200), r: rand(3, 16), sp: rand(.18, .55), ph: rand(0, 6.28), sw: rand(8, 26), a: rand(.25, .55) };
 }
+let fxPrev = 0;
 function fx(time) {
-  if (document.hidden) return requestAnimationFrame(fx);
+  if (ultra) return;                                   /* وضع ultra: الفقاقيع واقفة خالص */
+  if (document.hidden) { fxPrev = 0; return requestAnimationFrame(fx); }
+  /* الموبايل: 30 فريم/ث للفقاقيع بدل 60 — نص الشغل ومش بتتفرق بالعين */
+  if (lite && time - fxPrev < 30) return requestAnimationFrame(fx);
+  const kk = fxPrev ? clamp((time - fxPrev) / 16.67, .5, 3) : 1; fxPrev = time;
   cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, vw, vh);
-  const boost = clamp(Math.abs(scrollVel) * .03, 0, 1.2);
+  const boost = clamp(Math.abs(scrollVel) * .03, 0, 1.2), spr = sprite(null);
   for (const b of bubbles) {
-    b.y -= b.sp * (1 + boost) + (scrollVel > 0 ? 0 : -scrollVel * .1);
+    b.y -= (b.sp * (1 + boost) + (scrollVel > 0 ? 0 : -scrollVel * .1)) * kk;
     const x = b.x + Math.sin(time / 1400 + b.ph) * b.sw;
     if (b.y < -40) Object.assign(b, mkBubble(false));
-    const g = cx.createRadialGradient(x - b.r * .35, b.y - b.r * .35, b.r * .1, x, b.y, b.r);
-    g.addColorStop(0, `rgba(255,255,255,${b.a * .7})`); g.addColorStop(.6, `rgba(190,235,255,${b.a * .12})`); g.addColorStop(1, `rgba(255,255,255,${b.a * .3})`);
-    cx.beginPath(); cx.arc(x, b.y, b.r, 0, 6.283); cx.fillStyle = g; cx.fill();
-    cx.lineWidth = 1; cx.strokeStyle = `rgba(255,255,255,${b.a * .6})`; cx.stroke();
-    cx.beginPath(); cx.arc(x - b.r * .3, b.y - b.r * .3, b.r * .22, 0, 6.283); cx.fillStyle = `rgba(255,255,255,${b.a})`; cx.fill();
+    cx.globalAlpha = b.a; cx.drawImage(spr, x - b.r * 1.1, b.y - b.r * 1.1, b.r * 2.2, b.r * 2.2);
   }
+  cx.globalAlpha = 1;
   drawTrail(time);
   requestAnimationFrame(fx);
 }
@@ -998,6 +1099,11 @@ function fx(time) {
    Init
    --------------------------------------------------------- */
 fitScene(); sizeCanvas(); chrome();
+/* أي قسم برا الشاشة: نوقف الأنيميشن الدايم بتاعه (دخان/بخار/جسيمات/لمعة...) — كانت شغالة طول الوقت حتى وهي مش ظاهرة */
+if ('IntersectionObserver' in window) {
+  const ioOff = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('is-off', !e.isIntersecting)), { rootMargin: '120px 0px' });
+  $$('main > section, main > .ribbon, footer.footer').forEach(el => ioOff.observe(el));
+}
 if (!reduce) requestAnimationFrame(fx);
 /* رقم الدعم الفني في الفوتر (من CONFIG.WHATSAPP_NUMBER) */
 {
