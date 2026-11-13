@@ -8,4 +8,7 @@ const CONFIG = {
 
   // اختياري: إرسال تلقائي بالكامل عبر Meta (server/worker.js). فاضي = الطلب بيفتح واتساب للعميل
   ORDER_API: '',
+
+  // اختياري: رابط Google Apps Script بتاع طلبات «التقديم كموزع» (بيحفظها في Google Sheet ويبعت إيميل). الخطوات في server/README.md. فاضي = واتساب بس
+  APPLY_API: '',
 };

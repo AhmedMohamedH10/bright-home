@@ -19,7 +19,16 @@ const rand = (a, b) => a + Math.random() * (b - a);
 /* أجهزة ضعيفة (رام/معالج قليل): بنقلل الطبقات والجسيمات */
 /* أي موبايل/تابلت بلمس بيتعامل كجهاز «خفيف» (حتى لو معالجه 8 أنوية — التهنيج بييجي من الرسم مش من المعالج) */
 const touchDev = matchMedia('(hover:none) and (pointer:coarse)').matches && Math.min(screen.width, screen.height) < 900;
-const lite = touchDev || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 2);
+/* تخفيف تلقائي على 3 مستويات: full (كامل) ← lite (خفيف) ← ultra (أخف حاجة).
+   بيبدأ كامل على الجهاز القوي، ولو لقى النت بطيء أو الإطارات بتقع بينزل مستوى لوحده.
+   للتجربة: أضف ?perf=full أو ?perf=lite أو ?perf=ultra لرابط الموقع. */
+const perfQ = (new URLSearchParams(location.search).get('perf') || '').toLowerCase();
+const perfSaved = (() => { try { return sessionStorage.getItem('bh-perf') || ''; } catch (e) { return ''; } })();
+const perfRemember = t => { try { sessionStorage.setItem('bh-perf', t); } catch (e) {} };
+const nconn = navigator.connection || {};
+const slowNet = !!nconn.saveData || /2g|3g/.test(nconn.effectiveType || '');
+let lite = perfQ === 'full' ? false : !!(perfQ === 'lite' || perfQ === 'ultra' || perfSaved || slowNet || touchDev
+  || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 2));
 if (lite) document.documentElement.classList.add('lite');
 let vw = innerWidth, vh = innerHeight;
 
@@ -382,25 +391,40 @@ addEventListener('resize', () => {
 if ('ResizeObserver' in window) { let mT = 0; new ResizeObserver(() => { cancelAnimationFrame(mT); mT = requestAnimationFrame(() => { measure(); ticking = true; }); }).observe(document.body); }
 
 /* مراقب الأداء: لو الفريمات بطيئة فعلًا (أقل من ~30fps لثواني) نشغّل وضع «ultra» ونوقف الزينة */
-let pfT = 0, pfSum = 0, pfN = 0, pfBad = 0;
+let pfT = 0, pfSum = 0, pfN = 0, pfBad = 0, pfFrom = 0;
 function perfWatch(time) {
-  if (document.hidden) { pfT = 0; return; }
+  if (perfQ === 'full' || ultra) return;
+  if (document.hidden || document.documentElement.classList.contains('is-loading')) { pfT = 0; return; }
+  if (!pfFrom) pfFrom = time + 1500;            // مهلة بعد اختفاء اللودر عشان تحميل الصور ما يتحسبش بطء
+  if (time < pfFrom) { pfT = 0; return; }
   if (pfT) {
     const d = time - pfT;
     if (d < 250) { pfSum += d; pfN++; }
     if (pfN >= 50) {
-      pfBad = (pfSum / pfN > 31) ? pfBad + 1 : 0;
-      pfSum = pfN = 0;
-      if (pfBad >= 2 && !ultra) goUltra();
+      const avg = pfSum / pfN; pfSum = pfN = 0;
+      pfBad = avg > (lite ? 31 : 24) ? pfBad + 1 : 0;   // كامل: تحت ~41 إطار/ث · خفيف: تحت ~32 إطار/ث
+      if (pfBad >= 2) { pfBad = 0; lite ? goUltra() : goLite(); }
     }
   }
   pfT = time;
 }
 let ultra = false;
+function goLite() {
+  if (lite) return;
+  lite = true; MAXT = 8; pfFrom = 0; pfT = 0;
+  document.documentElement.classList.add('lite'); perfRemember('lite');
+}
 function goUltra() {
-  ultra = true; document.documentElement.classList.add('lite', 'ultra');
+  if (ultra) return;
+  ultra = true; lite = true; MAXT = 8;
+  document.documentElement.classList.add('lite', 'ultra'); perfRemember('ultra');
   cv.style.display = 'none'; trail.length = 0; pops.length = 0;
 }
+/* اتصال/تحميل بطيء: لو الصفحة خدت أكتر من 6 ثواني تتحمل، نبدأ بالنسخة الخفيفة */
+addEventListener('load', () => setTimeout(() => {
+  const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (nav && nav.loadEventEnd > 6000 && perfQ !== 'full') goLite();
+}, 0));
 
 function frame(time) {
   perfWatch(time);
@@ -485,6 +509,10 @@ const PRICES = {
   'مزيل الدهون الصعبة — الأخضر 2 لتر':           P(6, 'جركن'),
   'مزيل الدهون الصعبة — الأصفر 2 لتر':           P(6, 'جركن'),
   'مزيل الدهون الصعبة — الأخضر 4 لتر':           P(4, 'جركن'),
+  'مزيل الدهون الصعبة — الأخضر 5 لتر':           P(1, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 5 لتر':           P(1, 'جركن'),
+  'مزيل الدهون الصعبة — الأخضر 10 لتر':          P(1, 'جركن'),
+  'مزيل الدهون الصعبة — الأصفر 10 لتر':          P(1, 'جركن'),
   'مزيل الدهون الصعبة — الأصفر 4 لتر':           P(4, 'جركن'),
   'سائل غسول لليدين — عود 5 لتر':                P(4, 'جركن'),
   'سائل غسول لليدين — عنبر أحمر 5 لتر':          P(4, 'جركن'),
@@ -535,7 +563,7 @@ $$('#grid .order-product').forEach(b => {
 /* ---- منتج من مشهد المطبخ أو من السلايدرات: نروح لكارته في قسم المنتجات (الشراء من الكروت بس) ---- */
 $$('.kp, .order-product').forEach(b => b.addEventListener('click', () => {
   const vc = cards.find(c => c._vars && c._vars.some(v => v.sku === b.dataset.product));
-  if (vc) vc._setVar(vc._vars.findIndex(v => v.sku === b.dataset.product));
+  if (vc) vc._setVar(vc._vars.findIndex(v => v.sku === b.dataset.product), true);   /* quiet = تبديل فوري (من غير انتظار الأنيميشن) عشان نلاقي زرار الصنف مباشرة */
   const buy = $(`#grid .buy[data-sku="${b.dataset.product}"]`); if (!buy) return;
   const card = buy.closest('.card');
   const f = $('.filters button[data-f="all"]'); if (f && !f.classList.contains('is-on')) f.click();
@@ -763,7 +791,7 @@ function reskin3D(o, img) {
   size3D(o);
 }
 /* نسخة موبايل أصغر لصور المنتجات الكبيرة (srcset)؛ لازم نحدّث srcset مع src لأن المتصفح بيفضّل srcset */
-const HAS_M = {"amber.webp": [438, 616], "g2.webp": [438, 616], "g4.webp": [438, 616], "jug10l.webp": [441, 620], "lavender.webp": [438, 616], "lemon20.webp": [533, 750], "lime20.webp": [533, 750], "oud.webp": [438, 616], "rose.webp": [438, 616], "sea.webp": [438, 616], "y2.webp": [438, 616], "y4.webp": [438, 616]};
+const HAS_M = {"amber.webp": [438, 616], "g2.webp": [438, 616], "g4.webp": [438, 616], "jug10l.webp": [441, 620], "lavender.webp": [438, 616], "lemon20.webp": [533, 750], "lime20.webp": [533, 750], "oud.webp": [438, 616], "rose.webp": [438, 616], "sea.webp": [438, 616], "y2.webp": [438, 616], "y4.webp": [438, 616], "g5l.webp": [448, 640], "y5l.webp": [448, 640], "g10l.webp": [448, 640], "y10l.webp": [448, 640]};
 function setImgSrc(img, url) {
   const n = (url.match(/products\/([\w-]+\.webp)$/) || [])[1];
   if (n && HAS_M[n]) img.srcset = 'assets/products/m/' + n + ' ' + HAS_M[n][0] + 'w, ' + url + ' ' + HAS_M[n][1] + 'w';
@@ -1030,7 +1058,7 @@ const cv = $('#fx'), cx = cv.getContext('2d');
 let dpr = 1, bubbles = [];
 
 /* ---------- فقاقيع الماوس / الصباع ---------- */
-const trail = [], pops = [], MAXT = lite ? 8 : 20;
+const trail = [], pops = []; let MAXT = lite ? 8 : 20;
 let ptrIn = false, ptrX = 0, ptrY = 0, lbx = -1, lby = -1, bAcc = 0, lastIdle = 0, lastFx = 0;
 function spawnBubble(x, y, speed, ang) {
   const burst = ang != null, sp = burst ? rand(1.2, 3) : 0;
@@ -1202,4 +1230,6 @@ $$('.to-top, .brand').forEach(a => a.addEventListener('click', e => {
 requestAnimationFrame(frame);
 addEventListener('load', () => { fitScene(); ticking = true; });
 document.fonts && document.fonts.ready.then(() => { fitScene(); });
+window.bhToast = toast;   // بيستخدمه js/apply.js
+if (perfQ === 'ultra' || (perfSaved === 'ultra' && perfQ !== 'full')) goUltra();
 })();

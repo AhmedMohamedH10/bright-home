@@ -1281,3 +1281,119 @@ a,button,input,textarea,select,[role="button"]{touch-action:manipulation;-webkit
   .pi-col li{font-size:13.5px;margin-bottom:7px}
   .pinfo-brand{margin-top:16px}
 }
+
+/* ===== موزعي برايت هوم ===== */
+.dist{position:relative;color:#fff;background:radial-gradient(ellipse at 50% 0,#0a3a78 0,#062a55 38%,#020f24 100%)}
+.dist-head{text-align:center;margin-bottom:28px}
+.dist-head h2{font-family:var(--font-ar);font-weight:700;font-size:clamp(24px,7.1vw,76px);line-height:1.3;margin:12px 0 6px;display:flex;align-items:center;justify-content:center;gap:.18em;flex-wrap:nowrap;white-space:nowrap}
+.dist-t{padding:0 .08em .08em;background:linear-gradient(180deg,#f0fbff 0%,#8fdcff 42%,#3aa8f2 72%,#1c6fd6 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 16px rgba(0,20,60,.55))}
+.vbadge{width:.62em;height:.62em;flex:none;filter:drop-shadow(0 4px 12px rgba(29,155,240,.55))}
+.dist-head p{font-size:clamp(16px,2.4vw,22px);color:var(--mist);margin:0}
+.dist-grid{--dg:20px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:var(--dg);align-items:stretch}
+.dist-map{background:var(--glass);border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:16px;position:relative;overflow:hidden;background-image:radial-gradient(rgba(127,220,245,.12) 1px,transparent 1.4px);background-size:22px 22px}
+.dist-map svg{display:block;width:100%;height:auto;overflow:visible}
+.dist-key{display:flex;gap:18px;justify-content:center;margin-top:6px;font-size:13px;color:var(--mist);font-weight:600}
+.dist-key span{display:inline-flex;align-items:center;gap:7px}
+.dist-key i{width:14px;height:14px;border-radius:5px;display:inline-block;border:1px solid rgba(255,255,255,.35)}
+.k-has{background:linear-gradient(#3aa8ff,#0f62b8)}.k-soon{background:linear-gradient(#1f4a82,#13325e)}
+/* العمود الجانبي: ارتفاعه = ارتفاع مربع الخريطة بالظبط، والموزعين بيتمرّروا جواه */
+.dist-side{position:relative;min-width:0}
+.dist-side-in{position:absolute;inset:0;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;gap:var(--dg);min-height:0}
+.dist-sel{display:flex;flex-direction:column;gap:8px;flex:none}
+.dist-sel label{font-weight:700;color:var(--sky);font-size:14px}
+.dist-sel select{width:100%;font:700 16px var(--font-body);color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(127,220,245,.45);border-radius:16px;padding:15px 16px;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,#7fdcf5 50%),linear-gradient(135deg,#7fdcf5 50%,transparent 50%);background-position:18px 52%,24px 52%;background-size:6px 6px;background-repeat:no-repeat}
+.dist-sel select:focus-visible{outline:2px solid #7fdcf5;outline-offset:2px}
+.dist-sel select option{color:#0b2540}
+.dist-list{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:var(--dg);padding:0;scrollbar-width:thin;scrollbar-color:rgba(127,220,245,.5) transparent;overscroll-behavior:contain}
+.dist-list::-webkit-scrollbar{width:6px}.dist-list::-webkit-scrollbar-thumb{background:rgba(127,220,245,.45);border-radius:9px}
+.dist-list>*{flex:none}
+/* مفيش محافظة متختارة = مفيش صندوق تحت "اختر محافظتك" */
+.dist-list:not(:has(.dl-title)){display:none}
+.gmap{}
+.gback{fill:#4cc2ff;stroke:#4cc2ff;stroke-width:5;stroke-linejoin:round}
+.gdeco{fill:rgba(255,255,255,.04);stroke:rgba(127,220,245,.25);stroke-width:.6;stroke-dasharray:2 2}
+.gv{fill:url(#gvO);stroke:#061d3d;stroke-width:1.1;stroke-linejoin:round;cursor:pointer;transition:fill .25s,stroke .25s,filter .25s;outline:none}
+.gv.has{fill:url(#gvH)}
+.gv:hover,.gv:focus-visible{fill:#2b6db5;stroke:#9fe4ff}.gv.has:hover{fill:url(#gvA)}
+.gv.on{fill:url(#gvA);stroke:#fff;stroke-width:1.6;filter:drop-shadow(0 0 7px rgba(127,220,245,.95))}
+.gl{font-size:calc(var(--fs) * var(--k,1) * 1px);font-family:var(--font-body);font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:rgba(3,16,38,.85);stroke-width:2.6px;stroke-linejoin:round;transition:fill .2s}
+.gl.co{font-weight:700}
+.gl.we{text-anchor:end}
+.gl.has{fill:#ffe39a}
+.gl.hv{fill:#9fe4ff}.gl.on{fill:#fff}
+.gld line{stroke:rgba(159,228,255,.55);stroke-width:.7}.gld circle{fill:#9fe4ff}
+.gld.on line{stroke:#fff}.gld.on circle{fill:#fff}
+.pin{transition:transform .6s var(--ease),opacity .3s;pointer-events:none}
+.pin-body{fill:#ff4d4d;stroke:#fff;stroke-width:1.4}
+.pin-dot{fill:#fff}
+.pin-ring{fill:rgba(0,0,0,.35)}
+.pin.drop .pp{animation:pinDrop .7s var(--ease) both}
+@keyframes pinDrop{0%{transform:translateY(-30px);opacity:0}60%{transform:translateY(3px);opacity:1}100%{transform:translateY(0)}}
+.dl-title{font-family:var(--font-ar);font-size:26px;margin:0 4px;display:flex;align-items:baseline;gap:10px}
+.dl-title small{font:600 13px var(--font-body);color:var(--sky)}
+.dl-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-radius:18px;background:var(--glass);border:1px solid rgba(255,255,255,.18)}
+.dl-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+.dl-info b{font-size:17px}
+.dl-info span{font-size:13px;color:var(--mist)}
+.dl-tel{color:var(--ice);text-decoration:none;font-weight:700;text-align:right;letter-spacing:.03em}
+.dl-wa{flex:none;display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:99px;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 6px 18px rgba(37,211,102,.3);transition:transform .2s}
+.dl-wa:hover{transform:translateY(-2px)}
+.dl-wa svg{width:20px;height:20px}
+.dl-empty{display:flex;flex-direction:column;gap:8px;text-align:center;padding:22px 16px;color:var(--mist);border-radius:18px;background:var(--glass);border:1px solid rgba(255,255,255,.18)}
+.dl-empty b{font-size:20px;color:#fff}
+.dl-link{align-self:center;margin-top:6px;padding:10px 20px;border-radius:99px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none}
+@media (max-width:900px){
+  .dist-grid{grid-template-columns:1fr;--dg:16px}
+  .dist-map{padding:10px;border-radius:20px}
+  .dist-side,.dist-side-in{display:contents}
+  .dist-sel{order:-1}
+  .dist-grid>.dist-map{order:0}
+  .dist-list{order:1;overflow:visible}
+  .dist-grid{display:flex;flex-direction:column}
+  .dist-sel{order:-1}
+  .dist-map svg{--k:1.1}
+  .gl.co{--k:1.4}
+  .gl{stroke-width:3px}
+}
+@media (max-width:420px){.dl-card{flex-direction:column;align-items:stretch}.dl-wa{justify-content:center}.dl-tel{text-align:right}}
+
+/* ===== سلايدر مزيل الدهون 5 و 10 لتر (4 شرائح) ===== */
+#dish5 .scent-stage[data-i="3"] .sc-bg:nth-child(4){opacity:1}
+#dish5 .scent-stage[data-i="0"] .sc-fx>[data-s~="0"],
+#dish5 .scent-stage[data-i="1"] .sc-fx>[data-s~="1"],
+#dish5 .scent-stage[data-i="2"] .sc-fx>[data-s~="2"],
+#dish5 .scent-stage[data-i="3"] .sc-fx>[data-s~="3"]{opacity:1}
+.scent-stage[data-i="3"] .sc-dots button:nth-child(4){width:38px;background:#fff}
+
+/* ===== التقديم كموزع معتمد ===== */
+.ap-back{position:fixed;inset:0;z-index:100;background:rgba(1,8,22,.7);opacity:0;transition:opacity .35s}
+.ap-modal{position:fixed;inset:0;z-index:101;display:grid;place-items:center;padding:16px;overflow:auto;opacity:0;pointer-events:none;transition:opacity .35s}
+.ap-back[hidden],.ap-modal[hidden]{display:none}
+.ap-open .ap-back,.ap-open .ap-modal{opacity:1}
+.ap-open .ap-modal{pointer-events:auto}
+.ap-open{overflow:hidden}
+.ap-card{width:min(480px,100%);display:flex;flex-direction:column;gap:14px;padding:22px;border-radius:24px;background:linear-gradient(180deg,#07366e,#041a38);border:1px solid rgba(255,255,255,.18);box-shadow:0 30px 80px rgba(0,5,25,.6);transform:translateY(24px) scale(.97);transition:transform .45s var(--ease)}
+.ap-open .ap-card{transform:none}
+.ap-head{display:flex;align-items:center;justify-content:space-between}
+.ap-head h3{font-size:21px;color:#fff}
+.ap-sub{font-size:14px;line-height:1.8;color:rgba(255,255,255,.75);margin:0}
+.ap-type{border:0;margin:0;padding:0;min-width:0;display:flex;flex-wrap:wrap;gap:10px}
+.ap-type legend{font-size:13px;font-weight:700;color:var(--sky);padding:0;margin-bottom:8px;float:none;width:100%}
+.ap-type label{flex:1 1 90px;position:relative;cursor:pointer}
+.ap-type input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.ap-type span{display:block;text-align:center;padding:12px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.25);background:rgba(2,15,36,.35);font-weight:700;font-size:15px;color:#fff;transition:all .25s}
+.ap-type input:checked+span{background:#fff;color:var(--navy-800);border-color:#fff;box-shadow:0 0 0 4px rgba(127,220,245,.25)}
+.ap-type input:focus-visible+span{outline:2px solid var(--sky);outline-offset:2px}
+.ap-type.err span{border-color:#ff8aa0;animation:shake .4s}
+.field.err select{border-color:#ff8aa0;box-shadow:0 0 0 4px rgba(255,138,160,.18);animation:shake .4s}
+
+/* زرار التقديم داخل قسم الموزعين */
+.dist-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 16px;margin-top:22px;padding:14px 20px;border-radius:99px;background:var(--glass);border:1px solid rgba(255,255,255,.16);color:var(--mist);font-size:14px;font-weight:600;text-align:center}
+.dist-apply,.dl-apply{cursor:pointer;font:inherit;font-weight:800;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.35);border-radius:99px;transition:background .25s,color .25s,border-color .25s}
+.dist-apply{padding:9px 20px;font-size:14px}
+.dl-apply{align-self:center;padding:8px 16px;font-size:13px}
+.dist-apply:hover,.dl-apply:hover{background:#fff;color:var(--navy-800);border-color:#fff}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+@media(max-width:600px){.dist-cta{border-radius:22px;flex-direction:column}}
+
+.ct-btn{appearance:none;-webkit-appearance:none;font:inherit;color:#fff;cursor:pointer;text-align:start}
