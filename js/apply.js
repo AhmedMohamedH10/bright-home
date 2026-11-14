@@ -75,11 +75,11 @@
     if (!/^\d{10,15}$/.test(num)) { say('رقم واتساب غير مُضاف في CONFIG'); return; }
 
     // نسخة احتياطية في Google Sheet + إيميل (اختياري)
-    const api = (CONFIG.APPLY_API || '').trim();
+    const api = (CONFIG.SHEET_API || CONFIG.APPLY_API || '').trim();
     if (api) {
       try {
         fetch(api, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ name, phone, gov, address, type }) }).catch(() => {});
+          body: JSON.stringify({ kind: 'apply', name, phone, gov, address, type }) }).catch(() => {});
       } catch (err) {}
     }
 

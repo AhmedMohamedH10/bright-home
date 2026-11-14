@@ -11,4 +11,7 @@ const CONFIG = {
 
   // اختياري: رابط Google Apps Script بتاع طلبات «التقديم كموزع» (بيحفظها في Google Sheet ويبعت إيميل). الخطوات في server/README.md. فاضي = واتساب بس
   APPLY_API: '',
+
+  // رابط Google Apps Script الواحد (server/bright-sheet.gs): بيحفظ «طلبات المنتجات» في تاب «الطلبات» و«التقديم كموزع» في تاب «التقديمات» + إيميل تنبيه. واتساب بيفضل شغال زي ما هو. فاضي = من غير حفظ في الشيت
+  SHEET_API: 'https://script.google.com/macros/s/AKfycbz7o8iSiwmg7r8-6k1nvlpMjvK22ow44Gmx3eizFYvp_YiLLtxLS7uhQYrZvqHCwLIUag/exec',
 };

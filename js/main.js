@@ -679,6 +679,15 @@ form.addEventListener('submit', e => {
   const order = { name, phone, address, note: extra, cartons: cartCount(),
     items: cartNames().map(k => { const it = PRICES[k], n = cart[k]; return { name: disp(k), cartons: n, pack: it.pack, unit: it.unit, pieces: lineTotal(k, n) }; }) };
   const msg = buildMsg(order);
+  /* نسخة في Google Sheet (اختياري، في الخلفية — واتساب بيفضل شغال زي ما هو) */
+  const sheetApi = (CONFIG.SHEET_API || '').trim();
+  if (sheetApi) {
+    try {
+      fetch(sheetApi, { method: 'POST', mode: 'no-cors', keepalive: true, headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ kind: 'order', name, phone, address, note: extra, cartons: order.cartons,
+          items: order.items.map(x => ({ name: x.name, cartons: x.cartons, pieces: x.pieces, unit: x.unit })) }) }).catch(() => {});
+    } catch (err) {}
+  }
   const sendWA = () => {
   const num = (CONFIG.WHATSAPP_NUMBER || '').replace(/\D/g, '');
   if (!/^\d{10,15}$/.test(num)) {
