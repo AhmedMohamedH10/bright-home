@@ -426,8 +426,8 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 .c-vis{position:relative;height:370px;display:grid;place-items:center;overflow:hidden}
 .c-glow{position:absolute;left:50%;top:55%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;background:radial-gradient(circle,var(--hue),transparent 68%);opacity:.5;filter:blur(14px);transition:opacity .5s,transform .8s var(--ease)}
 .card:hover .c-glow{opacity:.85;transform:scale(1.2)}
-.c-vis img{position:relative;height:84%;width:auto;max-width:78%;object-fit:contain;filter:drop-shadow(0 30px 24px rgba(0,10,40,.5));transform:translateZ(40px);transition:transform .7s var(--ease);animation:bob 6s ease-in-out infinite}
-.c-vis img.slim{height:88%}
+.c-vis img{position:relative;height:90%;min-height:0;width:auto;max-width:78%;object-fit:contain;filter:drop-shadow(0 30px 24px rgba(0,10,40,.5));transform:translateZ(40px);transition:transform .7s var(--ease);animation:bob 6s ease-in-out infinite}
+.c-vis img.slim{height:700px;min-height:0;max-height:none;max-width:none;width:auto}
 .card:hover .c-vis img{transform:translateZ(70px) scale(1.07) rotate(-2deg)}
 .c-tag{position:absolute;z-index:3;top:18px;right:18px;padding:7px 14px;border-radius:99px;font-size:13px;font-weight:800;background:rgba(255,255,255,.92);color:var(--navy-800)}
 .c-info{padding:6px 24px 26px;position:relative}
@@ -661,7 +661,7 @@ img,svg,canvas,video{max-width:100%}
 .c-vis{-webkit-perspective:900px;perspective:900px;-webkit-perspective-origin:50% 62%;perspective-origin:50% 62%}
 .c-stage{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center;
   -webkit-transform-style:preserve-3d;transform-style:preserve-3d;will-change:transform}
-.c-vis img.c-boxes,.card:hover .c-vis img.c-boxes{position:absolute;left:50%;bottom:7%;height:78%;width:auto;max-width:none;margin:0;
+.c-vis img.c-boxes,.card:hover .c-vis img.c-boxes{position:absolute;left:50%;bottom:7%;height:84%;width:auto;max-width:none;margin:0;
   -webkit-transform:translateX(-50%) translateZ(-110px) scale(1.12);transform:translateX(-50%) translateZ(-110px) scale(1.12);
   -webkit-transform-origin:50% 100%;transform-origin:50% 100%;animation:none;transition:none;pointer-events:none;
   -webkit-user-select:none;user-select:none;opacity:.96;

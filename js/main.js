@@ -501,7 +501,6 @@ if (finePointer) {
 /* محتوى الكرتونة الواحدة: P(العدد, الوحدة). مفيش أسعار في الموقع — الطلب بعدد الكراتين بس. */
 const P = (pack, unit) => ({ pack, unit });
 const PRICES = {
-  'مزيل الدهون الصعبة — جركن 10 لتر':            P(1, 'جركن'),
   'مزيل الدهون الصعبة — جركن 20 لتر ليمون أصفر': P(1, 'جركن'),
   'مزيل الدهون الصعبة — جركن 20 لتر ليمون أخضر': P(1, 'جركن'),
   'مزيل الدهون الصعبة — الأصفر 750 مل':          P(12, 'زجاجة'),
@@ -665,7 +664,7 @@ form.addEventListener('submit', e => {
   e.preventDefault();
   const fd = new FormData(form);
   const name = (fd.get('name') || '').toString().trim();
-  const phone = (fd.get('phone') || '').toString().trim();
+  const phone = (fd.get('phone') || '').toString().trim().replace(/[٠-٩]/g, c => c.charCodeAt(0) - 1632).replace(/[۰-۹]/g, c => c.charCodeAt(0) - 1776);   /* أرقام عربي → إنجليزي */
   const address = (fd.get('address') || '').toString().trim();
   const extra = (fd.get('note') || '').toString().trim();
 
@@ -684,7 +683,7 @@ form.addEventListener('submit', e => {
   const num = (CONFIG.WHATSAPP_NUMBER || '').replace(/\D/g, '');
   if (!/^\d{10,15}$/.test(num)) {
     note.classList.add('warn');
-    note.textContent = 'رقم واتساب لسه مش متضاف في الموقع (CONFIG في js/main.js). الرسالة اتنسخت — ابعتها يدويًا لرقم برايت هوم.';
+    note.textContent = 'رقم واتساب لسه مش متضاف في الموقع (CONFIG في js/config.js). الرسالة اتنسخت — ابعتها يدويًا لرقم برايت هوم.';
     (navigator.clipboard ? navigator.clipboard.writeText(msg) : Promise.reject()).then(() => toast('تم نسخ رسالة الطلب ✓'), () => toast('رقم واتساب غير مُضاف بعد'));
     return;
   }
@@ -791,7 +790,7 @@ function reskin3D(o, img) {
   size3D(o);
 }
 /* نسخة موبايل أصغر لصور المنتجات الكبيرة (srcset)؛ لازم نحدّث srcset مع src لأن المتصفح بيفضّل srcset */
-const HAS_M = {"amber.webp": [438, 616], "g2.webp": [438, 616], "g4.webp": [438, 616], "jug10l.webp": [441, 620], "lavender.webp": [438, 616], "lemon20.webp": [533, 750], "lime20.webp": [533, 750], "oud.webp": [438, 616], "rose.webp": [438, 616], "sea.webp": [438, 616], "y2.webp": [438, 616], "y4.webp": [438, 616], "g5l.webp": [448, 640], "y5l.webp": [448, 640], "g10l.webp": [448, 640], "y10l.webp": [448, 640]};
+const HAS_M = {"amber.webp": [438, 616], "g2.webp": [438, 616], "g4.webp": [438, 616], "lavender.webp": [438, 616], "lemon20.webp": [533, 750], "lime20.webp": [533, 750], "oud.webp": [438, 616], "rose.webp": [438, 616], "sea.webp": [438, 616], "y2.webp": [438, 616], "y4.webp": [438, 616], "g5l.webp": [448, 640], "y5l.webp": [448, 640], "g10l.webp": [448, 640], "y10l.webp": [448, 640]};
 function setImgSrc(img, url) {
   const n = (url.match(/products\/([\w-]+\.webp)$/) || [])[1];
   if (n && HAS_M[n]) img.srcset = 'assets/products/m/' + n + ' ' + HAS_M[n][0] + 'w, ' + url + ' ' + HAS_M[n][1] + 'w';
