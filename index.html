@@ -29,27 +29,33 @@
   <link rel="icon" href="assets/img/icon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="assets/img/icon-512.png" sizes="512x512" type="image/png">
   <link rel="apple-touch-icon" href="assets/img/icon-180.png">
-  <link rel="preload" href="assets/img/logo-s.webp" as="image" type="image/webp">
+  <link rel="preload" href="assets/img/logo-m.webp" as="image" type="image/webp">
   <link rel="preload" href="assets/fonts/Arakans.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/fonts/dg-ghayaty-bold.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/fonts/cairo-arabic.woff" as="font" type="font/woff" crossorigin>
   <link rel="preload" href="assets/img/kitchen-p.webp" as="image" type="image/webp" media="(max-aspect-ratio: 85/100)">
   <style id="ld-css">
-.loader{position:fixed;top:0;right:0;bottom:0;left:0;z-index:999;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 38%,#0a3a78 0%,#062a55 45%,#020f24 100%);color:#fff;touch-action:none;opacity:1;visibility:visible;transition:opacity .55s ease,visibility 0s linear .55s;animation:ldFailsafe .01s linear 9s forwards}
+.loader{--ldw:clamp(120px,min(52vw,30vh),240px);overflow:hidden;position:fixed;top:0;right:0;bottom:0;left:0;z-index:999;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 38%,#0a3a78 0%,#062a55 45%,#020f24 100%);color:#fff;touch-action:none;opacity:1;visibility:visible;transition:opacity .55s ease,visibility 0s linear .55s;animation:ldFailsafe .01s linear 9s forwards}
 .loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.ld-in{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 24px;text-align:center}
-.ld-logo{width:96px;height:auto;filter:drop-shadow(0 8px 22px rgba(42,159,220,.55));animation:ldFloat 2.4s ease-in-out infinite}
+.ld-in{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 24px;text-align:center}
+.ld-mark{position:relative;display:grid;place-items:center;width:var(--ldw);margin-bottom:6px}
+.ld-mark::before,.ld-mark::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(127,220,245,.55);box-shadow:0 0 24px rgba(42,159,220,.35);opacity:0;animation:ldRing 2s ease-out infinite}
+.ld-mark::after{animation-delay:1s}
+.ld-logo{position:relative;display:block;width:100%;height:auto;filter:drop-shadow(0 10px 28px rgba(42,159,220,.6));animation:ldPulse 2s ease-in-out infinite;will-change:transform}
 .ld-ar,.ld-en{opacity:0;transition:opacity .5s ease}
 .loader.fonts .ld-ar,.loader.fonts .ld-en{opacity:1}
-.ld-ar{margin-top:10px;font-family:"Ghayaty","Cairo",sans-serif;font-weight:700;font-size:clamp(46px,15vw,72px);line-height:1.2;padding:0 .08em .06em;background:linear-gradient(180deg,#ffffff 0%,#c9f4ff 24%,#5fd2ff 54%,#2f9eff 80%,#1f7af2 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 14px rgba(0,20,60,.6))}
-.ld-en{font-family:"Arakans","Cairo",sans-serif;font-size:clamp(20px,6vw,28px);letter-spacing:.14em;color:#fff;text-shadow:0 4px 16px rgba(0,20,60,.7)}
-.ld-bar{display:block;position:relative;width:min(180px,48vw);height:3px;margin-top:18px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+.ld-ar{margin-top:12px;font-family:"Ghayaty","Cairo",sans-serif;font-weight:700;font-size:clamp(44px,16vw,104px);white-space:nowrap;line-height:1.2;padding:0 .08em .06em;background:linear-gradient(180deg,#ffffff 0%,#c9f4ff 24%,#5fd2ff 54%,#2f9eff 80%,#1f7af2 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 14px rgba(0,20,60,.6))}
+.ld-en{font-family:"Arakans","Cairo",sans-serif;font-size:clamp(24px,7vw,38px);letter-spacing:.14em;color:#fff;text-shadow:0 4px 16px rgba(0,20,60,.7)}
+.ld-bar{display:block;position:relative;width:min(240px,60vw);height:4px;margin-top:26px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
 .ld-bar b{position:absolute;top:0;bottom:0;left:0;width:40%;border-radius:3px;background:linear-gradient(90deg,transparent,#8fdcff,transparent);animation:ldBar 1.2s ease-in-out infinite}
 @keyframes ldBar{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
 @keyframes ldFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes ldPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 10px 28px rgba(42,159,220,.5))}18%{transform:scale(1.08);filter:drop-shadow(0 12px 40px rgba(95,210,255,.95))}36%{transform:scale(1.01)}52%{transform:scale(1.06);filter:drop-shadow(0 12px 36px rgba(95,210,255,.8))}72%{transform:scale(1)}}
+@keyframes ldRing{0%{transform:scale(.92);opacity:.7}100%{transform:scale(1.42);opacity:0}}
 @keyframes ldFailsafe{to{opacity:0;visibility:hidden;pointer-events:none}}
 .is-loading .mask>span,.is-loading .h-en span{animation-play-state:paused!important}
-@media (prefers-reduced-motion:reduce){.ld-logo,.ld-bar b{animation:none}}
+@media (max-height:520px){.loader{--ldw:clamp(84px,32vh,150px)}.ld-ar{font-size:clamp(34px,11vh,64px)}.ld-en{font-size:clamp(16px,5vh,24px)}.ld-bar{margin-top:14px}}
+@media (prefers-reduced-motion:reduce){.ld-logo,.ld-bar b,.ld-mark::before,.ld-mark::after{animation:none}}
   </style>
   <script>document.documentElement.classList.add('is-loading')</script>
   <link rel="stylesheet" href="css/style.css">
@@ -58,7 +64,7 @@
   <!-- شاشة التحميل: لوجو + برايت هوم بالخط المستخدم + Bright Home تحتيه -->
   <div class="loader" id="loader" role="status" aria-label="جاري التحميل">
     <div class="ld-in">
-      <img class="ld-logo" src="assets/img/logo-s.webp" width="96" height="98" alt="">
+      <span class="ld-mark" aria-hidden="true"><img class="ld-logo" src="assets/img/logo-m.webp" width="240" height="244" alt="" fetchpriority="high"></span>
       <div class="ld-ar">برايت هوم</div>
       <div class="ld-en" dir="ltr">Bright Home</div>
       <i class="ld-bar" aria-hidden="true"><b></b></i>
@@ -708,6 +714,12 @@
 
   <div class="mobile-cta"><a class="btn btn-wa" href="#order">اطلب برايت هوم عبر واتساب <span class="arr">↙</span></a></div>
   <button class="cart-fab" id="cartFab" type="button" aria-label="فتح السلة"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L20.5 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><span class="cart-badge" id="cartBadge" hidden>0</span></button>
+  <!-- عدّاد المتواجدين دلوقتي على الموقع (بيشتغل بس لو SHEET_API متضبط) -->
+  <div class="live" id="liveBadge" role="status" aria-live="polite">
+    <span class="live-dot" aria-hidden="true"></span>
+    <span class="live-txt">يشاهدون المنتجات الآن</span>
+    <b class="live-num" id="liveNum">0</b>
+  </div>
   <div class="cart-back" data-cart-close></div>
   <aside class="cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="سلة الطلب">
     <header class="cd-head"><h3>سلة الطلب</h3><button type="button" class="cd-x" data-cart-close aria-label="إغلاق">×</button></header>
@@ -750,5 +762,6 @@
   <script src="js/egypt-map.js"></script>
   <script src="js/distributors.js"></script>
   <script src="js/apply.js"></script>
+  <script src="js/live.js"></script>
 </body>
 </html>
