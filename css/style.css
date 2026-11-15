@@ -1416,16 +1416,19 @@ a,button,input,textarea,select,[role="button"]{touch-action:manipulation;-webkit
 .live-dot{position:relative;flex:none;width:9px;height:9px;border-radius:50%;background:#34d27b;box-shadow:0 0 10px rgba(52,210,123,.9)}
 .live-dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(52,210,123,.65);animation:livePulse 1.8s ease-out infinite}
 .live-txt{letter-spacing:.01em}
-.live-num{display:inline-grid;place-items:center;min-width:30px;height:28px;padding:0 9px;border-radius:99px;
-  font-family:var(--font-body);font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr;
-  color:var(--navy-900);background:linear-gradient(135deg,#fff,#aee9ff 55%,#7fdcf5)}
+.live-num{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
+  min-width:32px;height:32px;padding:0 10px;border-radius:99px;margin-inline-start:2px;
+  font-family:var(--font-body);font-size:17px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums lining-nums;letter-spacing:.02em;direction:ltr;
+  color:#03162f;background:linear-gradient(160deg,#ffffff 0%,#bdeeff 45%,#6fd6f3 100%);
+  box-shadow:0 0 0 3px rgba(127,220,245,.22),0 4px 12px -2px rgba(0,10,40,.55),inset 0 -2px 0 rgba(10,84,160,.18);
+  text-shadow:none;transition:min-width .3s var(--ease),padding .3s var(--ease)}
 .live-num.bump{animation:liveBump .5s var(--ease)}
 @keyframes livePulse{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.7);opacity:0}}
 @keyframes liveBump{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
 .lite .live{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(4,26,56,.88)}
 @media (max-width:900px){
   .live{left:auto;right:14px;bottom:calc(94px + env(safe-area-inset-bottom));font-size:12.5px;gap:8px;padding:7px 8px 7px 13px}
-  .live-num{min-width:26px;height:25px;font-size:14px;padding:0 7px}
+  .live-num{min-width:28px;height:28px;font-size:15px;padding:0 8px}
 }
 @media (max-width:360px){.live-txt{font-size:12px}}
 @media (prefers-reduced-motion:reduce){.live-dot::after{animation:none}.live-num.bump{animation:none}}

@@ -22,7 +22,7 @@
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function render(n) {
-    const txt = n > 999 ? '999+' : String(n);
+    const txt = String(n);
     if (!badge.classList.contains('on')) { numEl.textContent = txt; shown = n; badge.classList.add('on'); return; }
     if (n === shown) return;
     const from = shown; shown = n;
@@ -31,7 +31,7 @@
     const t0 = performance.now(), dur = 600;
     (function step(t) {
       const k = Math.min(1, (t - t0) / dur);
-      numEl.textContent = n > 999 ? '999+' : String(Math.round(from + (n - from) * k));
+      numEl.textContent = String(Math.round(from + (n - from) * k));
       if (k < 1) requestAnimationFrame(step);
     })(t0);
   }
