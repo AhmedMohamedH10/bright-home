@@ -34,8 +34,7 @@ input[type=color]{padding:3px;height:38px;cursor:pointer}input[type=checkbox]{wi
 .drop{border:1px dashed #1c4a7a;border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:var(--in);color:var(--m);display:flex;gap:14px;align-items:center;justify-content:center}.drop:hover,.drop.ov{border-color:var(--sky);color:var(--t)}.drop img{height:90px;object-fit:contain}
 .vr{border:1px solid var(--l);border-radius:10px;padding:16px;margin-bottom:12px}.vr .vh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:700;color:var(--sky)}
 .vi{display:flex;gap:10px;align-items:center;margin-top:12px;font-size:13px;color:var(--m)}.vi img{height:46px}
-#pv{position:sticky;top:76px;padding:16px;text-align:center}.cv{--h:#6cf08a;position:relative;height:300px;border-radius:10px;overflow:hidden;background:#041a38}
-.cv .gl{position:absolute;left:50%;top:55%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;background:radial-gradient(circle,var(--h),transparent 68%);opacity:.6;filter:blur(14px)}
+#pv{position:sticky;top:76px;padding:16px;text-align:center}.cv{--h:#6cf08a;position:relative;height:300px;border-radius:10px;overflow:hidden;background:radial-gradient(circle at 50% 62%,color-mix(in srgb,var(--h) 55%,#fff0),#0f2a4d 72%)}
 .cv .bx{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:105%}.cv .pr{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);height:86%;filter:drop-shadow(0 10px 14px #0007)}
 .cv .tag{position:absolute;top:10px;right:10px;background:#ffffffeb;color:#062a55;border-radius:99px;padding:1px 11px;font-size:12px;font-weight:700;z-index:2}
 .ci{padding:14px 4px 4px}.ci small{color:var(--sky);font-weight:600}.ci h3{margin:2px 0;font-size:17px}.ci p{margin:0;color:var(--m);font-size:13px}
@@ -53,7 +52,22 @@ dialog{background:var(--pn);color:var(--t);border:1px solid var(--l);border-radi
 .sec>h3{margin:0 0 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}.sec>h3 small{font-weight:400}
 .f.c3{grid-template-columns:repeat(3,1fr)}.f.c4{grid-template-columns:repeat(4,1fr)}.vr .f+.f{margin-top:14px}.vr .vi{margin:0}.w100{width:100%}
 label.ck{display:flex;align-items:center;gap:8px;font-weight:400;color:var(--t);height:38px;margin:0}
-@media(max-width:1000px){.g3,.g2{grid-template-columns:1fr}#pv{position:static}.list{max-height:260px}.f,.f.c3,.f.c4{grid-template-columns:1fr}.dr{grid-template-columns:1fr 1fr}.dr button{grid-column:1/-1}.top{flex-wrap:wrap;padding:10px 16px}main{padding:16px}}
+.lh{padding:2px 10px 8px;font-size:12px;color:var(--m)}
+.pi em{font-style:normal;min-width:24px;text-align:center;border-radius:99px;background:#7fdcf51a;color:var(--sky);font-weight:700;font-size:12px}
+.pi span{opacity:0;transition:opacity .15s}.pi:hover span,.pi.on span{opacity:1}
+.pi b{font-weight:600}.pi small{font-size:12px}
+.dr:not(.hd){padding:6px;border:1px solid var(--l);border-radius:10px;background:var(--in)}.dr:not(.hd) input{background:var(--pn)}.dr.hd{padding:0 6px}
+.ur{background:var(--in)}.ur .chip{font-size:11px;padding:0 8px;margin-inline-start:6px}.ur>div:last-child{display:flex;gap:6px}
+#gd h2 small{font:400 14px Cairo,sans-serif;color:var(--m)}
+input,select{height:40px}input[type=checkbox]{height:auto}input[type=color]{height:40px}
+.f{gap:16px}.s3{grid-column:1/-1}
+.sec{padding:24px 0 8px}.sec>h3{margin-bottom:16px;font-size:16px}
+.imgrow{display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start}
+.drop.sq{flex-direction:column;height:200px;padding:10px;gap:8px;font-size:13px}.drop.sq img{height:140px;max-width:100%}
+.ihint p{margin:0 0 14px;color:var(--m);font-size:13px;max-width:360px}
+.vr{background:var(--in);padding:18px}.vr .vh{margin-bottom:14px}.vr input,.vr select{background:var(--pn)}.vr .f+.f{margin-top:16px}
+.f.cb{grid-template-columns:1.5fr 1fr .8fr}select{padding-inline:10px}
+@media(max-width:1000px){.g3,.g2{grid-template-columns:1fr}#pv{position:static}.list{max-height:260px}.f,.f.c3,.f.c4,.f.cb{grid-template-columns:1fr}.imgrow{grid-template-columns:1fr}.dr{grid-template-columns:1fr 1fr}.dr button{grid-column:1/-1}.top{flex-wrap:wrap;padding:10px 16px}main{padding:16px}}
 </style></head><body>
 <header class="top"><div class="brand"><img src="assets/img/logo-s.webp" alt="">لوحة تحكم برايت هوم</div>
 <nav><button data-tab="p" id="tp" class="on">المنتجات</button><button data-tab="d" id="td">الموزعين</button><button data-tab="u" id="tu" hidden>المستخدمين</button></nav>
@@ -81,31 +95,31 @@ async function setImg(f,j){if(!f||!/^image\//.test(f.type))return toast('اخت�
 function renderP(){const p=P[sel];
  $('#app').innerHTML=`<div class="g3"><aside class="card"><div class="sh"><input id="q" placeholder="بحث في المنتجات" value="${E(q)}"><button class="btn sol" data-a="addP">+ جديد</button></div><div class="list" id="pl"></div></aside>
  <section class="card" id="ed">${p?edP(p):'<div class="emp">اختار منتج من القايمة أو أضف منتج جديد</div>'}</section><aside class="card" id="pv"></aside></div>`;listP();pvw()}
-function listP(){$('#pl').innerHTML=P.map((p,i)=>({p,i})).filter(({p})=>!q||(pn(p)+p.tag+p.variants.map(v=>v.label+v.sku).join()).includes(q)).map(({p,i})=>`<div class="pi ${i==sel?'on':''}" data-a="selP" data-i="${i}"><img src="${U(p.img)}" alt=""><div><b>${E(pn(p))}</b><small>${E(CATS[p.cat])} · ${E(p.tag)} · ${p.variants.length} صنف</small></div><span><button data-a="up" data-i="${i}" title="فوق">▲</button><button data-a="dn" data-i="${i}" title="تحت">▼</button></span></div>`).join('')||'<div class="emp">مفيش نتائج</div>'}
+function listP(){const rows=P.map((p,i)=>({p,i})).filter(({p})=>!q||(pn(p)+p.tag+p.variants.map(v=>v.label+v.sku).join()).includes(q));
+ $('#pl').innerHTML=`<div class="lh">${rows.length} منتج</div>`+(rows.map(({p,i})=>`<div class="pi ${i==sel?'on':''}" data-a="selP" data-i="${i}"><img src="${U(p.img)}" alt=""><div><b>${E(pn(p))}</b><small>${E(CATS[p.cat])}${p.tag?'، '+E(p.tag):''}</small></div><em title="عدد الأصناف">${p.variants.length}</em><span><button data-a="up" data-i="${i}" title="فوق">▲</button><button data-a="dn" data-i="${i}" title="تحت">▼</button></span></div>`).join('')||'<div class="emp">مفيش نتائج</div>')}
 function edP(p){return`<div class="eh"><h2>تعديل المنتج</h2><button class="btn dg" data-a="delP">حذف المنتج</button></div>
- <section class="sec"><h3>البيانات الأساسية</h3><div class="f">
+ <section class="sec"><h3>البيانات الأساسية</h3><div class="f c3 cb">
   <div><label>الفئة <small>(للفلتر في الموقع)</small></label><select data-f="cat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${p.cat==k?'selected':''}>${v}</option>`).join('')}</select></div>
   <div><label>الحجم على الكارت <small>(مثال: 5 لتر)</small></label><input data-f="tag" value="${E(p.tag)}"></div>
-  <div class="s2"><label>وصف قصير تحت الاسم</label><input data-f="desc" value="${E(p.desc)}"></div></div></section>
- <section class="sec"><h3>الصورة والإضاءة</h3><div class="f">
-  <div class="s2"><label>صورة المنتج الرئيسية <small>(PNG بخلفية شفافة، وصورة الكراتين بتتحط ورا المنتج تلقائيًا)</small></label>${drop(p.img,-1)}</div>
-  <div><label>لون الإضاءة خلف المنتج <small>(بيتطبق على كل الأصناف)</small></label><input type="color" data-f="hue" value="${E(p.hue)}"></div>
-  <div><label>شكل الزجاجة</label><label class="ck"><input type="checkbox" data-f="cls" ${p.cls?'checked':''}> زجاجة رفيعة (شكل نحيف)</label></div></div></section>
- <section class="sec"><h3><span>الأصناف <small>(اللون / الريحة)</small></span><button class="btn sol" data-a="addV">+ صنف</button></h3>
+  <div><label>لون التوهج ورا المنتج</label><input type="color" data-f="hue" value="${E(p.hue)}"></div>
+  <div class="s3"><label>وصف قصير تحت الاسم</label><input data-f="desc" value="${E(p.desc)}"></div></div></section>
+ <section class="sec"><h3>صورة المنتج</h3><div class="imgrow">${drop(p.img,-1)}
+  <div class="ihint"><p>ارفع صورة PNG بخلفية شفافة. صورة الكراتين بتتحط ورا المنتج تلقائيًا.</p><label class="ck"><input type="checkbox" data-f="cls" ${p.cls?'checked':''}> زجاجة رفيعة (شكل نحيف)</label></div></div></section>
+ <section class="sec"><h3><span>الأصناف <small>(اللون / الريحة) · ${p.variants.length}</small></span><button class="btn sol" data-a="addV">+ صنف</button></h3>
  ${p.variants.map((v,j)=>`<div class="vr"><div class="vh"><span>صنف ${j+1}</span>${p.variants.length>1?`<button class="btn dg" data-a="rmV" data-j="${j}">حذف</button>`:''}</div>
   <div class="f c3">
    <div><label>الاسم المعروض</label><input data-v="label" data-j="${j}" value="${E(v.label)}"></div>
-   <div><label>الاسم الكامل في الطلب <small>(لازم يكون مميز)</small></label><input data-v="sku" data-j="${j}" value="${E(v.sku)}"></div>
+   <div><label>الاسم الكامل في الطلب <small>(مميز)</small></label><input data-v="sku" data-j="${j}" value="${E(v.sku)}"></div>
    <div><label>السطر الصغير فوق الاسم</label><input data-v="cat" data-j="${j}" value="${E(v.cat)}"></div></div>
   <div class="f c4">
-   <div><label>محتوى الكرتونة <small>(العدد)</small></label><input type="number" min="1" data-v="pack" data-j="${j}" value="${v.pack}"></div>
+   <div><label>محتوى الكرتونة</label><input type="number" min="1" data-v="pack" data-j="${j}" value="${v.pack}"></div>
    <div><label>الوحدة</label><input data-v="unit" data-j="${j}" value="${E(v.unit)}" list="un"></div>
-   <div><label>لون الإضاءة</label><input type="color" data-v="hue" data-j="${j}" value="${E(v.hue)}"></div>
+   <div><label>اللون</label><input type="color" data-v="hue" data-j="${j}" value="${E(v.hue)}"></div>
    <div><label>صورة خاصة بالصنف <small>(اختياري)</small></label>${v.img?`<div class="vi"><img src="${U(v.img)}" alt=""><button class="btn dg" data-a="rmI" data-j="${j}">إزالة</button></div>`:`<button class="btn w100" data-a="img" data-j="${j}">رفع صورة</button>`}</div></div></div>`).join('')}
  <datalist id="un"><option>جركن<option>زجاجة<option>عبوة<option>قطعة</datalist></section>`}
-const drop=(o,j)=>`<div class="drop" data-a="img" data-j="${j}">${o?`<img src="${U(o)}" alt=""><span>اضغط أو اسحب صورة جديدة لتغييرها</span>`:'<span>اضغط هنا أو اسحب صورة PNG</span>'}</div>`;
+const drop=(o,j)=>`<div class="drop sq" data-a="img" data-j="${j}">${o?`<img src="${U(o)}" alt=""><span>اضغط أو اسحب صورة جديدة لتغييرها</span>`:'<span>اضغط هنا أو اسحب صورة PNG</span>'}</div>`;
 function pvw(){const p=P[sel],b=$('#pv');if(!p){b.innerHTML='';return}const v=p.variants[pj]||p.variants[0]||nv(),im=v.img||p.img;
- b.innerHTML=`<small>معاينة الكارت</small><div class="cv" style="--h:${E(v.hue||p.hue)}"><i class="gl"></i><span class="tag">${E(p.tag)||'—'}</span><img class="bx" src="assets/img/boxes.webp" alt="">${im?`<img class="pr" src="${U(im)}" alt="">`:''}</div>
+ b.innerHTML=`<small>معاينة الكارت</small><div class="cv" style="--h:${E(v.hue||p.hue)}"><span class="tag">${E(p.tag)||'—'}</span><img class="bx" src="assets/img/boxes.webp" alt="">${im?`<img class="pr" src="${U(im)}" alt="">`:''}</div>
  <div class="ci"><small>${E(v.cat)}</small><h3>${E(v.label)||'—'}</h3><p>${E(p.desc)}</p></div><div class="chips">${p.variants.map((x,j)=>`<button class="${j==pj?'on':''}" data-a="pj" data-j="${j}">${E(x.label)||'صنف '+(j+1)}</button>`).join('')}</div>`}
 /* ===== الموزعين ===== */
 const okPh=s=>/^(01\d{9}|201\d{9})$/.test(String(s).replace(/\D/g,''));
@@ -113,9 +127,8 @@ function renderD(){const all=GOVS.reduce((a,g)=>a+(D[g.id]||[]).length,0),cov=GO
  $('#app').innerHTML=`<div class="g2"><aside class="card"><div class="sh"><input id="gq" placeholder="محافظة أو اسم أو رقم" value="${E(gq)}"></div><div class="list" id="gl"></div></aside><section class="card" id="gd"><div class="st"><div><b>${all}</b><span>إجمالي الموزعين</span></div><div><b>${cov}/${GOVS.length}</b><span>محافظات مغطّاة</span></div></div><div id="gb"></div></section></div>`;listG();bodyG()}
 function listG(){const f=gq.trim();$('#gl').innerHTML=GOVS.filter(g=>!f||g.name.includes(f)||(D[g.id]||[]).some(r=>(r.name+r.phone+(r.area||'')).includes(f))).map(g=>{const n=(D[g.id]||[]).length;return`<div class="gi ${g.id==gov?'on':''}" data-a="selG" data-g="${g.id}"><span>${E(g.name)}</span><em class="${n?'':'z'}">${n}</em></div>`}).join('')}
 function bodyG(){const g=GOVS.find(x=>x.id==gov),r=D[gov]||(D[gov]=[]);
- $('#gb').innerHTML=`<h2>${E(g.name)} <small>(${r.length} موزع)</small></h2>${r.length?`<div class="dr hd"><span>الاسم</span><span>رقم الموبايل</span><span>المنطقة (اختياري)</span><span></span></div>`:'<div class="emp">مفيش موزعين هنا — المحافظة هتظهر «قريبًا» على الخريطة</div>'}
- ${r.map((x,i)=>`<div class="dr"><input data-d="name" data-i="${i}" value="${E(x.name)}" placeholder="اسم الموزع"><input data-d="phone" data-i="${i}" class="${okPh(x.phone)?'':'bad'}" value="${E(x.phone)}" placeholder="01012345678"><input data-d="area" data-i="${i}" value="${E(x.area||'')}" placeholder="المنطقة"><button data-a="rmD" data-i="${i}" title="حذف">حذف</button></div>`).join('')}
- <button class="btn sol" data-a="addD" style="margin-top:8px">+ إضافة موزع</button>`}
+ $('#gb').innerHTML=`<div class="eh"><h2>${E(g.name)} <small>(${r.length} موزع)</small></h2><button class="btn sol" data-a="addD">+ إضافة موزع</button></div>${r.length?`<div class="dr hd"><span>الاسم</span><span>رقم الموبايل</span><span>المنطقة (اختياري)</span><span></span></div>`:'<div class="emp">مفيش موزعين هنا — المحافظة هتظهر «قريبًا» على الخريطة</div>'}
+ ${r.map((x,i)=>`<div class="dr"><input data-d="name" data-i="${i}" value="${E(x.name)}" placeholder="اسم الموزع"><input data-d="phone" data-i="${i}" class="${okPh(x.phone)?'':'bad'}" value="${E(x.phone)}" placeholder="01012345678"><input data-d="area" data-i="${i}" value="${E(x.area||'')}" placeholder="المنطقة"><button data-a="rmD" data-i="${i}" title="حذف">حذف</button></div>`).join('')}`}
 /* ===== التصدير (ZIP) ===== */
 const CT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})(),crc=u=>{let c=-1;for(let i=0;i<u.length;i++)c=CT[(c^u[i])&255]^(c>>>8);return(~c)>>>0};
 function zip(fs){const en=new TextEncoder(),pt=[],cd=[];let o=0,cs=0;for(const f of fs){const nm=en.encode(f.name),c=crc(f.data),n=f.data.length,h=new DataView(new ArrayBuffer(30));
@@ -147,8 +160,9 @@ function start(){$('#lg').hidden=true;$('#me').hidden=$('#lo').hidden=false;$('#
  tab=!hp?'p':!hd?'d':mg?'u':'p';document.querySelectorAll('.top nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab==tab));R()}
 async function renderU(){$('#app').innerHTML='<section class="card" id="gd"><h2>المستخدمين والصلاحيات</h2><div id="ul">جاري التحميل…</div></section>';let us=[];try{us=(await api('/users')).users}catch(e){return toast(e.message)}
  const rs=me.role=='developer'?['owner','editor']:['editor'];
- $('#ul').innerHTML=`<div class="vr"><div class="vh">إضافة مستخدم جديد</div><div class="f"><div><label>اسم المستخدم (إنجليزي)</label><input id="nu" dir="ltr"></div><div><label>الاسم</label><input id="nn"></div><div><label>كلمة السر (8 حروف+)</label><input id="np" dir="ltr"></div><div><label>الدور</label><select id="nr">${rs.map(r=>`<option value="${r}">${RL[r]}</option>`).join('')}</select></div><div class="s2"><label>الصلاحيات (للمحرّر)</label>${Object.keys(PM).map(k=>`<label style="display:inline-flex;gap:4px;font-weight:400"><input type="checkbox" class="pk" value="${k}"> ${PM[k]}</label>`).join(' ')}</div></div><button class="btn sol" data-a="addU" style="margin-top:12px">+ إضافة</button></div>`
- +(us.length?us.map(x=>`<div class="ur"><div><b>${E(x.name)}</b><br><small dir="ltr">${E(x.username)} · ${RL[x.role]}</small></div><div>${x.role=='owner'?'<small>كل الصلاحيات</small>':Object.keys(PM).map(k=>`<label><input type="checkbox" data-pu="${E(x.username)}" value="${k}" ${x.perms.includes(k)?'checked':''}> ${PM[k]}</label>`).join('')}</div><div><button class="btn" data-a="pwU" data-u="${E(x.username)}">كلمة السر</button> <button class="btn dg" data-a="delU" data-u="${E(x.username)}">حذف</button></div></div>`).join(''):'<div class="emp">لسه مفيش مستخدمين</div>')}
+ $('#ul').innerHTML=`<section class="sec" style="border-top:0;margin-top:0;padding-top:0"><h3>إضافة مستخدم جديد</h3><div class="f c4"><div><label>اسم المستخدم (إنجليزي)</label><input id="nu" dir="ltr"></div><div><label>الاسم</label><input id="nn"></div><div><label>كلمة السر (8 حروف+)</label><input id="np" dir="ltr"></div><div><label>الدور</label><select id="nr">${rs.map(r=>`<option value="${r}">${RL[r]}</option>`).join('')}</select></div><div class="s2"><label>الصلاحيات <small>(للمحرّر)</small></label>${Object.keys(PM).map(k=>`<label style="display:inline-flex;gap:4px;font-weight:400"><input type="checkbox" class="pk" value="${k}"> ${PM[k]}</label>`).join(' ')}</div></div><button class="btn sol" data-a="addU" style="margin-top:14px">+ إضافة</button></section><section class="sec"><h3>المستخدمين الحاليين</h3><div id="ulist"></div></section>`
+ 
+ $('#ulist').innerHTML=(us.length?us.map(x=>`<div class="ur"><div><b>${E(x.name)}</b><br><small dir="ltr">${E(x.username)}</small> <span class="chip">${RL[x.role]}</span></div><div>${x.role=='owner'?'<small>كل الصلاحيات</small>':Object.keys(PM).map(k=>`<label><input type="checkbox" data-pu="${E(x.username)}" value="${k}" ${x.perms.includes(k)?'checked':''}> ${PM[k]}</label>`).join('')}</div><div><button class="btn" data-a="pwU" data-u="${E(x.username)}">كلمة السر</button> <button class="btn dg" data-a="delU" data-u="${E(x.username)}">حذف</button></div></div>`).join(''):'<div class="emp">لسه مفيش مستخدمين</div>')}
 async function addU(){const g=i=>$('#'+i).value.trim();try{await api('/users','POST',{username:g('nu'),name:g('nn'),password:g('np'),role:$('#nr').value,perms:[...document.querySelectorAll('.pk:checked')].map(c=>c.value)});toast('تمت الإضافة ✓');renderU()}catch(e){alert(e.message)}}
 async function pwU(u){const p=prompt('كلمة السر الجديدة للمستخدم '+u+' (8 حروف على الأقل)');if(!p)return;try{await api('/users/'+u,'PATCH',{password:p});toast('اتغيرت كلمة السر ✓')}catch(e){alert(e.message)}}
 async function delU(u){if(!confirm('تحذف المستخدم '+u+'؟'))return;try{await api('/users/'+u,'DELETE');renderU()}catch(e){alert(e.message)}}
@@ -171,7 +185,7 @@ document.addEventListener('dragleave',e=>e.target.closest&&e.target.closest('.dr
 document.addEventListener('drop',e=>{const d=e.target.closest('.drop');if(d){e.preventDefault();setImg(e.dataTransfer.files[0],+d.dataset.j)}});
 document.addEventListener('input',e=>{const t=e.target,p=P[sel];
  if(t.id=='q'){q=t.value;return listP()}if(t.id=='gq'){gq=t.value;return listG()}
- if(t.dataset.f){p[t.dataset.f]=t.type=='checkbox'?(t.checked?'slim':''):t.value;if(t.dataset.f=='hue'){p.variants.forEach(v=>v.hue=t.value);document.querySelectorAll('[data-v=hue]').forEach(i=>i.value=t.value)}mark();listP();pvw()}
+ if(t.dataset.f){p[t.dataset.f]=t.type=='checkbox'?(t.checked?'slim':''):t.value;mark();listP();pvw()}
  else if(t.dataset.v){const v=p.variants[+t.dataset.j];v[t.dataset.v]=t.dataset.v=='pack'?Math.max(1,+t.value||1):t.value;mark();listP();pvw()}
  else if(t.dataset.d){const r=D[gov][+t.dataset.i];r[t.dataset.d]=t.value;if(t.dataset.d=='phone')t.classList.toggle('bad',!okPh(t.value));mark()}});
 document.addEventListener('change',e=>{if(e.target.dataset.d)renderD();else if(e.target.dataset.pu)permU(e.target)});
