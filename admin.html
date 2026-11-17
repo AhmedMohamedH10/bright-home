@@ -166,7 +166,7 @@ async function exportZip(){const fs=await build();if(!fs)return;const a=document
 const b64=d=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(new Blob([d]))});
 async function publish(){if(!tok)return exportZip();let fs=await build();if(!fs)return;
  fs=fs.filter(f=>me.perms.includes(/settings-data/.test(f.name)?'settings':/distributors-data/.test(f.name)?'distributors':'products'));const b=$('#pub');b.disabled=true;toast('جارٍ النشر…');
- try{const files=[];for(const f of fs)files.push({path:f.name,b64:await b64(f.data)});const changes=diff().filter(c=>me.perms.includes(c.d));await api('/publish','POST',{files,changes});snap();Object.values(imgs).forEach(i=>i.done=1);dirty=false;$('#bd').hidden=true;toast('تم النشر. يتحدّث الموقع خلال دقيقة.')}catch(e){alert(e.message)}b.disabled=false}
+ try{const files=[];for(const f of fs)files.push({path:f.name,b64:await b64(f.data)});const changes=diff().filter(c=>me.perms.includes(c.d));const rs=await api('/publish','POST',{files,changes});snap();Object.values(imgs).forEach(i=>i.done=1);dirty=false;$('#bd').hidden=true;toast(!rs.v?'تم النشر، لكن السيرفر قديم. حدّث الـ Worker لتفعيل السجلات.':rs.logged===false?'تم النشر، لكن تعذّر حفظ السجل.':'تم النشر. يتحدّث الموقع خلال دقيقة.')}catch(e){alert(e.message)}b.disabled=false}
 /* ===== الحساب والمستخدمين ===== */
 const api=async(p,m='GET',b)=>{const r=await fetch(API+p,{method:m,headers:{'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok}:{})},body:b?JSON.stringify(b):undefined}),j=await r.json().catch(()=>({}));if(r.status===401&&tok&&p!=='/login'){logout();throw new Error(j.error||'انتهت الجلسة')}if(!r.ok)throw new Error(j.error||'خطأ '+r.status);return j};
 const logout=()=>{sessionStorage.removeItem('bh_tok');location.reload()},RL={developer:'مطوّر',owner:'مالك',editor:'محرّر'},PM={products:'المنتجات',distributors:'الموزعين'};
@@ -217,14 +217,14 @@ function diff(){const c=[],add=(d,k,a)=>c.push({d,k,a}),m0=new Map(P0.map(p=>[p.
  if((S0.applyOpen!==false)!==(S.applyOpen!==false))add('settings','set',S.applyOpen!==false?'فتح باب التقديم كموزّع':'أغلق باب التقديم كموزّع');
  return c}
 /* ===== السجلات (للمطوّر) ===== */
-let lg=[],lf='all',lq='';
+let lg=[],lf='all',lq='',lold=false;
 const LK={add:'إضافة',edit:'تعديل',del:'حذف',pub:'نشر',set:'إعدادات',in:'دخول',sec:'تنبيه أمني'},LG={all:'الكل',pub:'النشر',prod:'المنتجات',dist:'الموزّعون',set:'التقديم',usr:'المستخدمون',lgn:'الدخول'};
 async function renderL(){$('#app').innerHTML=`<section class="card" id="gd"><div class="eh"><h2>سجلات الموقع <small>آخر 500 عملية</small></h2><button class="btn" data-a="lr">تحديث</button></div><div class="lt"><div class="chips">${Object.entries(LG).map(([k,v])=>`<button class="${k==lf?'on':''}" data-a="lf" data-g="${k}">${v}</button>`).join('')}</div><input id="lq" placeholder="بحث في السجلات" value="${E(lq)}"></div><div id="ll"><div class="emp">جارٍ التحميل…</div></div></section>`;
- try{lg=(await api('/log')).log}catch(e){$('#ll').innerHTML='<div class="emp">'+E(e.message)+'</div>';return}listL()}
+ try{const rl=await api('/log');lg=rl.log;lold=!rl.v}catch(e){$('#ll').innerHTML='<div class="emp">'+E(e.message)+'</div>';return}listL()}
 function listL(){const f=lq.trim(),rows=lg.filter(r=>(lf=='all'||r.g==lf)&&(!f||(r.a+r.u+(r.n||'')).includes(f)));let day='',h='';
  rows.forEach(r=>{const d=new Date(r.t),dn=d.toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});if(dn!=day){day=dn;h+=`<div class="ld">${E(dn)}</div>`}
   h+=`<div class="lr"><time>${E(d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}))}</time><span class="lk k-${E(r.k)}">${E(LK[r.k]||r.k)}</span><div><b>${E(r.n||r.u)}</b> <small dir="ltr">${E(r.u)}</small><div>${E(r.a)}</div></div></div>`});
- $('#ll').innerHTML=h||'<div class="emp">لا توجد سجلات</div>'}
+ $('#ll').innerHTML=(lold?'<div class="bn" style="margin-bottom:12px">السيرفر قديم، فلا تُسجَّل التفاصيل. ألصق <b dir="ltr">admin-worker.js</b> الجديد في Cloudflare واضغط Deploy.</div>':'')+(h||'<div class="emp">لا توجد سجلات</div>')}
 
 const R=()=>tab=='p'?renderP():tab=='d'?renderD():tab=='l'?renderL():renderU();
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a],[data-tab]');if(!t)return;const a=t.dataset.a,i=+t.dataset.i,j=+t.dataset.j,p=P[sel];
