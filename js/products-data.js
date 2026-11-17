@@ -5,7 +5,7 @@ const PRODUCTS = [
   "cat": "degrease",
   "tag": "750 مل",
   "desc": "للمناطق اللي محتاجة عناية إضافية.",
-  "hue": "#ffe45e",
+  "hue": "#ffae00",
   "cls": "slim",
   "img": {
    "src": "assets/products/yellow.webp",
