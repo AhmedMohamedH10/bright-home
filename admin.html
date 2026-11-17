@@ -48,7 +48,12 @@ dialog{background:var(--pn);color:var(--t);border:1px solid var(--l);border-radi
 #lg{position:fixed;inset:0;z-index:30;background:var(--bg);display:grid;place-items:center}#lg form{background:var(--pn);border:1px solid var(--l);border-radius:14px;padding:28px;width:min(360px,92vw);display:grid;gap:12px}#lg h2{margin:0 0 4px}
 .chip{border:1px solid var(--l);color:var(--m);border-radius:99px;padding:2px 12px;font-size:13px;font-weight:600}.top .gh{color:var(--m)}
 .ur{display:grid;grid-template-columns:1.1fr 1.6fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--l);border-radius:10px;margin-bottom:8px}.ur label{display:inline-flex;gap:4px;font-weight:400;margin:0 6px 0 0;color:var(--t)}
-@media(max-width:1000px){.g3,.g2{grid-template-columns:1fr}#pv{position:static}.list{max-height:260px}.f,.f.c3{grid-template-columns:1fr}.dr{grid-template-columns:1fr 1fr}.dr button{grid-column:1/-1}.top{flex-wrap:wrap;padding:10px 16px}main{padding:16px}}
+.eh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.eh h2{margin:0}
+.sec{padding:22px 0 6px;border-top:1px solid var(--l);margin-top:18px}.eh+.sec{border-top:0;margin-top:0}
+.sec>h3{margin:0 0 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}.sec>h3 small{font-weight:400}
+.f.c3{grid-template-columns:repeat(3,1fr)}.f.c4{grid-template-columns:repeat(4,1fr)}.vr .f+.f{margin-top:14px}.vr .vi{margin:0}.w100{width:100%}
+label.ck{display:flex;align-items:center;gap:8px;font-weight:400;color:var(--t);height:38px;margin:0}
+@media(max-width:1000px){.g3,.g2{grid-template-columns:1fr}#pv{position:static}.list{max-height:260px}.f,.f.c3,.f.c4{grid-template-columns:1fr}.dr{grid-template-columns:1fr 1fr}.dr button{grid-column:1/-1}.top{flex-wrap:wrap;padding:10px 16px}main{padding:16px}}
 </style></head><body>
 <header class="top"><div class="brand"><img src="assets/img/logo-s.webp" alt="">لوحة تحكم برايت هوم</div>
 <nav><button data-tab="p" id="tp" class="on">المنتجات</button><button data-tab="d" id="td">الموزعين</button><button data-tab="u" id="tu" hidden>المستخدمين</button></nav>
@@ -77,22 +82,27 @@ function renderP(){const p=P[sel];
  $('#app').innerHTML=`<div class="g3"><aside class="card"><div class="sh"><input id="q" placeholder="بحث في المنتجات" value="${E(q)}"><button class="btn sol" data-a="addP">+ جديد</button></div><div class="list" id="pl"></div></aside>
  <section class="card" id="ed">${p?edP(p):'<div class="emp">اختار منتج من القايمة أو أضف منتج جديد</div>'}</section><aside class="card" id="pv"></aside></div>`;listP();pvw()}
 function listP(){$('#pl').innerHTML=P.map((p,i)=>({p,i})).filter(({p})=>!q||(pn(p)+p.tag+p.variants.map(v=>v.label+v.sku).join()).includes(q)).map(({p,i})=>`<div class="pi ${i==sel?'on':''}" data-a="selP" data-i="${i}"><img src="${U(p.img)}" alt=""><div><b>${E(pn(p))}</b><small>${E(CATS[p.cat])} · ${E(p.tag)} · ${p.variants.length} صنف</small></div><span><button data-a="up" data-i="${i}" title="فوق">▲</button><button data-a="dn" data-i="${i}" title="تحت">▼</button></span></div>`).join('')||'<div class="emp">مفيش نتائج</div>'}
-function edP(p){return`<h2>تعديل المنتج</h2><div class="f">
- <div><label>الفئة (للفلتر في الموقع)</label><select data-f="cat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${p.cat==k?'selected':''}>${v}</option>`).join('')}</select></div>
- <div><label>الحجم على الكارت <small>(مثال: 5 لتر)</small></label><input data-f="tag" value="${E(p.tag)}"></div>
- <div class="s2"><label>وصف قصير تحت الاسم</label><input data-f="desc" value="${E(p.desc)}"></div>
- <div><label>لون الإضاءة خلف المنتج <small>(بيتطبق على كل الأصناف)</small></label><input type="color" data-f="hue" value="${E(p.hue)}"></div>
- <div><label>&nbsp;</label><label style="font-weight:400"><input type="checkbox" data-f="cls" ${p.cls?'checked':''}> زجاجة رفيعة (شكل نحيف)</label></div>
- <div class="s2"><label>صورة المنتج الرئيسية <small>(PNG بخلفية شفافة — صورة الكراتين ثابتة ورا المنتج تلقائيًا)</small></label>${drop(p.img,-1)}</div></div>
- <h4>الأصناف (اللون / الريحة)<button class="btn sol" data-a="addV">+ صنف</button></h4>
- ${p.variants.map((v,j)=>`<div class="vr"><div class="vh"><span>صنف ${j+1}</span>${p.variants.length>1?`<button class="btn dg" data-a="rmV" data-j="${j}">حذف</button>`:''}</div><div class="f">
- <div><label>الاسم المعروض</label><input data-v="label" data-j="${j}" value="${E(v.label)}"></div>
- <div><label>الاسم الكامل في الطلب <small>(لازم يكون مميز)</small></label><input data-v="sku" data-j="${j}" value="${E(v.sku)}"></div>
- <div class="s2"><label>السطر الصغير فوق الاسم</label><input data-v="cat" data-j="${j}" value="${E(v.cat)}"></div></div>
- <div class="f c3" style="margin-top:12px"><div><label>محتوى الكرتونة <small>(العدد)</small></label><input type="number" min="1" data-v="pack" data-j="${j}" value="${v.pack}"></div><div><label>الوحدة</label><input data-v="unit" data-j="${j}" value="${E(v.unit)}" list="un"></div><div><label>لون الإضاءة</label><input type="color" data-v="hue" data-j="${j}" value="${E(v.hue)}"></div></div>
- <div class="vi">${v.img?`<img src="${U(v.img)}" alt=""><span>صورة خاصة بالصنف</span><button class="btn dg" data-a="rmI" data-j="${j}">إزالة</button>`:`<button class="btn" data-a="img" data-j="${j}">صورة خاصة بالصنف (اختياري)</button>`}</div></div>`).join('')}
- <datalist id="un"><option>جركن<option>زجاجة<option>عبوة<option>قطعة</datalist>
- <div style="margin-top:18px"><button class="btn dg" data-a="delP">حذف المنتج</button></div>`}
+function edP(p){return`<div class="eh"><h2>تعديل المنتج</h2><button class="btn dg" data-a="delP">حذف المنتج</button></div>
+ <section class="sec"><h3>البيانات الأساسية</h3><div class="f">
+  <div><label>الفئة <small>(للفلتر في الموقع)</small></label><select data-f="cat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${p.cat==k?'selected':''}>${v}</option>`).join('')}</select></div>
+  <div><label>الحجم على الكارت <small>(مثال: 5 لتر)</small></label><input data-f="tag" value="${E(p.tag)}"></div>
+  <div class="s2"><label>وصف قصير تحت الاسم</label><input data-f="desc" value="${E(p.desc)}"></div></div></section>
+ <section class="sec"><h3>الصورة والإضاءة</h3><div class="f">
+  <div class="s2"><label>صورة المنتج الرئيسية <small>(PNG بخلفية شفافة، وصورة الكراتين بتتحط ورا المنتج تلقائيًا)</small></label>${drop(p.img,-1)}</div>
+  <div><label>لون الإضاءة خلف المنتج <small>(بيتطبق على كل الأصناف)</small></label><input type="color" data-f="hue" value="${E(p.hue)}"></div>
+  <div><label>شكل الزجاجة</label><label class="ck"><input type="checkbox" data-f="cls" ${p.cls?'checked':''}> زجاجة رفيعة (شكل نحيف)</label></div></div></section>
+ <section class="sec"><h3><span>الأصناف <small>(اللون / الريحة)</small></span><button class="btn sol" data-a="addV">+ صنف</button></h3>
+ ${p.variants.map((v,j)=>`<div class="vr"><div class="vh"><span>صنف ${j+1}</span>${p.variants.length>1?`<button class="btn dg" data-a="rmV" data-j="${j}">حذف</button>`:''}</div>
+  <div class="f c3">
+   <div><label>الاسم المعروض</label><input data-v="label" data-j="${j}" value="${E(v.label)}"></div>
+   <div><label>الاسم الكامل في الطلب <small>(لازم يكون مميز)</small></label><input data-v="sku" data-j="${j}" value="${E(v.sku)}"></div>
+   <div><label>السطر الصغير فوق الاسم</label><input data-v="cat" data-j="${j}" value="${E(v.cat)}"></div></div>
+  <div class="f c4">
+   <div><label>محتوى الكرتونة <small>(العدد)</small></label><input type="number" min="1" data-v="pack" data-j="${j}" value="${v.pack}"></div>
+   <div><label>الوحدة</label><input data-v="unit" data-j="${j}" value="${E(v.unit)}" list="un"></div>
+   <div><label>لون الإضاءة</label><input type="color" data-v="hue" data-j="${j}" value="${E(v.hue)}"></div>
+   <div><label>صورة خاصة بالصنف <small>(اختياري)</small></label>${v.img?`<div class="vi"><img src="${U(v.img)}" alt=""><button class="btn dg" data-a="rmI" data-j="${j}">إزالة</button></div>`:`<button class="btn w100" data-a="img" data-j="${j}">رفع صورة</button>`}</div></div></div>`).join('')}
+ <datalist id="un"><option>جركن<option>زجاجة<option>عبوة<option>قطعة</datalist></section>`}
 const drop=(o,j)=>`<div class="drop" data-a="img" data-j="${j}">${o?`<img src="${U(o)}" alt=""><span>اضغط أو اسحب صورة جديدة لتغييرها</span>`:'<span>اضغط هنا أو اسحب صورة PNG</span>'}</div>`;
 function pvw(){const p=P[sel],b=$('#pv');if(!p){b.innerHTML='';return}const v=p.variants[pj]||p.variants[0]||nv(),im=v.img||p.img;
  b.innerHTML=`<small>معاينة الكارت</small><div class="cv" style="--h:${E(v.hue||p.hue)}"><i class="gl"></i><span class="tag">${E(p.tag)||'—'}</span><img class="bx" src="assets/img/boxes.webp" alt="">${im?`<img class="pr" src="${U(im)}" alt="">`:''}</div>
