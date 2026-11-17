@@ -67,22 +67,28 @@ input,select{height:40px}input[type=checkbox]{height:auto}input[type=color]{heig
 .ihint p{margin:0 0 14px;color:var(--m);font-size:13px;max-width:360px}
 .vr{background:var(--in);padding:18px}.vr .vh{margin-bottom:14px}.vr input,.vr select{background:var(--pn)}.vr .f+.f{margin-top:16px}
 .f.cb{grid-template-columns:1.5fr 1fr .8fr}select{padding-inline:10px}
+#lg form{padding:32px 30px 28px;width:min(380px,92vw)}#lg h2{text-align:center;margin:0 0 10px}.lgo{display:block;width:170px;height:170px;object-fit:contain;margin:0 auto 6px}#lg small{text-align:center}
+.cnt{display:block;margin-top:2px;color:var(--m);font-size:13px}
+.pi .gp{width:14px;height:22px;flex:none;cursor:grab;touch-action:none;user-select:none;opacity:.55;background:radial-gradient(circle,var(--m) 1.3px,transparent 1.7px) 0 0/7px 7px}.pi .gp:hover{opacity:1}
+.pi.drg{opacity:.45}.pi.ovt{box-shadow:inset 0 2px 0 var(--sky)}.pi.ovb{box-shadow:inset 0 -2px 0 var(--sky)}
+.asw{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;margin-bottom:16px;background:var(--in);border:1px solid var(--l);border-radius:10px}.asw b{display:block}.asw small{color:var(--m)}
+.sw{position:relative;flex:none;width:46px;height:26px;border-radius:99px;border:1px solid var(--l);background:var(--pn);cursor:pointer;padding:0;transition:background .2s,border-color .2s}.sw i{position:absolute;top:3px;inset-inline-start:3px;width:18px;height:18px;border-radius:50%;background:var(--m);transition:inset-inline-start .2s,background .2s}.sw.on{background:var(--bd);border-color:var(--bd)}.sw.on i{inset-inline-start:23px;background:#fff}
 @media(max-width:1000px){.g3,.g2{grid-template-columns:1fr}#pv{position:static}.list{max-height:260px}.f,.f.c3,.f.c4,.f.cb{grid-template-columns:1fr}.imgrow{grid-template-columns:1fr}.dr{grid-template-columns:1fr 1fr}.dr button{grid-column:1/-1}.top{flex-wrap:wrap;padding:10px 16px}main{padding:16px}}
 </style></head><body>
 <header class="top"><div class="brand"><img src="assets/img/logo-s.webp" alt="">لوحة تحكم برايت هوم</div>
 <nav><button data-tab="p" id="tp" class="on">المنتجات</button><button data-tab="d" id="td">الموزعين</button><button data-tab="u" id="tu" hidden>المستخدمين</button></nav>
 <span id="me" class="chip" hidden></span><button id="pub" class="btn pri">نشر على الموقع<i id="bd" hidden>●</i></button><button id="zp" class="btn gh" title="تحميل نسخة ZIP">تحميل ZIP</button><button id="lo" class="btn gh" hidden>خروج</button></header>
 <div id="ban"></div><main id="app"></main><div id="toast"></div>
-<div id="lg" hidden><form id="lf"><h2>دخول لوحة التحكم</h2><input id="lu" placeholder="اسم المستخدم" autocomplete="username" dir="ltr"><input id="lpw" type="password" placeholder="كلمة السر" autocomplete="current-password" dir="ltr"><button class="btn sol">دخول</button><small id="le" style="color:var(--er)"></small></form></div>
+<div id="lg" hidden><form id="lf"><img class="lgo" src="assets/img/logo-m.webp" alt="برايت هوم"><h2>دخول لوحة التحكم</h2><input id="lu" placeholder="اسم المستخدم" autocomplete="username" dir="ltr"><input id="lpw" type="password" placeholder="كلمة السر" autocomplete="current-password" dir="ltr"><button class="btn sol">دخول</button><small id="le" style="color:var(--er)"></small></form></div>
 <input type="file" id="file" accept="image/png,image/webp,image/jpeg" hidden>
 <dialog id="dlg"><h2>اتحمّل ملف التحديثات</h2><ol><li>فُك ضغط الملف <b>bright-home-update.zip</b>.</li><li>ارفع محتوياته فوق ملفات الموقع (GitHub) بنفس أسماء المجلدات: <code dir="ltr">js/</code> و <code dir="ltr">assets/</code>.</li><li>استنى دقيقة وافتح الموقع واعمل تحديث للصفحة.</li></ol><button class="btn sol" onclick="dlg.close()">تمام</button></dialog>
-<script src="js/config.js"></script><script src="js/egypt-map.js"></script><script src="js/products-data.js"></script><script src="js/distributors-data.js"></script>
+<script src="js/config.js"></script><script src="js/egypt-map.js"></script><script src="js/products-data.js"></script><script src="js/distributors-data.js"></script><script src="js/settings-data.js"></script>
 <script>
 const $=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const API=(typeof CONFIG!=='undefined'&&CONFIG.ADMIN_API)||'';let tok=sessionStorage.getItem('bh_tok')||'',me=null;
 const CATS={degrease:'مزيل الدهون',soap:'غسول اليدين',fresh:'معطر ملابس'},GOVS=EGYPT_MAP.govs,KEY='bh_admin_draft';
-let P=JSON.parse(JSON.stringify(PRODUCTS)),D=JSON.parse(JSON.stringify(DISTRIBUTORS)),imgs={},sel=0,pj=0,gov=GOVS[0].id,tab='p',pick=null,dirty=false,q='',gq='',tm;
-const U=o=>o?(imgs[o.src]?imgs[o.src].url:o.src):'',pn=p=>p.variants[0]?.label||'منتج جديد';
+let S=typeof SETTINGS!=='undefined'&&SETTINGS?JSON.parse(JSON.stringify(SETTINGS)):{applyOpen:true},P=JSON.parse(JSON.stringify(PRODUCTS)),D=JSON.parse(JSON.stringify(DISTRIBUTORS)),imgs={},sel=0,pj=0,gov=GOVS[0].id,tab='p',pick=null,dirty=false,q='',gq='',tm;
+const canS=()=>!API||(me&&me.perms.includes('settings')),U=o=>o?(imgs[o.src]?imgs[o.src].url:o.src):'',pn=p=>p.variants[0]?.label||'منتج جديد';
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)};
 const mark=()=>{dirty=true;$('#bd').hidden=false;clearTimeout(tm);if(!API)tm=setTimeout(()=>localStorage.setItem(KEY,JSON.stringify({P,D})),400)};
 const nv=()=>({sku:'',label:'',cat:'',hue:'#6cf08a',pack:1,unit:'جركن'});
@@ -96,12 +102,11 @@ function renderP(){const p=P[sel];
  $('#app').innerHTML=`<div class="g3"><aside class="card"><div class="sh"><input id="q" placeholder="بحث في المنتجات" value="${E(q)}"><button class="btn sol" data-a="addP">+ جديد</button></div><div class="list" id="pl"></div></aside>
  <section class="card" id="ed">${p?edP(p):'<div class="emp">اختار منتج من القايمة أو أضف منتج جديد</div>'}</section><aside class="card" id="pv"></aside></div>`;listP();pvw()}
 function listP(){const rows=P.map((p,i)=>({p,i})).filter(({p})=>!q||(pn(p)+p.tag+p.variants.map(v=>v.label+v.sku).join()).includes(q));
- $('#pl').innerHTML=`<div class="lh">${rows.length} منتج</div>`+(rows.map(({p,i})=>`<div class="pi ${i==sel?'on':''}" data-a="selP" data-i="${i}"><img src="${U(p.img)}" alt=""><div><b>${E(pn(p))}</b><small>${E(CATS[p.cat])}${p.tag?'، '+E(p.tag):''}</small></div><em title="عدد الأصناف">${p.variants.length}</em><span><button data-a="up" data-i="${i}" title="فوق">▲</button><button data-a="dn" data-i="${i}" title="تحت">▼</button></span></div>`).join('')||'<div class="emp">مفيش نتائج</div>')}
+ $('#pl').innerHTML=`<div class="lh">${rows.length} منتج</div>`+(rows.map(({p,i})=>`<div class="pi ${i==sel?'on':''}" data-a="selP" data-i="${i}"><img src="${U(p.img)}" alt=""><div><b>${E(pn(p))}</b><small>${E(CATS[p.cat])}${p.tag?'، '+E(p.tag):''}</small></div><em title="عدد الأصناف">${p.variants.length}</em><i class="gp" data-grip data-i="${i}" title="اسحب لترتيب المنتج"></i></div>`).join('')||'<div class="emp">مفيش نتائج</div>')}
 function edP(p){return`<div class="eh"><h2>تعديل المنتج</h2><button class="btn dg" data-a="delP">حذف المنتج</button></div>
- <section class="sec"><h3>البيانات الأساسية</h3><div class="f c3 cb">
+ <section class="sec"><h3>البيانات الأساسية</h3><div class="f">
   <div><label>الفئة <small>(للفلتر في الموقع)</small></label><select data-f="cat">${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${p.cat==k?'selected':''}>${v}</option>`).join('')}</select></div>
   <div><label>الحجم على الكارت <small>(مثال: 5 لتر)</small></label><input data-f="tag" value="${E(p.tag)}"></div>
-  <div><label>لون التوهج ورا المنتج</label><input type="color" data-f="hue" value="${E(p.hue)}"></div>
   <div class="s3"><label>وصف قصير تحت الاسم</label><input data-f="desc" value="${E(p.desc)}"></div></div></section>
  <section class="sec"><h3>صورة المنتج</h3><div class="imgrow">${drop(p.img,-1)}
   <div class="ihint"><p>ارفع صورة PNG بخلفية شفافة. صورة الكراتين بتتحط ورا المنتج تلقائيًا.</p><label class="ck"><input type="checkbox" data-f="cls" ${p.cls?'checked':''}> زجاجة رفيعة (شكل نحيف)</label></div></div></section>
@@ -124,10 +129,10 @@ function pvw(){const p=P[sel],b=$('#pv');if(!p){b.innerHTML='';return}const v=p.
 /* ===== الموزعين ===== */
 const okPh=s=>/^(01\d{9}|201\d{9})$/.test(String(s).replace(/\D/g,''));
 function renderD(){const all=GOVS.reduce((a,g)=>a+(D[g.id]||[]).length,0),cov=GOVS.filter(g=>(D[g.id]||[]).length).length;
- $('#app').innerHTML=`<div class="g2"><aside class="card"><div class="sh"><input id="gq" placeholder="محافظة أو اسم أو رقم" value="${E(gq)}"></div><div class="list" id="gl"></div></aside><section class="card" id="gd"><div class="st"><div><b>${all}</b><span>إجمالي الموزعين</span></div><div><b>${cov}/${GOVS.length}</b><span>محافظات مغطّاة</span></div></div><div id="gb"></div></section></div>`;listG();bodyG()}
+ $('#app').innerHTML=`<div class="g2"><aside class="card"><div class="sh"><input id="gq" placeholder="محافظة أو اسم أو رقم" value="${E(gq)}"></div><div class="list" id="gl"></div></aside><section class="card" id="gd">${canS()?`<div class="asw"><div><b>التقديم كموزع معتمد</b><small>${S.applyOpen!==false?'مفتوح: الزوار يقدروا يقدّموا من الموقع':'مقفول: الموقع بيعرض «التقديم مغلق» تحت الزرار'}</small></div><button class="sw ${S.applyOpen!==false?'on':''}" data-a="swA" role="switch" aria-checked="${S.applyOpen!==false}" title="فتح أو قفل التقديم"><i></i></button></div>`:''}<div class="st"><div><b>${all}</b><span>إجمالي الموزعين</span></div><div><b>${cov}/${GOVS.length}</b><span>محافظات مغطّاة</span></div></div><div id="gb"></div></section></div>`;listG();bodyG()}
 function listG(){const f=gq.trim();$('#gl').innerHTML=GOVS.filter(g=>!f||g.name.includes(f)||(D[g.id]||[]).some(r=>(r.name+r.phone+(r.area||'')).includes(f))).map(g=>{const n=(D[g.id]||[]).length;return`<div class="gi ${g.id==gov?'on':''}" data-a="selG" data-g="${g.id}"><span>${E(g.name)}</span><em class="${n?'':'z'}">${n}</em></div>`}).join('')}
 function bodyG(){const g=GOVS.find(x=>x.id==gov),r=D[gov]||(D[gov]=[]);
- $('#gb').innerHTML=`<div class="eh"><h2>${E(g.name)} <small>(${r.length} موزع)</small></h2><button class="btn sol" data-a="addD">+ إضافة موزع</button></div>${r.length?`<div class="dr hd"><span>الاسم</span><span>رقم الموبايل</span><span>المنطقة (اختياري)</span><span></span></div>`:'<div class="emp">مفيش موزعين هنا — المحافظة هتظهر «قريبًا» على الخريطة</div>'}
+ $('#gb').innerHTML=`<div class="eh"><div><h2>${E(g.name)}</h2><span class="cnt">${r.length} موزع</span></div><button class="btn sol" data-a="addD">+ إضافة موزع</button></div>${r.length?`<div class="dr hd"><span>الاسم</span><span>رقم الموبايل</span><span>المنطقة (اختياري)</span><span></span></div>`:'<div class="emp">مفيش موزعين هنا، والمحافظة هتظهر «قريبًا» على الخريطة</div>'}
  ${r.map((x,i)=>`<div class="dr"><input data-d="name" data-i="${i}" value="${E(x.name)}" placeholder="اسم الموزع"><input data-d="phone" data-i="${i}" class="${okPh(x.phone)?'':'bad'}" value="${E(x.phone)}" placeholder="01012345678"><input data-d="area" data-i="${i}" value="${E(x.area||'')}" placeholder="المنطقة"><button data-a="rmD" data-i="${i}" title="حذف">حذف</button></div>`).join('')}`}
 /* ===== التصدير (ZIP) ===== */
 const CT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})(),crc=u=>{let c=-1;for(let i=0;i<u.length;i++)c=CT[(c^u[i])&255]^(c>>>8);return(~c)>>>0};
@@ -141,6 +146,7 @@ async function build(){const er=check();if(er.length)return alert('راجع ال
  const en=new TextEncoder(),fs=[],used=new Set();
  P.forEach(p=>[p.img,...p.variants.map(v=>v.img)].forEach(o=>o&&imgs[o.src]&&!imgs[o.src].done&&used.add(o.src)));
  for(const s of used){fs.push({name:s,data:new Uint8Array(await imgs[s].full.arrayBuffer())},{name:s.replace('products/','products/m/'),data:new Uint8Array(await imgs[s].m.arrayBuffer())})}
+ fs.push({name:'js/settings-data.js',data:en.encode('/* إعدادات الموقع — بتتعدّل من لوحة التحكم (admin.html) */\nconst SETTINGS = '+JSON.stringify(S,null,1)+';\n')});
  fs.push({name:'js/products-data.js',data:en.encode('/* بيانات المنتجات — بتتعدّل من لوحة التحكم (admin.html) */\nconst PRODUCTS = '+JSON.stringify(P,null,1)+';\n')});
  const ks=[...GOVS.map(g=>g.id),...Object.keys(D).filter(k=>!GOVS.some(g=>g.id==k))];
  fs.push({name:'js/distributors-data.js',data:en.encode('/* موزعي برايت هوم — بيتعدّل من لوحة التحكم (admin.html) */\nconst DISTRIBUTORS = {\n'+ks.map(k=>`\n  // ───── ${(GOVS.find(g=>g.id==k)||{}).name||k} ─────\n  ${k}: [\n`+(D[k]||[]).map(r=>`    { name:${JSON.stringify(r.name.trim())}, phone:${JSON.stringify(r.phone.trim())}${r.area&&r.area.trim()?`, area:${JSON.stringify(r.area.trim())}`:''} },\n`).join('')+'  ],\n').join('')+'};\n')});
@@ -148,13 +154,13 @@ async function build(){const er=check();if(er.length)return alert('راجع ال
 async function exportZip(){const fs=await build();if(!fs)return;const a=document.createElement('a');a.href=URL.createObjectURL(zip(fs));a.download='bright-home-update.zip';a.click();dirty=false;$('#bd').hidden=true;dlg.showModal()}
 const b64=d=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(new Blob([d]))});
 async function publish(){if(!tok)return exportZip();let fs=await build();if(!fs)return;
- fs=fs.filter(f=>me.perms.includes(/distributors-data/.test(f.name)?'distributors':'products'));const b=$('#pub');b.disabled=true;toast('جاري النشر…');
+ fs=fs.filter(f=>me.perms.includes(/settings-data/.test(f.name)?'settings':/distributors-data/.test(f.name)?'distributors':'products'));const b=$('#pub');b.disabled=true;toast('جاري النشر…');
  try{const files=[];for(const f of fs)files.push({path:f.name,b64:await b64(f.data)});await api('/publish','POST',{files});Object.values(imgs).forEach(i=>i.done=1);dirty=false;$('#bd').hidden=true;toast('تم النشر ✓ — الموقع هيتحدّث خلال دقيقة تقريبًا')}catch(e){alert(e.message)}b.disabled=false}
 /* ===== الحساب والمستخدمين ===== */
 const api=async(p,m='GET',b)=>{const r=await fetch(API+p,{method:m,headers:{'Content-Type':'application/json',...(tok?{Authorization:'Bearer '+tok}:{})},body:b?JSON.stringify(b):undefined}),j=await r.json().catch(()=>({}));if(r.status===401&&tok&&p!=='/login'){logout();throw new Error(j.error||'انتهت الجلسة')}if(!r.ok)throw new Error(j.error||'خطأ '+r.status);return j};
 const logout=()=>{sessionStorage.removeItem('bh_tok');location.reload()},RL={developer:'مطوّر',owner:'مالك',editor:'محرّر'},PM={products:'المنتجات',distributors:'الموزعين'};
 async function boot(){if(!API)return renderP();if(!tok){$('#lg').hidden=false;return}
- try{me=await api('/me');const d=await api('/data');if(d.products)P=new Function(d.products+';return PRODUCTS')();if(d.distributors)D=new Function(d.distributors+';return DISTRIBUTORS')();start()}catch(e){tok='';$('#lg').hidden=false}}
+ try{me=await api('/me');const d=await api('/data');if(d.products)P=new Function(d.products+';return PRODUCTS')();if(d.distributors)D=new Function(d.distributors+';return DISTRIBUTORS')();if(d.settings)S=new Function(d.settings+';return SETTINGS')();start()}catch(e){tok='';$('#lg').hidden=false}}
 function start(){$('#lg').hidden=true;$('#me').hidden=$('#lo').hidden=false;$('#me').textContent=me.name+' · '+RL[me.role];
  const hp=!me.perms.includes('products'),hd=!me.perms.includes('distributors'),mg=me.role!='editor';$('#tp').hidden=hp;$('#td').hidden=hd;$('#tu').hidden=!mg;
  tab=!hp?'p':!hd?'d':mg?'u':'p';document.querySelectorAll('.top nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab==tab));R()}
@@ -168,6 +174,15 @@ async function pwU(u){const p=prompt('كلمة السر الجديدة للمس�
 async function delU(u){if(!confirm('تحذف المستخدم '+u+'؟'))return;try{await api('/users/'+u,'DELETE');renderU()}catch(e){alert(e.message)}}
 async function permU(c){const u=c.dataset.pu;try{await api('/users/'+u,'PATCH',{perms:[...document.querySelectorAll(`[data-pu="${u}"]:checked`)].map(x=>x.value)});toast('اتحدّثت الصلاحيات ✓')}catch(e){alert(e.message);renderU()}}
 /* ===== الأحداث ===== */
+/* ===== ترتيب المنتجات بالسحب (ماوس + لمس) ===== */
+let drag=null;
+const clr=()=>document.querySelectorAll('.pi.ovt,.pi.ovb,.pi.drg').forEach(x=>x.classList.remove('ovt','ovb','drg'));
+document.addEventListener('pointerdown',e=>{const g=e.target.closest('[data-grip]');if(!g)return;e.preventDefault();drag={from:+g.dataset.i,to:null,after:false};g.closest('.pi').classList.add('drg')});
+document.addEventListener('pointermove',e=>{if(!drag)return;const t=document.elementFromPoint(e.clientX,e.clientY)?.closest('.pi');document.querySelectorAll('.pi.ovt,.pi.ovb').forEach(x=>x.classList.remove('ovt','ovb'));if(!t){drag.to=null;return}
+ const r=t.getBoundingClientRect();drag.to=+t.dataset.i;drag.after=e.clientY>r.top+r.height/2;t.classList.add(drag.after?'ovb':'ovt')});
+const dragEnd=()=>{if(!drag)return;const d=drag;drag=null;clr();if(d.to==null)return;let k=d.to+(d.after?1:0);const cur=P[sel],m=P.splice(d.from,1)[0];if(d.from<k)k--;P.splice(k,0,m);if(k==d.from)return;sel=P.indexOf(cur);mark();renderP()};
+document.addEventListener('pointerup',dragEnd);document.addEventListener('pointercancel',()=>{drag=null;clr()});
+
 const R=()=>tab=='p'?renderP():tab=='d'?renderD():renderU();
 document.addEventListener('click',e=>{const t=e.target.closest('[data-a],[data-tab]');if(!t)return;const a=t.dataset.a,i=+t.dataset.i,j=+t.dataset.j,p=P[sel];
  if(t.dataset.tab){tab=t.dataset.tab;document.querySelectorAll('.top nav button').forEach(b=>b.classList.toggle('on',b==t));return R()}
@@ -178,7 +193,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-a],[data-t
  else if(a=='img'){pick=j;$('#file').value='';$('#file').click()}else if(a=='rmI'){delete p.variants[j].img;mark();renderP()}else if(a=='pj'){pj=j;pvw()}
  else if(a=='selG'){gov=t.dataset.g;listG();bodyG()}else if(a=='addD'){(D[gov]=D[gov]||[]).push({name:'',phone:'',area:''});mark();bodyG();listG()}
  else if(a=='rmD'){if(confirm('تحذف الموزع ده؟')){D[gov].splice(i,1);mark();renderD()}}
- else if(a=='addU')addU();else if(a=='pwU')pwU(t.dataset.u);else if(a=='delU')delU(t.dataset.u)});
+ else if(a=='swA'){S.applyOpen=S.applyOpen===false;mark();renderD()}else if(a=='addU')addU();else if(a=='pwU')pwU(t.dataset.u);else if(a=='delU')delU(t.dataset.u)});
 $('#file').onchange=e=>setImg(e.target.files[0],pick);
 document.addEventListener('dragover',e=>{if(e.target.closest('.drop')){e.preventDefault();e.target.closest('.drop').classList.add('ov')}});
 document.addEventListener('dragleave',e=>e.target.closest&&e.target.closest('.drop')?.classList.remove('ov'));

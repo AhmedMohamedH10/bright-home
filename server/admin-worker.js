@@ -6,7 +6,7 @@
      Variables  : GH_REPO (مثال AhmedMohamedH10/bright-home) · GH_BRANCH (main) · ALLOWED_ORIGIN (https://brighthome-eg.shop)
      Secrets    : GH_TOKEN · SESSION_SECRET · DEV_USER · DEV_PASSWORD
    ========================================================= */
-const E = new TextEncoder(), PERMS = ['products', 'distributors'];
+const E = new TextEncoder(), PERMS = ['products', 'distributors'], ADMIN = [...PERMS, 'settings'];
 const J = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'Content-Type': 'application/json' } });
 const T = (m, s) => { const e = new Error(m); e.s = s; return e; };
 const b64u = b => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -15,7 +15,7 @@ const safeEq = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.le
 async function sign(k, d) { const key = await crypto.subtle.importKey('raw', E.encode(k), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); return b64u(await crypto.subtle.sign('HMAC', key, E.encode(d))); }
 async function pbk(pw, salt) { const k = await crypto.subtle.importKey('raw', E.encode(pw), 'PBKDF2', false, ['deriveBits']); return b64u(await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt: E.encode(salt), iterations: 100000 }, k, 256)); }
 const gh = (env, p, o = {}) => fetch('https://api.github.com/repos/' + env.GH_REPO + p, { ...o, headers: { Authorization: 'Bearer ' + env.GH_TOKEN, Accept: 'application/vnd.github+json', 'User-Agent': 'bh-admin', 'Content-Type': 'application/json', ...(o.headers || {}) } });
-const need = p => p === 'js/products-data.js' || /^assets\/products\/(m\/)?n[a-z0-9]+\.webp$/.test(p) ? 'products' : p === 'js/distributors-data.js' ? 'distributors' : null;
+const need = p => p === 'js/products-data.js' || /^assets\/products\/(m\/)?n[a-z0-9]+\.webp$/.test(p) ? 'products' : p === 'js/distributors-data.js' ? 'distributors' : p === 'js/settings-data.js' ? 'settings' : null;
 const canManage = (me, role) => me.role === 'developer' || (me.role === 'owner' && role === 'editor');
 const okUser = u => /^[a-z0-9_.-]{3,30}$/.test(u);
 
@@ -24,9 +24,9 @@ async function who(req, env) {
   if (!p || !s || !safeEq(s, await sign(env.SESSION_SECRET, p))) throw T('سجّل دخول الأول', 401);
   const d = JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/')));
   if (d.exp < Date.now()) throw T('انتهت الجلسة، سجّل دخول تاني', 401);
-  if (d.u === String(env.DEV_USER).toLowerCase()) return { u: d.u, name: 'المطوّر', role: 'developer', perms: PERMS };
+  if (d.u === String(env.DEV_USER).toLowerCase()) return { u: d.u, name: 'المطوّر', role: 'developer', perms: ADMIN };
   const r = await env.BH_KV.get('u:' + d.u, 'json'); if (!r) throw T('الحساب ده اتحذف', 401);
-  return { u: d.u, name: r.name, role: r.role, perms: r.role === 'owner' ? PERMS : r.perms };
+  return { u: d.u, name: r.name, role: r.role, perms: r.role === 'owner' ? ADMIN : r.perms };
 }
 async function audit(env, u, a) { const l = JSON.parse(await env.BH_KV.get('log') || '[]'); l.unshift({ t: Date.now(), u, a }); await env.BH_KV.put('log', JSON.stringify(l.slice(0, 100))); }
 const raw = async (env, p) => { const r = await gh(env, `/contents/${p}?ref=${env.GH_BRANCH || 'main'}`, { headers: { Accept: 'application/vnd.github.raw+json' } }); if (!r.ok) throw T('مش قادر أقرأ من GitHub', 502); return r.text(); };
@@ -46,7 +46,7 @@ async function route(req, env) {
   }
   const me = await who(req, env);
   if (path === '/me') return J(me);
-  if (path === '/data') return J({ products: me.perms.includes('products') ? await raw(env, 'js/products-data.js') : null, distributors: me.perms.includes('distributors') ? await raw(env, 'js/distributors-data.js') : null });
+  if (path === '/data') return J({ products: me.perms.includes('products') ? await raw(env, 'js/products-data.js') : null, distributors: me.perms.includes('distributors') ? await raw(env, 'js/distributors-data.js') : null, settings: me.perms.includes('settings') ? await raw(env, 'js/settings-data.js').catch(() => null) : null });
 
   if (path === '/publish' && m === 'POST') {
     const fs = Array.isArray(body.files) ? body.files : []; if (!fs.length || fs.length > 80) throw T('مفيش ملفات للنشر', 400);

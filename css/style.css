@@ -1432,3 +1432,9 @@ a,button,input,textarea,select,[role="button"]{touch-action:manipulation;-webkit
 }
 @media (max-width:360px){.live-txt{font-size:12px}}
 @media (prefers-reduced-motion:reduce){.live-dot::after{animation:none}.live-num.bump{animation:none}}
+
+/* ---------- التقديم مغلق (بيتحكم فيه من لوحة التحكم) ---------- */
+[data-apply].is-closed{opacity:.7;cursor:not-allowed}
+.ap-note{display:block;font-size:12px;font-weight:600;color:var(--mist)}
+.ct-tx small.ap-note{font-size:12px;color:var(--mist)}
+.dl-apply.is-closed:hover{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}

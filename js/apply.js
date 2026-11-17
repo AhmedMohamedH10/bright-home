@@ -11,6 +11,15 @@
   const root = document.documentElement;
   const say = m => (window.bhToast ? window.bhToast(m) : alert(m));
 
+  // التقديم مقفول من لوحة التحكم (js/settings-data.js): كل زراير التقديم بتتقفل وبيظهر تحتها «التقديم مغلق»
+  const closed = typeof SETTINGS !== 'undefined' && SETTINGS && SETTINGS.applyOpen === false;
+  const markClosed = () => document.querySelectorAll('[data-apply]:not([data-closed])').forEach(b => {
+    b.setAttribute('data-closed', ''); b.classList.add('is-closed'); b.setAttribute('aria-disabled', 'true');
+    const n = document.createElement('small'); n.className = 'ap-note'; n.textContent = 'التقديم مغلق';
+    (b.querySelector('.ct-tx') || b).appendChild(n);
+  });
+  if (closed) { markClosed(); new MutationObserver(markClosed).observe(document.body, { childList: true, subtree: true }); }
+
   // المحافظات من خريطة مصر (مع قايمة احتياطية)
   const fallback = ['القاهرة','الجيزة','الإسكندرية','القليوبية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','الوادي الجديد','مطروح','شمال سيناء','جنوب سيناء'];
   const govs = (typeof EGYPT_MAP !== 'undefined' && EGYPT_MAP.govs ? EGYPT_MAP.govs.map(g => g.name) : fallback);
@@ -27,6 +36,7 @@
 
   let lastFocus = null;
   const open = gov => {
+    if (closed) return;
     lastFocus = document.activeElement;
     if (gov && [...sel.options].some(o => o.value === gov)) sel.value = gov;
     modal.hidden = back.hidden = false;
@@ -41,7 +51,7 @@
   };
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-apply]');
-    if (b) { e.preventDefault(); open(b.getAttribute('data-gov') || ''); }
+    if (b) { e.preventDefault(); if (closed) return say('التقديم مغلق حاليًا'); open(b.getAttribute('data-gov') || ''); }
   });
   $('#applyClose').addEventListener('click', close);
   back.addEventListener('click', close);
