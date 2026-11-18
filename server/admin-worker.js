@@ -21,26 +21,31 @@ const okUser = u => /^[a-z0-9_.-]{3,30}$/.test(u);
 
 async function who(req, env) {
   const [p, s] = (req.headers.get('Authorization') || '').slice(7).split('.');
-  if (!p || !s || !safeEq(s, await sign(env.SESSION_SECRET, p))) throw T('سجّل دخول الأول', 401);
+  if (!p || !s || !safeEq(s, await sign(env.SESSION_SECRET, p))) throw T('سجّل الدخول أولًا', 401);
   const d = JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/')));
-  if (d.exp < Date.now()) throw T('انتهت الجلسة، سجّل دخول تاني', 401);
+  if (d.exp < Date.now()) throw T('انتهت الجلسة، سجّل الدخول مجددًا', 401);
   if (d.u === String(env.DEV_USER).toLowerCase()) return { u: d.u, name: 'المطوّر', role: 'developer', perms: ADMIN };
-  const r = await env.BH_KV.get('u:' + d.u, 'json'); if (!r) throw T('الحساب ده اتحذف', 401);
+  const r = await env.BH_KV.get('u:' + d.u, 'json'); if (!r) throw T('تم حذف هذا الحساب', 401);
   return { u: d.u, name: r.name, role: r.role, perms: r.role === 'owner' ? ADMIN : r.perms };
 }
-async function audit(env, u, a) { const l = JSON.parse(await env.BH_KV.get('log') || '[]'); l.unshift({ t: Date.now(), u, a }); await env.BH_KV.put('log', JSON.stringify(l.slice(0, 100))); }
-const raw = async (env, p) => { const r = await gh(env, `/contents/${p}?ref=${env.GH_BRANCH || 'main'}`, { headers: { Accept: 'application/vnd.github.raw+json' } }); if (!r.ok) throw T('مش قادر أقرأ من GitHub', 502); return r.text(); };
+const clean = (x, n) => String(x ?? '').replace(/[\u0000-\u001f]/g, ' ').slice(0, n);
+async function audit(env, me, items) {
+  const t = Date.now(), rows = (Array.isArray(items) ? items : [items]).map(x => ({ t, u: clean(me.u, 30), n: clean(me.name, 60), k: x.k, g: x.g, a: clean(x.a, 220) }));
+  try { const l = JSON.parse(await env.BH_KV.get('log') || '[]'); l.unshift(...rows); await env.BH_KV.put('log', JSON.stringify(l.slice(0, 500))); return true; } catch (e) { return false; /* فشل السجل لا يعطّل العملية، لكن يُبلَّغ به */ }
+}
+const VER = 2, GRP = { products: 'prod', distributors: 'dist', settings: 'set' }, KINDS = ['add', 'edit', 'del', 'set'];
+const raw = async (env, p) => { const r = await gh(env, `/contents/${p}?ref=${env.GH_BRANCH || 'main'}`, { headers: { Accept: 'application/vnd.github.raw+json' } }); if (!r.ok) throw T('تعذّرت القراءة من GitHub', 502); return r.text(); };
 
 async function route(req, env) {
   const url = new URL(req.url), path = url.pathname, m = req.method, body = m === 'GET' || m === 'DELETE' ? {} : await req.json().catch(() => ({}));
   if (path === '/login' && m === 'POST') {
     const u = String(body.username || '').toLowerCase(), pw = String(body.password || ''), ip = req.headers.get('CF-Connecting-IP') || 'x', k = 'rl:' + ip, n = +(await env.BH_KV.get(k) || 0);
-    if (n >= 8) throw T('محاولات كتير — جرّب بعد 15 دقيقة', 429);
-    let ok = false;
-    if (u === String(env.DEV_USER).toLowerCase()) ok = safeEq(pw, env.DEV_PASSWORD);
-    else { const r = okUser(u) && await env.BH_KV.get('u:' + u, 'json'); ok = !!r && safeEq(await pbk(pw, r.salt), r.hash); }
-    if (!ok) { await env.BH_KV.put(k, String(n + 1), { expirationTtl: 900 }); throw T('اسم المستخدم أو كلمة السر غلط', 401); }
-    await env.BH_KV.delete(k);
+    if (n >= 8) throw T('محاولات كثيرة. حاول بعد 15 دقيقة', 429);
+    let ok = false, nm = '';
+    if (u === String(env.DEV_USER).toLowerCase()) { ok = safeEq(pw, env.DEV_PASSWORD); nm = 'المطوّر'; }
+    else { const r = okUser(u) && await env.BH_KV.get('u:' + u, 'json'); ok = !!r && safeEq(await pbk(pw, r.salt), r.hash); nm = r ? r.name : ''; }
+    if (!ok) { await env.BH_KV.put(k, String(n + 1), { expirationTtl: 900 }); await audit(env, { u: u.replace(/[^a-z0-9_.-]/g, '').slice(0, 30) || '؟', name: '' }, { k: 'sec', g: 'lgn', a: 'محاولة دخول فاشلة' }); throw T('اسم المستخدم أو كلمة المرور غير صحيح', 401); }
+    await env.BH_KV.delete(k); await audit(env, { u, name: nm }, { k: 'in', g: 'lgn', a: 'تسجيل دخول' });
     const p = b64u(E.encode(JSON.stringify({ u, exp: Date.now() + 12 * 36e5 })));
     return J({ token: p + '.' + await sign(env.SESSION_SECRET, p) });
   }
@@ -49,24 +54,25 @@ async function route(req, env) {
   if (path === '/data') return J({ products: me.perms.includes('products') ? await raw(env, 'js/products-data.js') : null, distributors: me.perms.includes('distributors') ? await raw(env, 'js/distributors-data.js') : null, settings: me.perms.includes('settings') ? await raw(env, 'js/settings-data.js').catch(() => null) : null });
 
   if (path === '/publish' && m === 'POST') {
-    const fs = Array.isArray(body.files) ? body.files : []; if (!fs.length || fs.length > 80) throw T('مفيش ملفات للنشر', 400);
-    for (const f of fs) { const n = need(f.path); if (!n) throw T('مسار غير مسموح: ' + f.path, 403); if (!me.perms.includes(n)) throw T('ماعندكش صلاحية على: ' + f.path, 403); if (String(f.b64).length > 3e6) throw T('ملف كبير: ' + f.path, 413); }
+    const fs = Array.isArray(body.files) ? body.files : []; if (!fs.length || fs.length > 80) throw T('لا توجد ملفات للنشر', 400);
+    for (const f of fs) { const n = need(f.path); if (!n) throw T('مسار غير مسموح: ' + f.path, 403); if (!me.perms.includes(n)) throw T('لا تملك صلاحية على: ' + f.path, 403); if (String(f.b64).length > 3e6) throw T('الملف كبير: ' + f.path, 413); }
+    const dom = new Set(fs.map(f => need(f.path))), ch = (Array.isArray(body.changes) ? body.changes : []).slice(0, 60).filter(c => c && dom.has(c.d) && me.perms.includes(c.d) && KINDS.includes(c.k) && typeof c.a === 'string' && c.a.trim());
     const br = env.GH_BRANCH || 'main', ref = await (await gh(env, '/git/ref/heads/' + br)).json(), cm = await (await gh(env, '/git/commits/' + ref.object.sha)).json(), tree = [];
     for (const f of fs) { const r = await gh(env, '/git/blobs', { method: 'POST', body: JSON.stringify({ content: f.b64, encoding: 'base64' }) }); if (!r.ok) throw T('فشل رفع ' + f.path, 502); tree.push({ path: f.path, mode: '100644', type: 'blob', sha: (await r.json()).sha }); }
     const t = await (await gh(env, '/git/trees', { method: 'POST', body: JSON.stringify({ base_tree: cm.tree.sha, tree }) })).json();
     const c = await (await gh(env, '/git/commits', { method: 'POST', body: JSON.stringify({ message: `تحديث من لوحة التحكم — ${me.u}`, tree: t.sha, parents: [ref.object.sha] }) })).json();
     const u = await gh(env, '/git/refs/heads/' + br, { method: 'PATCH', body: JSON.stringify({ sha: c.sha }) }); if (!u.ok) throw T('فشل النشر على GitHub', 502);
-    await audit(env, me.u, 'نشر ' + fs.length + ' ملف'); return J({ ok: true });
+    const logged = await audit(env, me, [{ k: 'pub', g: 'pub', a: 'نشر ' + fs.length + ' ملف' + (ch.length ? ' (' + ch.length + ' تغيير)' : '') }, ...ch.map(c => ({ k: c.k, g: GRP[c.d], a: c.a }))]); return J({ ok: true, v: VER, logged });
   }
 
   if (path === '/me/password' && m === 'POST') {
-    if (me.role === 'developer') throw T('كلمة سر المطوّر بتتغير من إعدادات Cloudflare', 400);
-    const r = await env.BH_KV.get('u:' + me.u, 'json'); if (!safeEq(await pbk(String(body.old || ''), r.salt), r.hash)) throw T('كلمة السر الحالية غلط', 403);
-    if (String(body.new || '').length < 8) throw T('كلمة السر 8 حروف على الأقل', 400);
-    r.salt = rnd(); r.hash = await pbk(body.new, r.salt); await env.BH_KV.put('u:' + me.u, JSON.stringify(r)); return J({ ok: true });
+    if (me.role === 'developer') throw T('تُغيَّر كلمة مرور المطوّر من إعدادات Cloudflare', 400);
+    const r = await env.BH_KV.get('u:' + me.u, 'json'); if (!safeEq(await pbk(String(body.old || ''), r.salt), r.hash)) throw T('كلمة المرور الحالية غير صحيحة', 403);
+    if (String(body.new || '').length < 8) throw T('كلمة المرور 8 أحرف على الأقل', 400);
+    r.salt = rnd(); r.hash = await pbk(body.new, r.salt); await env.BH_KV.put('u:' + me.u, JSON.stringify(r)); await audit(env, me, { k: 'edit', g: 'usr', a: 'غيّر كلمة مروره' }); return J({ ok: true });
   }
 
-  if (path === '/log') { if (me.role === 'editor') throw T('غير مسموح', 403); return J({ log: JSON.parse(await env.BH_KV.get('log') || '[]') }); }
+  if (path === '/log') { if (me.role !== 'developer') throw T('غير مسموح', 403); return J({ v: VER, log: JSON.parse(await env.BH_KV.get('log') || '[]') }); }
 
   if (path === '/users' || path.startsWith('/users/')) {
     if (me.role === 'editor') throw T('غير مسموح', 403);
@@ -78,25 +84,25 @@ async function route(req, env) {
     }
     if (path === '/users' && m === 'POST') {
       const u = String(body.username || '').toLowerCase(), role = body.role;
-      if (!okUser(u) || u === String(env.DEV_USER).toLowerCase()) throw T('اسم المستخدم لازم حروف إنجليزي/أرقام (3-30)', 400);
-      if (!['owner', 'editor'].includes(role) || !canManage(me, role)) throw T('ماعندكش صلاحية تضيف الدور ده', 403);
-      if (String(body.password || '').length < 8) throw T('كلمة السر 8 حروف على الأقل', 400);
-      if (await env.BH_KV.get('u:' + u)) throw T('اسم المستخدم موجود', 409);
+      if (!okUser(u) || u === String(env.DEV_USER).toLowerCase()) throw T('اسم المستخدم: أحرف إنجليزية أو أرقام (3–30)', 400);
+      if (!['owner', 'editor'].includes(role) || !canManage(me, role)) throw T('لا تملك صلاحية إضافة هذا الدور', 403);
+      if (String(body.password || '').length < 8) throw T('كلمة المرور 8 أحرف على الأقل', 400);
+      if (await env.BH_KV.get('u:' + u)) throw T('اسم المستخدم مستخدم مسبقًا', 409);
       const salt = rnd(), perms = role === 'owner' ? PERMS : (body.perms || []).filter(p => PERMS.includes(p) && me.perms.includes(p));
       await env.BH_KV.put('u:' + u, JSON.stringify({ name: String(body.name || u).slice(0, 60), role, perms, salt, hash: await pbk(body.password, salt), created: Date.now(), by: me.u }));
-      await audit(env, me.u, 'أضاف مستخدم ' + u); return J({ ok: true });
+      await audit(env, me, { k: 'add', g: 'usr', a: 'أضاف المستخدم ' + u + ' (' + (role === 'owner' ? 'مالك' : 'محرّر: ' + (perms.map(x => x === 'products' ? 'المنتجات' : 'الموزّعون').join('، ') || 'بدون صلاحيات')) + ')' }); return J({ ok: true });
     }
-    const r = await env.BH_KV.get('u:' + target, 'json'); if (!r) throw T('المستخدم مش موجود', 404);
-    if (!canManage(me, r.role)) throw T('ماعندكش صلاحية على المستخدم ده', 403);
-    if (m === 'DELETE') { await env.BH_KV.delete('u:' + target); await audit(env, me.u, 'حذف مستخدم ' + target); return J({ ok: true }); }
+    const r = await env.BH_KV.get('u:' + target, 'json'); if (!r) throw T('المستخدم غير موجود', 404);
+    if (!canManage(me, r.role)) throw T('لا تملك صلاحية على هذا المستخدم', 403);
+    if (m === 'DELETE') { await env.BH_KV.delete('u:' + target); await audit(env, me, { k: 'del', g: 'usr', a: 'حذف المستخدم ' + target }); return J({ ok: true }); }
     if (m === 'PATCH') {
       if (body.name) r.name = String(body.name).slice(0, 60);
       if (Array.isArray(body.perms) && r.role === 'editor') r.perms = body.perms.filter(p => PERMS.includes(p) && me.perms.includes(p));
-      if (body.password) { if (String(body.password).length < 8) throw T('كلمة السر 8 حروف على الأقل', 400); r.salt = rnd(); r.hash = await pbk(body.password, r.salt); }
-      await env.BH_KV.put('u:' + target, JSON.stringify(r)); await audit(env, me.u, 'عدّل مستخدم ' + target); return J({ ok: true });
+      if (body.password) { if (String(body.password).length < 8) throw T('كلمة المرور 8 أحرف على الأقل', 400); r.salt = rnd(); r.hash = await pbk(body.password, r.salt); }
+      await env.BH_KV.put('u:' + target, JSON.stringify(r)); await audit(env, me, { k: 'edit', g: 'usr', a: 'عدّل المستخدم ' + target + ': ' + [body.name && 'الاسم', Array.isArray(body.perms) && r.role === 'editor' && 'الصلاحيات (' + (r.perms.map(x => x === 'products' ? 'المنتجات' : 'الموزّعون').join('، ') || 'بدون') + ')', body.password && 'كلمة المرور'].filter(Boolean).join('، ') }); return J({ ok: true });
     }
   }
-  throw T('مش موجود', 404);
+  throw T('غير موجود', 404);
 }
 
 export default {

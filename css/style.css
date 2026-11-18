@@ -102,8 +102,13 @@ h2 em{font-style:normal;background:linear-gradient(100deg,#fff 10%,var(--sky) 55
 }
 .header.stuck{background:rgba(4,26,56,.62);border-color:rgba(255,255,255,.16);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);box-shadow:0 20px 50px -20px rgba(0,8,30,.8);height:60px}
 .brand{display:flex;align-items:center;gap:12px;direction:ltr}
-.brand img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,10,40,.5));transition:transform .6s var(--ease)}
-.brand:hover img{transform:rotate(-8deg) scale(1.08)}
+.brand{-webkit-tap-highlight-color:transparent;outline:none}
+.brand img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,10,40,.5));transition:transform .45s cubic-bezier(.34,1.56,.64,1);transform:translateZ(0);will-change:transform}
+@media (hover:hover) and (pointer:fine){
+  .brand:hover img{transform:scale(1.1)}
+}
+.brand:active img{transform:scale(.95);transition-duration:.15s}
+.brand:focus-visible{outline:2px solid var(--sky);outline-offset:4px;border-radius:99px}
 .brand-word{display:flex;flex-direction:column;align-items:center;line-height:1}
 .brand-word b{font-family:var(--font-ar);font-weight:700;font-size:23px;color:#fff;letter-spacing:0}
 .brand-word small{font-family:var(--font-en);font-size:12px;letter-spacing:.14em;color:var(--sky);margin-top:3px}
@@ -1438,3 +1443,35 @@ a,button,input,textarea,select,[role="button"]{touch-action:manipulation;-webkit
 .ap-note{display:block;font-size:12px;font-weight:600;color:var(--mist)}
 .ct-tx small.ap-note{font-size:12px;color:var(--mist)}
 .dl-apply.is-closed:hover{background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+
+
+/* =========================================================
+   PERF-2 — لمعة الفضة خفيفة
+   بدل حركة مستمرة على 26 عنصر: اللمعة تعدّي مرة كل 6 ثواني (ثانيتين ونص) وبعدين تهدأ،
+   وعلى اللوحة الظاهرة بس، بـ 24 خطوة بدل رسم كل فريم. الشكل نفسه، والتكلفة أقل بكتير.
+   ========================================================= */
+@keyframes silverSweep{0%,55%{background-position:0% 50%}100%{background-position:200% 50%}}
+.sc-cat,.sc-title.two .lm{animation:silverSweep 6s steps(24,end) infinite}
+.scent:not(.near) .sc-cat,.scent:not(.near) .lm,
+.sc-panel:not(.is-on) .sc-cat,.sc-panel:not(.is-on) .lm{animation-play-state:paused}
+
+/* =========================================================
+   PERF-3 — تقطيع عام: شيل تمويه الخلفية (backdrop-filter) على كل الأجهزة
+   بيعيد حساب الخلفية كل فريم سكرول فوق عناصر بتتحرك؛ بنعوّضه بخلفية أغمق شبه زجاجية.
+   ========================================================= */
+.glass,.header,.header.stuck,.btn-ghost,.filters,.chips li,.feature,.toast,.var-list,.card,.cart-drawer,.cd-panel,.live{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.header,.header.stuck{background:rgba(4,26,56,.9);box-shadow:0 10px 24px -14px rgba(0,8,30,.8)}
+.btn-ghost{background:rgba(255,255,255,.16)}
+.filters{background:rgba(2,15,36,.62)}
+.var-list{background:#041634}
+.live{background:rgba(4,26,56,.88)}
+
+/* =========================================================
+   PERF-4 — جسيمات المشاهد: بس اللوحة الظاهرة بتتحرك
+   كان في كل مشهد 2-3 مجموعات جسيمات (دخان/بتلات/لمعات...) كلها شغالة وهي مخفية (opacity:0).
+   ========================================================= */
+.sc-fx>div:not(.fx-on){visibility:hidden;transition:opacity 1s,visibility 0s 1s}
+.sc-fx>div:not(.fx-on) i{animation-play-state:paused!important}
+/* الدخان: الـ radial-gradient ناعم أصلًا، فمش محتاج blur بيتعاد حسابه مع كل تكبير */
+.fx-smoke i{-webkit-filter:none;filter:none}

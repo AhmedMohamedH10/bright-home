@@ -111,8 +111,10 @@ const HL = new Set(['لمعانًا', 'ونظافة', 'نعومة', 'يديك', 
 const header = $('#header'), progBar = $('.progress i'), glow = $('.cursor-glow'), mCta = $('.mobile-cta');
 if (finePointer && glow) {
   let gx = 0, gy = 0, tx = 0, ty = 0;
-  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; glow.classList.add('on'); }, { passive: true });
-  (function loop() { gx = lerp(gx, tx, .12); gy = lerp(gy, ty, .12); glow.style.transform = `translate(${gx}px,${gy}px)`; requestAnimationFrame(loop); })();
+  /* الحلقة بتشتغل بس وإنت بتحرّك الماوس وبتقف لما الوهج يوصل (كانت شغالة 60 مرة/ث طول الوقت) */
+  let glowRun = false;
+  const loop = () => { gx = lerp(gx, tx, .12); gy = lerp(gy, ty, .12); glow.style.transform = `translate(${gx}px,${gy}px)`; if (Math.abs(tx - gx) + Math.abs(ty - gy) > .5) requestAnimationFrame(loop); else glowRun = false; };
+  addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; glow.classList.add('on'); if (!glowRun) { glowRun = true; requestAnimationFrame(loop); } }, { passive: true });
 }
 const navLinks = $$('.nav a');
 /* على الموبايل الناف قابل للسحب: نخلّي الرابط الحالي في نص الشريط */
@@ -285,6 +287,8 @@ const scenes = $$('.scent').map(sec => {
     T: 0, F: 0, idx: -1, tiltX: 0, tiltY: 0, tX: 0, tY: 0, visible: true,
   };
   S.n = S.jugs.length;
+  S.fxg = $$('.sc-fx > div', sec); S.w = 0;
+  if ('ResizeObserver' in window) new ResizeObserver(() => { S.w = 0; }).observe(S.stage);
 
   /* جسيمات كل مشهد */
   const FX = {
@@ -302,7 +306,7 @@ const scenes = $$('.scent').map(sec => {
   };
   $$('.sc-fx > div', sec).forEach(box => {
     for (const k in FX) if (box.classList.contains(k)) {
-      const [n, fn] = FX[k], cnt = Math.ceil(n * (lite ? .3 : .45));
+      const [n, fn] = FX[k], cnt = Math.ceil(n * (lite ? .2 : .3));   /* عدد جسيمات أقل: كل جسيمة طبقة رسم مستقلة */
       for (let i = 0; i < cnt; i++) { const el = document.createElement('i'); fn(el, i); box.appendChild(el); }
     }
   });
@@ -322,9 +326,11 @@ const scenes = $$('.scent').map(sec => {
     if (idx !== S.idx) {
       S.idx = idx; S.stage.dataset.i = idx;
       S.panels.forEach((p, i) => p.classList.toggle('is-on', i === idx));
+      /* جسيمات اللوحة الظاهرة بس هي اللي بتتحرك — الباقي واقف (كانت كل جسيمات اللوحات التلاتة شغالة مع بعض) */
+      S.fxg.forEach(g => g.classList.toggle('fx-on', g.dataset.s == null || g.dataset.s.split(' ').includes(String(idx))));   /* من غير data-s = ظاهرة دايمًا */
       if (S.count) S.count.textContent = `0${idx + 1} / 0${S.n}`;
     }
-    const w = S.jugs[0].offsetWidth || 300;
+    const w = S.w || (S.w = S.jugs[0].offsetWidth || 300);   /* قياس متخزّن: قراءة offsetWidth كل فريم كانت بتجبر المتصفح يحسب التخطيط */
     S.tiltX = lerp(S.tiltX, S.tX, .08); S.tiltY = lerp(S.tiltY, S.tY, .08);
     /* لو مفيش حركة (الجركن واقف) منكتبش ستايل كل فريم — ده اللي كان بيهنّج الموبايل */
     const moving = S.F !== S.T || Math.abs(S.tiltX - S.tX) > .002 || Math.abs(S.tiltY - S.tY) > .002;
@@ -1006,7 +1012,7 @@ function spinJugs(time) {
     o.sh.style.transform = `translateX(-50%) scaleX(${(1 + Math.abs(Math.sin(a * Math.PI / 180)) * .08).toFixed(3)})`;
   }
 }
-requestAnimationFrame(spinJugs);
+if (solids.length) requestAnimationFrame(spinJugs);   /* مجسّم WebGL متوقف: مفيش داعي لحلقة أنيميشن شغالة فاضية طول الوقت */
 
 /* نشغّل الحركة بس على اللي ظاهر، ونفضّي الطبقات من الذاكرة لو بعيد عن الشاشة */
 if ('IntersectionObserver' in window) {
@@ -1141,7 +1147,7 @@ function fx(time) {
   if (ultra) return;                                   /* وضع ultra: الفقاقيع واقفة خالص */
   if (document.hidden) { fxPrev = 0; return requestAnimationFrame(fx); }
   /* الموبايل: 30 فريم/ث للفقاقيع بدل 60 — نص الشغل ومش بتتفرق بالعين */
-  if (lite && time - fxPrev < 30) return requestAnimationFrame(fx);
+  if (time - fxPrev < 30) return requestAnimationFrame(fx);
   const kk = fxPrev ? clamp((time - fxPrev) / 16.67, .5, 3) : 1; fxPrev = time;
   cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, vw, vh);
   const boost = clamp(Math.abs(scrollVel) * .03, 0, 1.2), spr = sprite(null);
